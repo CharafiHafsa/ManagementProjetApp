@@ -153,35 +153,35 @@ To avoid conflicts, always pull the latest changes from the main branch into you
 
 ---
 ## test a teammate bracnh
-##1. Make Sure You're in the Right Repository
+### 1. Make Sure You're in the Right Repository
 
-##2. Clone the repository if you haven't already:
+### 2. Clone the repository if you haven't already:
 >> git clone <repository_url>
 Replace <repository_url> with the actual URL of the GitHub repository.
 
-##3. Navigate to the repository's directory:
+### 3. Navigate to the repository's directory:
 >> cd <repository_folder>
 
-##4.  Fetch the Latest Updates
+### 4.  Fetch the Latest Updates
 To ensure you have the latest branches and commits, run:
 >> git fetch
 
-##5. List All Branches
+### 5. List All Branches
 To see all branches (both local and remote), run:
 >> git branch -a
 Look for the new branch in the list (e.g., remotes/origin/new-branch-name).
 
-##6. Check Out the New Branch
+### 6. Check Out the New Branch
 To switch to the new branch, run:
 >> git checkout <branch_name>
 Replace <branch_name> with the name of the new branch your friend created.
 If the branch exists remotely but not locally, git checkout will automatically track it and bring the branch to your local system.
 
-##7. Pull the Latest Code
+### 7. Pull the Latest Code
 To ensure the branch has the most recent changes, run:
 >> git pull
 
-##8. Test the Code
+### 8. Test the Code
 After switching to the branch, you can test the code locally on your machine as needed.
 
 ### **📝 Best Practices**
