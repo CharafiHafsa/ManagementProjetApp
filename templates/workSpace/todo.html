@@ -1,0 +1,250 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+{% load static %}
+<div class="card-body p-3">
+
+    <div class="table-responsive border rounded" style="background-color: white;">
+      <table class="table align-middle text-nowrap mb-0">
+        <div class="table-responsive">
+            <ul class="nav nav-tabs theme-tab gap-3 flex-nowrap" role="tablist" style="background-color: white; padding: 20px;">
+                <li class="nav-item" role="presentation">
+                <a class="nav-link" data-bs-toggle="tab" href="https://bootstrapdemos.adminmart.com/matdash/dist/main/index3.html#app" role="tab" aria-selected="false" tabindex="-1">
+                    <div class="hstack gap-2">
+                    <iconify-icon icon="solar:widget-linear" class="fs-4"><template shadowrootmode="open"><style data-style="data-style">:host{display:inline-block;vertical-align:0}span,svg{display:block}</style><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.5" d="M2.5 6.5c0-1.886 0-2.828.586-3.414S4.614 2.5 6.5 2.5s2.828 0 3.414.586s.586 1.528.586 3.414s0 2.828-.586 3.414s-1.528.586-3.414.586s-2.828 0-3.414-.586S2.5 8.386 2.5 6.5Zm11 11c0-1.886 0-2.828.586-3.414s1.528-.586 3.414-.586s2.828 0 3.414.586s.586 1.528.586 3.414s0 2.828-.586 3.414s-1.528.586-3.414.586s-2.828 0-3.414-.586s-.586-1.528-.586-3.414Zm-11 0c0-1.886 0-2.828.586-3.414S4.614 13.5 6.5 13.5s2.828 0 3.414.586s.586 1.528.586 3.414s0 2.828-.586 3.414s-1.528.586-3.414.586s-2.828 0-3.414-.586S2.5 19.386 2.5 17.5Zm11-11c0-1.886 0-2.828.586-3.414S15.614 2.5 17.5 2.5s2.828 0 3.414.586s.586 1.528.586 3.414s0 2.828-.586 3.414s-1.528.586-3.414.586s-2.828 0-3.414-.586S13.5 8.386 13.5 6.5Z"></path></svg></template></iconify-icon>
+                    <span>Tous</span>
+                    </div>
+
+                </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                <a class="nav-link active" data-bs-toggle="tab" href="https://bootstrapdemos.adminmart.com/matdash/dist/main/index3.html#mobile" role="tab" aria-selected="true">
+                    <div class="hstack gap-2">
+                    <iconify-icon icon="solar:history-2-outline" class="fs-4"><template shadowrootmode="open"><style data-style="data-style">:host{display:inline-block;vertical-align:0}span,svg{display:block}</style><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 10c0-3.771 0-5.657 1.172-6.828S8.229 2 12 2s5.657 0 6.828 1.172S20 6.229 20 10v4c0 3.771 0 5.657-1.172 6.828S15.771 22 12 22s-5.657 0-6.828-1.172S4 17.771 4 14z"></path><path stroke-linecap="round" d="M15 19H9" opacity=".5"></path></g></svg></template></iconify-icon>
+                    <span>En cours</span>
+                    </div>
+                </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                <a class="nav-link" data-bs-toggle="tab" href="https://bootstrapdemos.adminmart.com/matdash/dist/main/index3.html#saas" role="tab" aria-selected="false" tabindex="-1">
+                    <div class="hstack gap-2">
+                    <iconify-icon icon="solar:danger-broken" class="fs-4"><template shadowrootmode="open"><style data-style="data-style">:host{display:inline-block;vertical-align:0}span,svg{display:block}</style><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none"><path stroke="currentColor" stroke-width="1.5" d="M4.318 20.536C5.636 22 7.758 22 12 22s6.364 0 7.682-1.465C21 19.072 21 16.714 21 12s0-7.071-1.318-8.536S16.242 2 12 2S5.636 2 4.318 3.464C3 4.93 3 7.286 3 12s0 7.071 1.318 8.535Z"></path><path stroke="currentColor" stroke-width="1.5" d="M7 8c0-.465 0-.697.051-.888a1.5 1.5 0 0 1 1.06-1.06C8.304 6 8.536 6 9 6h6c.465 0 .697 0 .888.051a1.5 1.5 0 0 1 1.06 1.06C17 7.304 17 7.536 17 8s0 .697-.051.888a1.5 1.5 0 0 1-1.06 1.06C15.697 10 15.464 10 15 10H9c-.465 0-.697 0-.888-.051a1.5 1.5 0 0 1-1.06-1.06C7 8.696 7 8.464 7 8Z"></path><circle cx="8" cy="13" r="1" fill="currentColor"></circle><circle cx="8" cy="17" r="1" fill="currentColor"></circle><circle cx="12" cy="13" r="1" fill="currentColor"></circle><circle cx="12" cy="17" r="1" fill="currentColor"></circle><circle cx="16" cy="13" r="1" fill="currentColor"></circle><circle cx="16" cy="17" r="1" fill="currentColor"></circle></g></svg></template></iconify-icon>
+                    <span>Prioritaire</span>
+                    </div>
+                </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                <a class="nav-link" data-bs-toggle="tab" href="https://bootstrapdemos.adminmart.com/matdash/dist/main/index3.html#other" role="tab" aria-selected="false" tabindex="-1">
+                    <div class="hstack gap-2">
+                    <iconify-icon icon="solar:check-square-outline" class="fs-4"><template shadowrootmode="open"><style data-style="data-style">:host{display:inline-block;vertical-align:0}span,svg{display:block}</style><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M16.03 10.03a.75.75 0 1 0-1.06-1.06l-4.47 4.47l-1.47-1.47a.75.75 0 0 0-1.06 1.06l2 2a.75.75 0 0 0 1.06 0z"/><path fill="currentColor" fill-rule="evenodd" d="M12.057 1.25h-.114c-2.309 0-4.118 0-5.53.19c-1.444.194-2.584.6-3.479 1.494c-.895.895-1.3 2.035-1.494 3.48c-.19 1.411-.19 3.22-.19 5.529v.114c0 2.309 0 4.118.19 5.53c.194 1.444.6 2.584 1.494 3.479c.895.895 2.035 1.3 3.48 1.494c1.411.19 3.22.19 5.529.19h.114c2.309 0 4.118 0 5.53-.19c1.444-.194 2.584-.6 3.479-1.494c.895-.895 1.3-2.035 1.494-3.48c.19-1.411.19-3.22.19-5.529v-.114c0-2.309 0-4.118-.19-5.53c-.194-1.444-.6-2.584-1.494-3.479c-.895-.895-2.035-1.3-3.48-1.494c-1.411-.19-3.22-.19-5.529-.19M3.995 3.995c.57-.57 1.34-.897 2.619-1.069c1.3-.174 3.008-.176 5.386-.176s4.086.002 5.386.176c1.279.172 2.05.5 2.62 1.069c.569.57.896 1.34 1.068 2.619c.174 1.3.176 3.008.176 5.386s-.002 4.086-.176 5.386c-.172 1.279-.5 2.05-1.069 2.62c-.57.569-1.34.896-2.619 1.068c-1.3.174-3.008.176-5.386.176s-4.086-.002-5.386-.176c-1.279-.172-2.05-.5-2.62-1.069c-.569-.57-.896-1.34-1.068-2.619c-.174-1.3-.176-3.008-.176-5.386s.002-4.086.176-5.386c.172-1.279.5-2.05 1.069-2.62" clip-rule="evenodd"/></svg></template></iconify-icon>
+                    <span>Terminée</span>
+                    </div>
+                </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <div class="card-body calender-sidebar app-calendar">
+                        <div id="calendar" class="fc fc-media-screen fc-direction-ltr fc-theme-standard">
+                            <div class="fc-header-toolbar fc-toolbar fc-toolbar-ltr">
+                                <button type="button" aria-pressed="false" class="fc-addEventButton-button fc-button fc-button-primary">Ajouter une tache</button>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <thead>
+          <tr>
+            <th scope="col">
+              
+            </th>
+            <th scope="col">L'étudiant chargé</th>
+            <th scope="col">Date limite</th>
+            <th scope="col">Status</th>
+            <th scope="col">Déscription</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="form-check mb-0">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault1">
+              </div>
+            </td>
+            <td>
+              <div class="d-flex align-items-center">
+                <img src="{% static 'MatDash Bootstrap Admin_files/user-2.jpg' %}" class="rounded-circle" alt="matdash-img" width="40" height="40">
+                <div class="ms-3">
+                  <p class="mb-0">Fatima CHAKIR</p>
+                </div>
+              </div>
+            </td>
+            <td>
+              <p class="mb-0">Thu, Jan 12 2023</p>
+            </td>
+            <td>
+              <div class="d-flex align-items-center">
+                <span class="text-bg-success p-1 rounded-circle"></span>
+                <p class="mb-0 ms-2">Simple</p>
+              </div>
+            </td>
+            <td>
+              <h6 class="mb-0 fs-4">Créer une page d'accueil pour l'application.</h6>
+            </td>
+            <td>
+                <a class="fs-6 text-muted" href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Editer">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M7 12a2 2 0 1 1-4 0a2 2 0 0 1 4 0m7 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0m7 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0"/></svg>
+                </a>
+                <a class="fs-6 text-muted" href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Supprimer">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.75a2.25 2.25 0 0 0-2.122 1.5a.75.75 0 0 1-1.414-.5a3.751 3.751 0 0 1 7.073 0a.75.75 0 0 1-1.415.5A2.25 2.25 0 0 0 12 2.75M2.75 6a.75.75 0 0 1 .75-.75h17a.75.75 0 0 1 0 1.5h-17A.75.75 0 0 1 2.75 6m3.165 2.45a.75.75 0 1 0-1.497.1l.464 6.952c.085 1.282.154 2.318.316 3.132c.169.845.455 1.551 1.047 2.104s1.315.793 2.17.904c.822.108 1.86.108 3.146.108h.879c1.285 0 2.324 0 3.146-.108c.854-.111 1.578-.35 2.17-.904c.591-.553.877-1.26 1.046-2.104c.162-.814.23-1.85.316-3.132l.464-6.952a.75.75 0 0 0-1.497-.1l-.46 6.9c-.09 1.347-.154 2.285-.294 2.99c-.137.685-.327 1.047-.6 1.303c-.274.256-.648.422-1.34.512c-.713.093-1.653.095-3.004.095h-.774c-1.35 0-2.29-.002-3.004-.095c-.692-.09-1.066-.256-1.34-.512c-.273-.256-.463-.618-.6-1.303c-.14-.705-.204-1.643-.294-2.99z"/><path fill="currentColor" d="M9.425 10.254a.75.75 0 0 1 .821.671l.5 5a.75.75 0 0 1-1.492.15l-.5-5a.75.75 0 0 1 .671-.821m5.821.821a.75.75 0 0 0-1.492-.15l-.5 5a.75.75 0 0 0 1.492.15z"/></svg>
+                </a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="form-check mb-0">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault2">
+              </div>
+            </td>
+            <td>
+              <div class="d-flex align-items-center">
+                <img src="{% static 'MatDash Bootstrap Admin_files/user-1.jpg' %}" class="rounded-circle" alt="matdash-img" width="40" height="40">
+                <div class="ms-3">
+                  <p class="mb-0">Mohammed ALAOUI</p>
+                </div>
+              </div>
+            </td>
+            <td>
+              <p class="mb-0">Thu, Jan 10 2023</p>
+            </td>
+            <td>
+              <div class="d-flex align-items-center">
+                <span class="text-bg-danger p-1 rounded-circle"></span>
+                <p class="mb-0 ms-2">Prioritaire</p>
+              </div>
+            </td>
+            <td>
+              <h6 class="mb-0 fs-4">Mettre en place une base de données.</h6>
+            </td>
+            <td>
+                <a class="fs-6 text-muted" href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Editer">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M7 12a2 2 0 1 1-4 0a2 2 0 0 1 4 0m7 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0m7 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0"/></svg>
+                </a>
+                <a class="fs-6 text-muted" href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Supprimer">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.75a2.25 2.25 0 0 0-2.122 1.5a.75.75 0 0 1-1.414-.5a3.751 3.751 0 0 1 7.073 0a.75.75 0 0 1-1.415.5A2.25 2.25 0 0 0 12 2.75M2.75 6a.75.75 0 0 1 .75-.75h17a.75.75 0 0 1 0 1.5h-17A.75.75 0 0 1 2.75 6m3.165 2.45a.75.75 0 1 0-1.497.1l.464 6.952c.085 1.282.154 2.318.316 3.132c.169.845.455 1.551 1.047 2.104s1.315.793 2.17.904c.822.108 1.86.108 3.146.108h.879c1.285 0 2.324 0 3.146-.108c.854-.111 1.578-.35 2.17-.904c.591-.553.877-1.26 1.046-2.104c.162-.814.23-1.85.316-3.132l.464-6.952a.75.75 0 0 0-1.497-.1l-.46 6.9c-.09 1.347-.154 2.285-.294 2.99c-.137.685-.327 1.047-.6 1.303c-.274.256-.648.422-1.34.512c-.713.093-1.653.095-3.004.095h-.774c-1.35 0-2.29-.002-3.004-.095c-.692-.09-1.066-.256-1.34-.512c-.273-.256-.463-.618-.6-1.303c-.14-.705-.204-1.643-.294-2.99z"/><path fill="currentColor" d="M9.425 10.254a.75.75 0 0 1 .821.671l.5 5a.75.75 0 0 1-1.492.15l-.5-5a.75.75 0 0 1 .671-.821m5.821.821a.75.75 0 0 0-1.492-.15l-.5 5a.75.75 0 0 0 1.492.15z"/></svg>
+                </a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="form-check mb-0">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault3">
+              </div>
+            </td>
+            <td>
+              <div class="d-flex align-items-center">
+                <img src="{% static 'MatDash Bootstrap Admin_files/user-3.jpg' %}" class="rounded-circle" alt="matdash-img" width="40" height="40">
+                <div class="ms-3">
+                  <p class="mb-0">Yassin AISSI</p>
+                </div>
+              </div>
+            </td>
+            <td>
+              <p class="mb-0">Thu, Jan 12 2023</p>
+            </td>
+            <td>
+              <div class="d-flex align-items-center">
+                <span class="text-bg-success p-1 rounded-circle"></span>
+                <p class="mb-0 ms-2">Simple</p>
+              </div>
+            </td>
+            <td>
+              <h6 class="mb-0 fs-4">Implémenter une fonctionnalité de recherche.</h6>
+            </td>
+            <td>
+                <a class="fs-6 text-muted" href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Editer">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M7 12a2 2 0 1 1-4 0a2 2 0 0 1 4 0m7 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0m7 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0"/></svg>
+                </a>
+                <a class="fs-6 text-muted" href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Supprimer">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.75a2.25 2.25 0 0 0-2.122 1.5a.75.75 0 0 1-1.414-.5a3.751 3.751 0 0 1 7.073 0a.75.75 0 0 1-1.415.5A2.25 2.25 0 0 0 12 2.75M2.75 6a.75.75 0 0 1 .75-.75h17a.75.75 0 0 1 0 1.5h-17A.75.75 0 0 1 2.75 6m3.165 2.45a.75.75 0 1 0-1.497.1l.464 6.952c.085 1.282.154 2.318.316 3.132c.169.845.455 1.551 1.047 2.104s1.315.793 2.17.904c.822.108 1.86.108 3.146.108h.879c1.285 0 2.324 0 3.146-.108c.854-.111 1.578-.35 2.17-.904c.591-.553.877-1.26 1.046-2.104c.162-.814.23-1.85.316-3.132l.464-6.952a.75.75 0 0 0-1.497-.1l-.46 6.9c-.09 1.347-.154 2.285-.294 2.99c-.137.685-.327 1.047-.6 1.303c-.274.256-.648.422-1.34.512c-.713.093-1.653.095-3.004.095h-.774c-1.35 0-2.29-.002-3.004-.095c-.692-.09-1.066-.256-1.34-.512c-.273-.256-.463-.618-.6-1.303c-.14-.705-.204-1.643-.294-2.99z"/><path fill="currentColor" d="M9.425 10.254a.75.75 0 0 1 .821.671l.5 5a.75.75 0 0 1-1.492.15l-.5-5a.75.75 0 0 1 .671-.821m5.821.821a.75.75 0 0 0-1.492-.15l-.5 5a.75.75 0 0 0 1.492.15z"/></svg>
+                </a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="form-check mb-0">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault4">
+              </div>
+            </td>
+            <td>
+              <div class="d-flex align-items-center">
+                <img src="{% static 'MatDash Bootstrap Admin_files/user-4.jpg' %}" class="rounded-circle" alt="matdash-img" width="40" height="40">
+                <div class="ms-3">
+                  <p class="mb-0">Yassmin SALMI</p>
+                </div>
+              </div>
+            </td>
+            <td>
+              <p class="mb-0">Mon, Jan 16 2023</p>
+            </td>
+            <td>
+              <div class="d-flex align-items-center">
+                <span class="text-bg-success p-1 rounded-circle"></span>
+                <p class="mb-0 ms-2">Simple</p>
+              </div>
+            </td>
+            <td>
+              <h6 class="mb-0 fs-4">Implémenter une fonctionnalité de tris.</h6>
+            </td>
+            <td>
+                <a class="fs-6 text-muted" href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Editer">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M7 12a2 2 0 1 1-4 0a2 2 0 0 1 4 0m7 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0m7 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0"/></svg>
+                </a>
+                <a class="fs-6 text-muted" href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Supprimer">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.75a2.25 2.25 0 0 0-2.122 1.5a.75.75 0 0 1-1.414-.5a3.751 3.751 0 0 1 7.073 0a.75.75 0 0 1-1.415.5A2.25 2.25 0 0 0 12 2.75M2.75 6a.75.75 0 0 1 .75-.75h17a.75.75 0 0 1 0 1.5h-17A.75.75 0 0 1 2.75 6m3.165 2.45a.75.75 0 1 0-1.497.1l.464 6.952c.085 1.282.154 2.318.316 3.132c.169.845.455 1.551 1.047 2.104s1.315.793 2.17.904c.822.108 1.86.108 3.146.108h.879c1.285 0 2.324 0 3.146-.108c.854-.111 1.578-.35 2.17-.904c.591-.553.877-1.26 1.046-2.104c.162-.814.23-1.85.316-3.132l.464-6.952a.75.75 0 0 0-1.497-.1l-.46 6.9c-.09 1.347-.154 2.285-.294 2.99c-.137.685-.327 1.047-.6 1.303c-.274.256-.648.422-1.34.512c-.713.093-1.653.095-3.004.095h-.774c-1.35 0-2.29-.002-3.004-.095c-.692-.09-1.066-.256-1.34-.512c-.273-.256-.463-.618-.6-1.303c-.14-.705-.204-1.643-.294-2.99z"/><path fill="currentColor" d="M9.425 10.254a.75.75 0 0 1 .821.671l.5 5a.75.75 0 0 1-1.492.15l-.5-5a.75.75 0 0 1 .671-.821m5.821.821a.75.75 0 0 0-1.492-.15l-.5 5a.75.75 0 0 0 1.492.15z"/></svg>
+                </a>
+            </td>
+          </tr>
+          <tr>
+            <td class="border-bottom-0">
+              <div class="form-check mb-0">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault5">
+              </div>
+            </td>
+            <td class="border-bottom-0">
+              <div class="d-flex align-items-center">
+                <img src="{% static 'MatDash Bootstrap Admin_files/user-1.jpg' %}" class="rounded-circle" alt="matdash-img" width="40" height="40">
+                <div class="ms-3">
+                  <p class="mb-0">Mohammed ALAOUI</p>
+                </div>
+              </div>
+            </td>
+            <td class="border-bottom-0">
+              <p class="mb-0">Wed, Jan 18 2023</p>
+            </td>
+            <td class="border-bottom-0">
+              <div class="d-flex align-items-center">
+                <span class="text-bg-danger p-1 rounded-circle"></span>
+                <p class="mb-0 ms-2">Prioritaire</p>
+              </div>
+            </td>
+            <td class="border-bottom-0">
+              <h6 class="mb-0 fs-4">Réaliser des tests de performance.</h6>
+            </td>
+            <td class="border-bottom-0">
+                <a class="fs-6 text-muted" href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Editer">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M7 12a2 2 0 1 1-4 0a2 2 0 0 1 4 0m7 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0m7 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0"/></svg>
+                </a>
+                <a class="fs-6 text-muted" href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Supprimer">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.75a2.25 2.25 0 0 0-2.122 1.5a.75.75 0 0 1-1.414-.5a3.751 3.751 0 0 1 7.073 0a.75.75 0 0 1-1.415.5A2.25 2.25 0 0 0 12 2.75M2.75 6a.75.75 0 0 1 .75-.75h17a.75.75 0 0 1 0 1.5h-17A.75.75 0 0 1 2.75 6m3.165 2.45a.75.75 0 1 0-1.497.1l.464 6.952c.085 1.282.154 2.318.316 3.132c.169.845.455 1.551 1.047 2.104s1.315.793 2.17.904c.822.108 1.86.108 3.146.108h.879c1.285 0 2.324 0 3.146-.108c.854-.111 1.578-.35 2.17-.904c.591-.553.877-1.26 1.046-2.104c.162-.814.23-1.85.316-3.132l.464-6.952a.75.75 0 0 0-1.497-.1l-.46 6.9c-.09 1.347-.154 2.285-.294 2.99c-.137.685-.327 1.047-.6 1.303c-.274.256-.648.422-1.34.512c-.713.093-1.653.095-3.004.095h-.774c-1.35 0-2.29-.002-3.004-.095c-.692-.09-1.066-.256-1.34-.512c-.273-.256-.463-.618-.6-1.303c-.14-.705-.204-1.643-.294-2.99z"/><path fill="currentColor" d="M9.425 10.254a.75.75 0 0 1 .821.671l.5 5a.75.75 0 0 1-1.492.15l-.5-5a.75.75 0 0 1 .671-.821m5.821.821a.75.75 0 0 0-1.492-.15l-.5 5a.75.75 0 0 0 1.492.15z"/></svg>
+                </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+     
+    </div>
+
+  </div>
+{% endblock content %}
