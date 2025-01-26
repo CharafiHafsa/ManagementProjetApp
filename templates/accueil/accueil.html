@@ -1,0 +1,715 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- 
+    - primary meta tag
+  -->
+    <title>Study Hub</title>
+    <meta
+      name="title"
+      content="Study Hub"
+    />
+    <meta
+      name="description"
+      content="collaboration plateforme !"
+    />
+
+    <!-- 
+    - favicon
+  -->
+    <link rel="shortcut icon" href="./favicon.svg" type="image/svg+xml" />
+
+    <!-- 
+    - custom css link
+  -->
+    <link rel="stylesheet" href="{% static 'css/accueil/accueil_style.css' %}" />
+
+    <!-- 
+    - google font link
+  -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;500;600;700;800&family=Poppins:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- 
+    - preload images
+  -->
+    <link rel="preload" as="image" href="{% static 'img/accueil/hero-bg.svg' %}" />
+    <link rel="preload" as="image" href=" {% static 'img/accueil/hero-banner-1.jpg' %} />
+    <link rel="preload" as="image" href=" {% static 'img/accueil/hero-banner-2.jpg' %}" />
+    <link rel="preload" as="image" href=" {% static 'img/accueil/hero-shape-1.svg' %}" />
+    <link rel="preload" as="image" href="{% static 'img/accueil/hero-shape-2.png' %}" />
+  </head>
+
+  <body id="top">
+    <!-- 
+    - #HEADER
+  -->
+
+    <header class="header" data-header>
+      <div class="container">
+        <a href="#" class="logo" style="display: flex">
+          <img
+            src="{% static 'img/accueil/logo.png' %}"
+            width="80"
+            height="50"
+            alt="StudyHub logo"
+          />
+          <h2
+            style="
+              position: absolute;
+              left: 110px;
+              top: 30%;
+              color: #635bff;
+              font-family: 'Times New Roman', Times, serif;
+              font-weight: bold;
+            "
+          >
+            Sutdy Hub
+          </h2>
+        </a>
+
+        <nav class="navbar" data-navbar>
+          <div class="wrapper">
+            <a href="#" class="logo">
+              <img
+                src="{% static 'img/accueil/logo.png' %}"
+                width="80"
+                height="50"
+                alt="StudyHub logo"
+              />
+            </a>
+
+            <button
+              class="nav-close-btn"
+              aria-label="close menu"
+              data-nav-toggler
+            >
+              <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
+            </button>
+          </div>
+
+          <ul class="navbar-list">
+            <li class="navbar-item">
+              <a href="#home" class="navbar-link" data-nav-link>Home</a>
+            </li>
+
+            <li class="navbar-item">
+              <a href="#outils" class="navbar-link" data-nav-link>Outils</a>
+            </li>
+
+            <li class="navbar-item">
+              <a href="#about" class="navbar-link" data-nav-link>À propos</a>
+            </li>
+
+            <li class="navbar-item">
+              <a href="#courses" class="navbar-link" data-nav-link>Workspace</a>
+            </li>
+
+            <li class="navbar-item">
+              <a href="#blog" class="navbar-link" data-nav-link>Enseignant</a>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="header-actions">
+          <a href="#" class="btn has-before">
+            <span class="span">Log in</span>
+
+            <ion-icon
+              name="arrow-forward-outline"
+              aria-hidden="true"
+            ></ion-icon>
+          </a>
+
+          <button
+            class="header-action-btn"
+            aria-label="open menu"
+            data-nav-toggler
+          >
+            <ion-icon name="menu-outline" aria-hidden="true"></ion-icon>
+          </button>
+        </div>
+
+        <div class="overlay" data-nav-toggler data-overlay></div>
+      </div>
+    </header>
+
+    <main>
+      <article>
+        <!-- 
+        - #HERO
+      -->
+
+        <section
+          class="section hero has-bg-image hero-img-bg"
+          id="home"
+          aria-label="home"
+         
+        >
+          <div class="container">
+            <div class="hero-content">
+              <h1 class="h1 section-title">
+                La meilleure solution pour
+                <span class="span">la collaboration</span> et la réussite
+                académique !
+              </h1>
+
+              <p class="hero-text">
+                Travaillez ensemble, organisez vos projets et atteignez vos
+                objectifs facilement.
+              </p>
+
+              <a href="#" class="btn has-before">
+                <span class="span">Inscrivez-vous maintenant</span>
+
+                <ion-icon
+                  name="arrow-forward-outline"
+                  aria-hidden="true"
+                ></ion-icon>
+              </a>
+            </div>
+
+            <figure class="hero-banner">
+              <div class="img-holder one" style="--width: 270; --height: 300">
+                <img
+                  src="{% static 'img/accueil/hero-banner-1.jpg' %}"
+                  width="270"
+                  height="300"
+                  alt="hero banner"
+                  class="img-cover"
+                />
+              </div>
+
+              <div class="img-holder two" style="--width: 240; --height: 370">
+                <img
+                  src="{% static 'img/accueil/photo.jpg' %}"
+                  width="240"
+                  height="370"
+                  alt="hero banner"
+                  class="img-cover"
+                />
+              </div>
+
+              <img
+                src="{% static 'img/accueil/hero-shape-2.png' %}"
+                width="622"
+                height="551"
+                alt=""
+                class="shape hero-shape-2"
+              />
+            </figure>
+          </div>
+        </section>
+
+        <!-- 
+        - #CATEGORY
+      -->
+
+        <section class="section category" aria-label="category" id="outils">
+          <div class="container">
+            <p class="section-subtitle">Outils</p>
+
+            <h2 class="h2 section-title">
+              Meilleurs <span class="span">Outils</span> Pour Votre Projet.
+            </h2>
+
+            <p class="section-text">
+              Organiser, collabores et réussissez avec des outils innovants
+              conçus pour simplifier votre travail
+            </p>
+
+            <ul class="grid-list">
+              <li>
+                <div class="category-card" style="--color: 202, 100%, 70%">
+                  <div class="card-icon">
+                    <img
+                      src="{% static 'img/accueil/icone1.png' %}"
+                      width="40"
+                      height="40"
+                      loading="lazy"
+                      alt="Online Degree Programs"
+                      class="img"
+                    />
+                  </div>
+
+                  <h3 class="h3">
+                    <a href="#" class="card-title">To-Do</a>
+                  </h3>
+
+                  <p class="card-text">
+                    Organisez vos tâches avec des listes intuitives et des
+                    rappels.
+                  </p>
+                </div>
+              </li>
+
+              <li>
+                <div class="category-card" style="--color: 52, 100%, 65%">
+                  <div class="card-icon">
+                    <img
+                      src="{% static 'img/accueil/icone2.png' %}"
+                      width="40"
+                      height="40"
+                      loading="lazy"
+                      alt="Non-Degree Programs"
+                      class="img"
+                    />
+                  </div>
+
+                  <h3 class="h3">
+                    <a href="#" class="card-title">Chat</a>
+                  </h3>
+
+                  <p class="card-text">
+                    Communiquez en temps réel avec vos coéquipiers et vos
+                    enseignants.
+                  </p>
+                </div>
+              </li>
+
+              <li>
+                <div class="category-card" style="--color: 229, 75%, 58%">
+                  <div class="card-icon">
+                    <img
+                      src="{% static 'img/accueil/icone3.png' %}"
+                      width="40"
+                      height="40"
+                      loading="lazy"
+                      alt="Off-Campus Programs"
+                      class="img"
+                    />
+                  </div>
+
+                  <h3 class="h3">
+                    <a href="#" class="card-title">IA</a>
+                  </h3>
+
+                  <p class="card-text">
+                    Recevez des suggestions personnalisées pour prioriser vos
+                    tâches.
+                  </p>
+                </div>
+              </li>
+
+              <li>
+                <div class="category-card" style="--color: 330, 78%, 67%">
+                  <div class="card-icon">
+                    <img
+                      src="{% static 'img/accueil/icone4.png' %}"
+                      width="40"
+                      height="40"
+                      loading="lazy"
+                      alt="Hybrid Distance Programs"
+                      class="img"
+                    />
+                  </div>
+
+                  <h3 class="h3">
+                    <a href="#" class="card-title">Analyse</a>
+                  </h3>
+
+                  <p class="card-text">
+                    Suivez vos progrès et obtenez des rapports sur vos
+                    performances.
+                  </p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- 
+        - #ABOUT
+      -->
+
+        <section class="section about" id="about" aria-label="about">
+          <div class="container">
+            <figure class="about-banner">
+              <div class="img-holder" style="--width: 520; --height: 370">
+                <img
+                  src="{% static 'img/accueil/about-banner.jpg' %}"
+                  width="520"
+                  height="370"
+                  loading="lazy"
+                  alt="about banner"
+                  class="img-cover"
+                />
+              </div>
+
+              <img
+                src="{% static 'img/accueil/about-shape3.png' %}"
+                width="722"
+                height="528"
+                loading="lazy"
+                alt=""
+                class="shape about-shape-3"
+              />
+            </figure>
+
+            <div class="about-content" style="text-align: center">
+              <p class="section-subtitle">À propos</p>
+
+              <h2 class="h2 section-title">
+                Une plateforme pour révolutionner
+                <span class="span">la collaboration académique.</span>
+              </h2>
+
+              <p class="section-text">
+                Nous sommes dédiés à aider les étudiants et les enseignants à
+                travailler plus intelligemment grâce à une interface intuitive
+                et des fonctionnalités innovantes.
+              </p>
+
+              <ul class="about-list">
+                <li class="about-item">
+                  <ion-icon
+                    name="checkmark-done-outline"
+                    aria-hidden="true"
+                  ></ion-icon>
+
+                  <span class="span">Simplifier La gestion Des Projets</span>
+                </li>
+
+                <li class="about-item">
+                  <ion-icon
+                    name="checkmark-done-outline"
+                    aria-hidden="true"
+                  ></ion-icon>
+
+                  <span class="span"
+                    >Encourager La Collaboration En Equipe</span
+                  >
+                </li>
+
+                <li class="about-item">
+                  <ion-icon
+                    name="checkmark-done-outline"
+                    aria-hidden="true"
+                  ></ion-icon>
+
+                  <span class="span"
+                    >Promouvoir Des Pratiques De Travail Productives</span
+                  >
+                </li>
+              </ul>
+
+              <img
+                src="{% static 'img/accueil/about-shape-4.svg' %}"
+                width="100"
+                height="100"
+                loading="lazy"
+                alt=""
+                class="shape about-shape-4"
+              />
+            </div>
+          </div>
+        </section>
+
+        <!-- 
+        - #COURSE
+      -->
+
+        <section class="section course" id="courses" aria-label="course">
+          <div class="container">
+            <p class="section-subtitle">Workspace Partagé</p>
+
+            <h2 class="h2 section-title">
+              Collaborez avec votre équipe dans un espace centralisé
+            </h2>
+
+            <ul class="grid-list">
+              <li>
+                <div class="course-card">
+                  <figure
+                    class="card-banner img-holder"
+                    style="--width: 370; --height: 220"
+                  >
+                    <img
+                      src="{% static 'img/accueil/files.jpg' %}"
+                      width="370"
+                      height="220"
+                      loading="lazy"
+                      alt="Build Responsive Real- World Websites with HTML and CSS"
+                      class="img-cover"
+                    />
+                  </figure>
+
+                  <div class="card-content">
+                    <span class="badge">Ressources</span>
+
+                    <h3 class="h3">
+                      <a href="#" class="card-title"
+                        >Partagez des fichiers et des ressources en toute
+                        sécurité.</a
+                      >
+                    </h3>
+                  </div>
+                </div>
+              </li>
+
+              <li>
+                <div class="course-card">
+                  <figure
+                    class="card-banner img-holder"
+                    style="--width: 370; --height: 220"
+                  >
+                    <img
+                      src="{% static 'img/accueil/course-2.jpg' %}"
+                      width="370"
+                      height="220"
+                      loading="lazy"
+                      alt="Java Programming Masterclass for Software Developers"
+                      class="img-cover"
+                    />
+                  </figure>
+
+                  <div class="card-content">
+                    <span class="badge">Suiver</span>
+
+                    <h3 class="h3">
+                      <a href="#" class="card-title"
+                        >Suivez l’avancement des projets en temps réel.</a
+                      >
+                    </h3>
+                  </div>
+                </div>
+              </li>
+
+              <li>
+                <div class="course-card">
+                  <figure
+                    class="card-banner img-holder"
+                    style="--width: 370; --height: 220"
+                  >
+                    <img
+                      src="{% static 'img/accueil/course-3.jpg' %}"
+                      width="370"
+                      height="220"
+                      loading="lazy"
+                      alt="The Complete Camtasia Course for Content Creators"
+                      class="img-cover"
+                    />
+                  </figure>
+
+                  <div class="card-content">
+                    <span class="badge">Synchronisation</span>
+
+                    <h3 class="h3">
+                      <a href="#" class="card-title"
+                        >Synchronisation pour ne rien manquer</a
+                      >
+                    </h3>
+                  </div>
+                </div>
+              </li>
+            </ul>
+
+            <a href="#" class="btn has-before">
+              <span class="span">Registre Maintenant</span>
+
+              <ion-icon
+                name="arrow-forward-outline"
+                aria-hidden="true"
+              ></ion-icon>
+            </a>
+          </div>
+        </section>
+
+        <!-- 
+        - #BLOG
+      -->
+
+        <section
+          class="section blog has-bg-image blog-img"
+          id="blog"
+          aria-label="blog"
+        >
+          <div class="container">
+            <p class="section-subtitle">Vous etes un enseignant?</p>
+
+            <h2 class="h2 section-title">
+              Offrez aux enseignants les outils nécessaires pour guider leurs
+              étudiants efficacement
+            </h2>
+
+            <ul class="grid-list">
+              <li>
+                <div class="blog-card">
+                  <figure
+                    class="card-banner img-holder has-after"
+                    style="--width: 370; --height: 370"
+                  >
+                    <img
+                      src="{% static 'img/accueil/blog-1.jpg'%}"
+                      width="370"
+                      height="370"
+                      loading="lazy"
+                      alt="Become A Better Blogger: Content Planning"
+                      class="img-cover"
+                    />
+                  </figure>
+
+                  <div class="card-content">
+                    <a href="#" class="card-btn" aria-label="read more">
+                      <ion-icon
+                        name="arrow-forward-outline"
+                        aria-hidden="true"
+                      ></ion-icon>
+                    </a>
+
+                    <a href="#" class="card-subtitle">Créer des cours </a>
+
+                    <h3 class="h3">
+                      <a href="#" class="card-title"
+                        >Concevez et partagez des contenus pédagogiques
+                        interactifs directement sur la plateforme</a
+                      >
+                    </h3>
+                  </div>
+                </div>
+              </li>
+
+              <li>
+                <div class="blog-card">
+                  <figure
+                    class="card-banner img-holder has-after"
+                    style="--width: 370; --height: 370"
+                  >
+                    <img
+                      src="{% static 'img/accueil/blog-2.jpg' %}"
+                      width="370"
+                      height="370"
+                      loading="lazy"
+                      alt="Become A Better Blogger: Content Planning"
+                      class="img-cover"
+                    />
+                  </figure>
+
+                  <div class="card-content">
+                    <a href="#" class="card-btn" aria-label="read more">
+                      <ion-icon
+                        name="arrow-forward-outline"
+                        aria-hidden="true"
+                      ></ion-icon>
+                    </a>
+
+                    <a href="#" class="card-subtitle"
+                      >Initialiser des projets</a
+                    >
+
+                    <h3 class="h3">
+                      <a href="#" class="card-title"
+                        >Lancez des projets de groupe, assignez des tâches et
+                        suivez leur avancement</a
+                      >
+                    </h3>
+                  </div>
+                </div>
+              </li>
+
+              <li>
+                <div class="blog-card">
+                  <figure
+                    class="card-banner img-holder has-after"
+                    style="--width: 370; --height: 370"
+                  >
+                    <img
+                      src="{% static 'img/accueil/blog-3.jpg' %}"
+                      width="370"
+                      height="370"
+                      loading="lazy"
+                      alt="Become A Better Blogger: Content Planning"
+                      class="img-cover"
+                    />
+                  </figure>
+
+                  <div class="card-content">
+                    <a href="#" class="card-btn" aria-label="read more">
+                      <ion-icon
+                        name="arrow-forward-outline"
+                        aria-hidden="true"
+                      ></ion-icon>
+                    </a>
+
+                    <a href="#" class="card-subtitle"
+                      >Suivi des travaux des étudiants</a
+                    >
+
+                    <h3 class="h3">
+                      <a href="#" class="card-title"
+                        >Évaluez facilement les contributions individuelles et
+                        collectives grâce à des outils d’analyse détaillés</a
+                      >
+                    </h3>
+                  </div>
+                </div>
+              </li>
+            </ul>
+
+            <img
+              src="{% static 'img/accueil/blog-shape.png' %}"
+              width="186"
+              height="186"
+              loading="lazy"
+              alt=""
+              class="shape blog-shape"
+            />
+          </div>
+        </section>
+      </article>
+    </main>
+
+    <!-- 
+    - #FOOTER
+  -->
+
+    <footer
+      class="footer"
+      style="background-image: url('img/accueil/footer-bg.png')"
+    >
+      <div class="footer-top section">
+        <h2 style="text-align: center">Rejoignez-nous maintenant !</h2>
+      </div>
+    </footer>
+
+    <!-- 
+    - #BACK TO TOP
+  -->
+
+    <a
+      href="#top"
+      class="back-top-btn"
+      aria-label="back top top"
+      data-back-top-btn
+    >
+      <ion-icon name="chevron-up" aria-hidden="true"></ion-icon>
+    </a>
+
+    <!-- 
+    - custom js link
+  -->
+    <script src="{% static 'js/accueil/script.js' %}" defer></script>
+
+    <!-- 
+    - ionicon link
+  -->
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"
+    ></script>
+  </body>
+</html>
