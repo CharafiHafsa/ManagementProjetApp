@@ -1,6 +1,29 @@
 from django.db import models
+from django.contrib.auth.hashers import check_password
 
-# Create your models here.
+# Manager personnalisé pour Professeur
+class ProfesseurManager(models.Manager):
+    def authenticate(self, email, password):
+        try:
+            professeur = self.get(EMAIL=email)  
+            if check_password(password, professeur.PASSWORD):  
+                return professeur
+            else:
+                return 'incorrect_password'
+        except Professeur.DoesNotExist:
+            return None
+
+# Manager personnalisé pour Etudiant
+class EtudiantManager(models.Manager):
+    def authenticate(self, email, password):
+        try:
+            etudiant = self.get(EMAIL_ETUDIANT=email)  
+            if check_password(password, etudiant.PASSWORD):  
+                return etudiant
+            else:
+                return 'incorrect_password'
+        except Etudiant.DoesNotExist:
+            return None
 
 class Etudiant(models.Model):
     IDETUDIANT = models.AutoField(primary_key=True)
@@ -10,7 +33,8 @@ class Etudiant(models.Model):
     NOM = models.CharField(max_length=255, null=False)
     PRENOM = models.CharField(max_length=255, null=False)
     DEPARTEMENT = models.CharField(max_length=255, null=False)
-
+    last_login = models.DateTimeField(null=True, blank=True) 
+    objects = EtudiantManager()
     
 
 class Professeur(models.Model):
@@ -21,7 +45,8 @@ class Professeur(models.Model):
     PASSWORD = models.CharField(max_length=255, null=False)
     NOM = models.CharField(max_length=255, null=False)
     PRENOM = models.CharField(max_length=255, null=False)
-
+    last_login = models.DateTimeField(null=True, blank=True) 
+    objects = ProfesseurManager()
     
 
 class Classe(models.Model):
