@@ -3,5 +3,14 @@ from django.shortcuts import render
 def chat(request):
     return render(request, 'workSpace/chat.html')
 
-def todo(request):
+def todo_ws(request):
     return render(request, 'workSpace/todo.html')
+
+def todo_home(request):
+    return render(request, 'home/todo.html')
+
+def calender_home(request):
+    return render(request, 'home/calender.html')
+
+def classes(request):
+    return render(request, 'home/classes.html')

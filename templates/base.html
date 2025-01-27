@@ -17,6 +17,10 @@
   <link rel="stylesheet" href="{% static 'MatDash Bootstrap Admin_files/styles.css' %}">
 
   <title>MatDash Bootstrap Admin</title>
+
+  {% block style %}
+  {% endblock style %}
+
 </head>
 
 <body data-sidebartype="full">
@@ -68,12 +72,12 @@
                         <div class="simplebar-content" style="padding: 0px;">
 
                           <!-- --------------------------------------------------------------------------------------------------------- -->
-                          <!-- Dashboards -->
+                          <!-- Accueil -->
                           <!-- --------------------------------------------------------------------------------------------------------- -->
                           <li class="mini-nav-item selected" id="mini-1">
                             <a href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
-                              data-bs-placement="right" data-bs-title="Dashboards">
-                              <iconify-icon icon="solar:layers-line-duotone" class="fs-7">
+                              data-bs-placement="right" data-bs-title="Accueil">
+                              <iconify-icon icon="solar:home-angle-linear" class="fs-7">
                                 <template shadowrootmode="open">
                                   <style data-style="data-style">
                                     :host {
@@ -101,12 +105,12 @@
                           </li>
 
                           <!-- --------------------------------------------------------------------------------------------------------- -->
-                          <!-- Pages -->
+                          <!-- Groupes -->
                           <!-- --------------------------------------------------------------------------------------------------------- -->
                           <li class="mini-nav-item" id="mini-3">
                             <a href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
-                              data-bs-placement="right" data-bs-title="Pages">
-                              <iconify-icon icon="solar:notes-line-duotone" class="fs-7"><template
+                              data-bs-placement="right" data-bs-title="Groupes">
+                              <iconify-icon icon="solar:users-group-rounded-linear" class="fs-7"><template
                                   shadowrootmode="open">
                                   <style data-style="data-style">
                                     :host {
@@ -135,12 +139,12 @@
                             </a>
                           </li>
                           <!-- --------------------------------------------------------------------------------------------------------- -->
-                          <!-- Forms  -->
+                          <!-- Classes  -->
                           <!-- --------------------------------------------------------------------------------------------------------- -->
                           <li class="mini-nav-item" id="mini-4">
                             <a href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
-                              data-bs-placement="right" data-bs-title="Forms">
-                              <iconify-icon icon="solar:palette-round-line-duotone" class="fs-7"><template
+                              data-bs-placement="right" data-bs-title="Classes">
+                              <iconify-icon icon="solar:notes-linear" class="fs-7"><template
                                   shadowrootmode="open">
                                   <style data-style="data-style">
                                     :host {
@@ -169,12 +173,12 @@
                             <span class="sidebar-divider lg"></span>
                           </li>
                           <!-- --------------------------------------------------------------------------------------------------------- -->
-                          <!-- Tables -->
+                          <!-- Work Space -->
                           <!-- --------------------------------------------------------------------------------------------------------- -->
                           <li class="mini-nav-item" id="mini-5">
                             <a href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
-                              data-bs-placement="right" data-bs-title="Tables">
-                              <iconify-icon icon="solar:tuning-square-2-line-duotone" class="fs-7"><template
+                              data-bs-placement="right" data-bs-title="Espace de travail">
+                              <iconify-icon icon="solar:layers-linear" class="fs-7"><template
                                   shadowrootmode="open">
                                   <style data-style="data-style">
                                     :host {
@@ -235,12 +239,12 @@
                             </a>
                           </li>
                           <!-- --------------------------------------------------------------------------------------------------------- -->
-                          <!-- Ui -->
+                          <!-- Pomodoro -->
                           <!-- --------------------------------------------------------------------------------------------------------- -->
                           <li class="mini-nav-item" id="mini-7">
                             <a href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
-                              data-bs-placement="right" data-bs-title="Ui Components">
-                              <iconify-icon icon="solar:widget-6-line-duotone" class="fs-7"><template
+                              data-bs-placement="right" data-bs-title="Pomodoro">
+                              <iconify-icon icon="solar:alarm-linear" class="fs-7"><template
                                   shadowrootmode="open">
                                   <style data-style="data-style">
                                     :host {
@@ -267,12 +271,12 @@
                             </a>
                           </li>
                           <!-- --------------------------------------------------------------------------------------------------------- -->
-                          <!-- Components -->
+                          <!-- Créer un projet -->
                           <!-- --------------------------------------------------------------------------------------------------------- -->
                           <li class="mini-nav-item" id="mini-8">
                             <a href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
-                              data-bs-placement="right" data-bs-title="Components">
-                              <iconify-icon icon="solar:archive-line-duotone" class="fs-7"><template
+                              data-bs-placement="right" data-bs-title="Créer un projets">
+                              <iconify-icon icon="solar:add-folder-linear" class="fs-7"><template
                                   shadowrootmode="open">
                                   <style data-style="data-style">
                                     :host {
@@ -306,12 +310,12 @@
                             <span class="sidebar-divider lg"></span>
                           </li>
                           <!-- --------------------------------------------------------------------------------------------------------- -->
-                          <!-- Auth -->
+                          <!-- Profile -->
                           <!-- --------------------------------------------------------------------------------------------------------- -->
                           <li class="mini-nav-item" id="mini-9">
                             <a href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
-                              data-bs-placement="right" data-bs-title="Authentication Pages">
-                              <iconify-icon icon="solar:lock-keyhole-line-duotone" class="fs-7"><template
+                              data-bs-placement="right" data-bs-title="Profile">
+                              <iconify-icon icon="solar:user-broken" class="fs-7"><template
                                   shadowrootmode="open">
                                   <style data-style="data-style">
                                     :host {
@@ -338,12 +342,12 @@
                           </li>
 
                           <!-- --------------------------------------------------------------------------------------------------------- -->
-                          <!-- Multi level -->
+                          <!-- Logout -->
                           <!-- --------------------------------------------------------------------------------------------------------- -->
                           <li class="mini-nav-item" id="mini-10">
                             <a href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
-                              data-bs-placement="right" data-bs-title="Docs &amp; Other">
-                              <iconify-icon icon="solar:mirror-left-line-duotone" class="fs-7"><template
+                              data-bs-placement="right" data-bs-title="Se déconnecter">
+                              <iconify-icon icon="solar:logout-2-outline" class="fs-7"><template
                                   shadowrootmode="open">
                                   <style data-style="data-style">
                                     :host {
@@ -394,9 +398,9 @@
 
               </div>
               <!-- ---------------------------------- -->
-              <!-- Dashboard -->
+              <!-- Accueil -->
               <!-- ---------------------------------- -->
-              <nav class="sidebar-nav d-block simplebar-scrollable-y" id="menu-right-mini-1" data-simplebar="init">
+              <nav class="sidebar-nav scroll-sidebar" id="menu-right-mini-1" data-simplebar="init">
                 <div class="simplebar-wrapper" style="margin: 0px -20px -24px;">
                   <div class="simplebar-height-auto-observer-wrapper">
                     <div class="simplebar-height-auto-observer"></div>
@@ -408,18 +412,18 @@
                         <div class="simplebar-content" style="padding: 0px 20px 24px;">
                           <ul class="sidebar-menu" id="sidebarnav">
                             <!-- ---------------------------------- -->
-                            <!-- Home -->
+                            <!-- Planification --> 
                             <!-- ---------------------------------- -->
                             <li class="nav-small-cap">
-                              <span class="hide-menu">Dashboards</span>
+                              <span class="hide-menu">Accueil</span>
                             </li>
                             <!-- ---------------------------------- -->
-                            <!-- Dashboard -->
+                            <!-- TO-DO / Calender / Classes / Notifications / Activity -->
                             <!-- ---------------------------------- -->
                             <li class="sidebar-item">
-                              <a class="sidebar-link" href="https://bootstrapdemos.adminmart.com/matdash/dist/main/"
+                              <a class="sidebar-link" href="{% url 'todo_home' %}"
                                 id="get-url" aria-expanded="false">
-                                <iconify-icon icon="solar:atom-line-duotone"><template shadowrootmode="open">
+                                <iconify-icon icon="solar:checklist-minimalistic-line-duotone"><template shadowrootmode="open">
                                     <style data-style="data-style">
                                       :host {
                                         display: inline-block;
@@ -430,7 +434,8 @@
                                       svg {
                                         display: block
                                       }
-                                    </style><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+                                    </style>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
                                       viewBox="0 0 24 24">
                                       <g fill="none" stroke="currentColor" stroke-width="1.5">
                                         <path
@@ -440,15 +445,15 @@
                                       </g>
                                     </svg>
                                   </template></iconify-icon>
-                                <span class="hide-menu">Dashboard 1</span>
+                                <span class="hide-menu">To-Do liste</span>
                               </a>
                             </li>
 
                             <li class="sidebar-item">
                               <a class="sidebar-link"
-                                href="https://bootstrapdemos.adminmart.com/matdash/dist/main/index2.html"
-                                aria-expanded="false">
-                                <iconify-icon icon="solar:chart-line-duotone"><template shadowrootmode="open">
+                                href="{% url 'calender_home' %}">
+                                <iconify-icon
+                                  icon="solar:calendar-mark-line-duotone"><template shadowrootmode="open">
                                     <style data-style="data-style">
                                       :host {
                                         display: inline-block;
@@ -462,26 +467,50 @@
                                     </style><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
                                       viewBox="0 0 24 24">
                                       <g fill="none" stroke="currentColor" stroke-width="1.5">
-                                        <path stroke-linecap="round" d="M22 22H2"></path>
-                                        <path d="M21 22v-7.5a1.5 1.5 0 0 0-1.5-1.5h-3a1.5 1.5 0 0 0-1.5 1.5V22"
-                                          opacity=".5"></path>
                                         <path
-                                          d="M15 22V5c0-1.414 0-2.121-.44-2.56C14.122 2 13.415 2 12 2s-2.121 0-2.56.44C9 2.878 9 3.585 9 5v17">
+                                          d="M2 12c0-3.771 0-5.657 1.172-6.828S6.229 4 10 4h4c3.771 0 5.657 0 6.828 1.172S22 8.229 22 12v2c0 3.771 0 5.657-1.172 6.828S17.771 22 14 22h-4c-3.771 0-5.657 0-6.828-1.172S2 17.771 2 14z">
                                         </path>
-                                        <path d="M9 22V9.5A1.5 1.5 0 0 0 7.5 8h-3A1.5 1.5 0 0 0 3 9.5V22" opacity=".5">
+                                        <path stroke-linecap="round" d="M7 4V2.5M17 4V2.5M2 9h20" opacity=".5"></path>
+                                        <circle cx="16.5" cy="16.5" r="1.5"></circle>
+                                      </g>
+                                    </svg>
+                                  </template></iconify-icon>Calendrier</a>
+                            </li>
+
+                            <li class="sidebar-item">
+                              <a class="sidebar-link" href="{% url 'classes' %}"
+                                id="get-url" aria-expanded="false">
+                                <iconify-icon icon="solar:notes-line-duotone"><template shadowrootmode="open">
+                                    <style data-style="data-style">
+                                      :host {
+                                        display: inline-block;
+                                        vertical-align: 0
+                                      }
+
+                                      span,
+                                      svg {
+                                        display: block
+                                      }
+                                    </style>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+                                      viewBox="0 0 24 24">
+                                      <g fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path
+                                          d="M20.942 3.058c2.47 2.469.468 8.474-4.47 13.413c-4.94 4.939-10.945 6.94-13.414 4.471c-2.47-2.47-.468-8.474 4.471-13.413S18.473.589 20.942 3.058Zm-17.884 0c-2.47 2.47-.468 8.475 4.47 13.413c4.94 4.939 10.945 6.94 13.414 4.471c2.47-2.469.468-8.474-4.471-13.413S5.527.589 3.058 3.058Z">
                                         </path>
+                                        <path d="M14.5 12a2.5 2.5 0 1 1-5 0a2.5 2.5 0 0 1 5 0Z" opacity=".5"></path>
                                       </g>
                                     </svg>
                                   </template></iconify-icon>
-                                <span class="hide-menu">Dashboard 2</span>
+                                <span class="hide-menu">Mes Classes</span>
                               </a>
                             </li>
 
                             <li class="sidebar-item">
                               <a class="sidebar-link"
-                                href="https://bootstrapdemos.adminmart.com/matdash/dist/main/index3.html"
-                                aria-expanded="false">
-                                <iconify-icon icon="solar:screencast-2-line-duotone"><template shadowrootmode="open">
+                                href="">
+                                <iconify-icon
+                                  icon="solar:bell-line-duotone"><template shadowrootmode="open">
                                     <style data-style="data-style">
                                       :host {
                                         display: inline-block;
@@ -492,25 +521,25 @@
                                       svg {
                                         display: block
                                       }
-                                    </style><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+                                    </style>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
                                       viewBox="0 0 24 24">
                                       <g fill="none" stroke="currentColor" stroke-width="1.5">
-                                        <path stroke-linecap="round"
-                                          d="M7.142 18.97c-1.957-.07-3.142-.313-3.97-1.142C2 16.657 2 14.771 2 11s0-5.657 1.172-6.828S6.229 3 10 3h4c3.771 0 5.657 0 6.828 1.172S22 7.229 22 11s0 5.657-1.172 6.828c-.808.809-1.956 1.06-3.828 1.137"
-                                          opacity=".5"></path>
                                         <path
-                                          d="M9.95 16.05c.93-.93 1.396-1.396 1.97-1.427q.08-.003.159 0c.574.03 1.04.496 1.971 1.427c2.026 2.026 3.039 3.039 2.755 3.913a1.5 1.5 0 0 1-.09.218C16.297 21 14.865 21 12 21s-4.298 0-4.715-.819a1.5 1.5 0 0 1-.09-.218c-.284-.874.729-1.887 2.755-3.913Z">
+                                          d="M2 12c0-3.771 0-5.657 1.172-6.828S6.229 4 10 4h4c3.771 0 5.657 0 6.828 1.172S22 8.229 22 12v2c0 3.771 0 5.657-1.172 6.828S17.771 22 14 22h-4c-3.771 0-5.657 0-6.828-1.172S2 17.771 2 14z">
                                         </path>
+                                        <path stroke-linecap="round" d="M7 4V2.5M17 4V2.5M2 9h20" opacity=".5"></path>
+                                        <circle cx="16.5" cy="16.5" r="1.5"></circle>
                                       </g>
                                     </svg>
-                                  </template></iconify-icon>
-                                <span class="hide-menu">Dashboard 3</span>
-                              </a>
+                                  </template></iconify-icon>Notifications</a>
                             </li>
 
                             <li class="sidebar-item">
-                              <a class="sidebar-link has-arrow" href="javascript:void(0)" aria-expanded="false">
-                                <iconify-icon icon="solar:home-angle-line-duotone"><template shadowrootmode="open">
+                              <a class="sidebar-link"
+                                href="">
+                                <iconify-icon
+                                  icon="solar:chart-line-duotone"><template shadowrootmode="open">
                                     <style data-style="data-style">
                                       :host {
                                         display: inline-block;
@@ -521,80 +550,25 @@
                                       svg {
                                         display: block
                                       }
-                                    </style><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+                                    </style>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
                                       viewBox="0 0 24 24">
                                       <g fill="none" stroke="currentColor" stroke-width="1.5">
                                         <path
-                                          d="M2.364 12.958c-.38-2.637-.57-3.956-.029-5.083s1.691-1.813 3.992-3.183l1.385-.825C9.8 2.622 10.846 2 12 2s2.199.622 4.288 1.867l1.385.825c2.3 1.37 3.451 2.056 3.992 3.183s.35 2.446-.03 5.083l-.278 1.937c-.487 3.388-.731 5.081-1.906 6.093S16.553 22 13.106 22h-2.212c-3.447 0-5.17 0-6.345-1.012s-1.419-2.705-1.906-6.093z"
-                                          opacity=".5"></path>
-                                        <path stroke-linecap="round" d="M15 18H9"></path>
+                                          d="M2 12c0-3.771 0-5.657 1.172-6.828S6.229 4 10 4h4c3.771 0 5.657 0 6.828 1.172S22 8.229 22 12v2c0 3.771 0 5.657-1.172 6.828S17.771 22 14 22h-4c-3.771 0-5.657 0-6.828-1.172S2 17.771 2 14z">
+                                        </path>
+                                        <path stroke-linecap="round" d="M7 4V2.5M17 4V2.5M2 9h20" opacity=".5"></path>
+                                        <circle cx="16.5" cy="16.5" r="1.5"></circle>
                                       </g>
                                     </svg>
-                                  </template></iconify-icon>
-                                <span class="hide-menu">Front Pages</span>
-                              </a>
-                              <ul aria-expanded="false" class="collapse first-level">
-                                <li class="sidebar-item">
-                                  <a class="sidebar-link"
-                                    href="https://bootstrapdemos.adminmart.com/matdash/dist/main/frontend-landingpage.html">
-                                    <span class="icon-small"></span>
-                                    Homepage
-                                  </a>
-                                </li>
-                                <li class="sidebar-item">
-                                  <a class="sidebar-link"
-                                    href="https://bootstrapdemos.adminmart.com/matdash/dist/main/frontend-aboutpage.html">
-                                    <span class="icon-small"></span>
-                                    About Us
-                                  </a>
-                                </li>
-                                <li class="sidebar-item">
-                                  <a class="sidebar-link"
-                                    href="https://bootstrapdemos.adminmart.com/matdash/dist/main/frontend-blogpage.html">
-                                    <span class="icon-small"></span>
-                                    Blog
-                                  </a>
-                                </li>
-                                <li class="sidebar-item">
-                                  <a class="sidebar-link"
-                                    href="https://bootstrapdemos.adminmart.com/matdash/dist/main/frontend-blogdetailpage.html">
-                                    <span class="icon-small"></span>
-                                    Blog Details
-                                  </a>
-                                </li>
-                                <li class="sidebar-item">
-                                  <a class="sidebar-link"
-                                    href="https://bootstrapdemos.adminmart.com/matdash/dist/main/frontend-contactpage.html">
-                                    <span class="icon-small"></span>
-                                    Contact Us
-                                  </a>
-                                </li>
-                                <li class="sidebar-item">
-                                  <a class="sidebar-link"
-                                    href="https://bootstrapdemos.adminmart.com/matdash/dist/main/frontend-portfoliopage.html">
-                                    <span class="icon-small"></span>
-                                    Portfolio
-                                  </a>
-                                </li>
-                                <li class="sidebar-item">
-                                  <a class="sidebar-link"
-                                    href="https://bootstrapdemos.adminmart.com/matdash/dist/main/frontend-pricingpage.html">
-                                    <span class="icon-small"></span>
-                                    Pricing
-                                  </a>
-                                </li>
-                              </ul>
+                                  </template></iconify-icon>Suivi d'activité</a>
                             </li>
 
-                            <li>
+                            <!-- <li>
                               <span class="sidebar-divider"></span>
-                            </li>
+                            </li> -->
 
-                            <li class="nav-small-cap">
-                              <span class="hide-menu">Apps</span>
-                            </li>
-
-                            <li class="sidebar-item">
+                            <!-- <li class="sidebar-item">
                               <a class="sidebar-link has-arrow" href="javascript:void(0)" aria-expanded="false">
                                 <iconify-icon icon="solar:cart-3-line-duotone"><template shadowrootmode="open">
                                     <style data-style="data-style">
@@ -622,7 +596,7 @@
                                       </g>
                                     </svg>
                                   </template></iconify-icon>
-                                <span class="hide-menu">Ecommerce</span>
+                                <span class="hide-menu">Classes</span>
                               </a>
                               <ul aria-expanded="false" class="collapse first-level">
                                 <li class="sidebar-item">
@@ -664,291 +638,9 @@
                                   </a>
                                 </li>
                               </ul>
-                            </li>
-                            <li class="sidebar-item">
-                              <a class="sidebar-link has-arrow" href="javascript:void(0)" aria-expanded="false">
-                                <iconify-icon icon="solar:widget-4-line-duotone"><template shadowrootmode="open">
-                                    <style data-style="data-style">
-                                      :host {
-                                        display: inline-block;
-                                        vertical-align: 0
-                                      }
+                            </li> -->
 
-                                      span,
-                                      svg {
-                                        display: block
-                                      }
-                                    </style><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
-                                      viewBox="0 0 24 24">
-                                      <g fill="none" stroke="currentColor" stroke-width="1.5">
-                                        <path
-                                          d="M2.5 6.5c0-1.886 0-2.828.586-3.414S4.614 2.5 6.5 2.5s2.828 0 3.414.586s.586 1.528.586 3.414v11c0 1.886 0 2.828-.586 3.414S8.386 21.5 6.5 21.5s-2.828 0-3.414-.586S2.5 19.386 2.5 17.5z"
-                                          opacity=".5"></path>
-                                        <path
-                                          d="M13.5 15.5c0-1.886 0-2.828.586-3.414s1.528-.586 3.414-.586s2.828 0 3.414.586s.586 1.528.586 3.414v2c0 1.886 0 2.828-.586 3.414s-1.528.586-3.414.586s-2.828 0-3.414-.586s-.586-1.528-.586-3.414zm0-10c0-.932 0-1.398.152-1.765a2 2 0 0 1 1.083-1.083c.367-.152.833-.152 1.765-.152h2c.932 0 1.398 0 1.765.152a2 2 0 0 1 1.083 1.083c.152.367.152.833.152 1.765s0 1.398-.152 1.765a2 2 0 0 1-1.083 1.083c-.367.152-.833.152-1.765.152h-2c-.932 0-1.398 0-1.765-.152a2 2 0 0 1-1.083-1.083C13.5 6.898 13.5 6.432 13.5 5.5Z">
-                                        </path>
-                                      </g>
-                                    </svg>
-                                  </template></iconify-icon>
-                                <span class="hide-menu">Blog</span>
-                              </a>
-                              <ul aria-expanded="false" class="collapse first-level">
-                                <li class="sidebar-item">
-                                  <a class="sidebar-link"
-                                    href="https://bootstrapdemos.adminmart.com/matdash/dist/main/blog-posts.html">
-                                    <span class="icon-small"></span>Blog
-                                    Posts
-                                  </a>
-                                </li>
-                                <li class="sidebar-item">
-                                  <a class="sidebar-link"
-                                    href="https://bootstrapdemos.adminmart.com/matdash/dist/main/blog-detail.html">
-                                    <span class="icon-small"></span>Blog
-                                    Details
-                                  </a>
-                                </li>
-                              </ul>
-                            </li>
-                            <li class="sidebar-item">
-                              <a class="sidebar-link"
-                                href="https://bootstrapdemos.adminmart.com/matdash/dist/main/page-user-profile.html"
-                                aria-expanded="false">
-                                <iconify-icon icon="solar:shield-user-line-duotone"><template shadowrootmode="open">
-                                    <style data-style="data-style">
-                                      :host {
-                                        display: inline-block;
-                                        vertical-align: 0
-                                      }
-
-                                      span,
-                                      svg {
-                                        display: block
-                                      }
-                                    </style><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
-                                      viewBox="0 0 24 24">
-                                      <g fill="none" stroke="currentColor" stroke-width="1.5">
-                                        <path
-                                          d="M3 10.417c0-3.198 0-4.797.378-5.335c.377-.537 1.88-1.052 4.887-2.081l.573-.196C10.405 2.268 11.188 2 12 2s1.595.268 3.162.805l.573.196c3.007 1.029 4.51 1.544 4.887 2.081C21 5.62 21 7.22 21 10.417v1.574c0 5.638-4.239 8.375-6.899 9.536C13.38 21.842 13.02 22 12 22s-1.38-.158-2.101-.473C7.239 20.365 3 17.63 3 11.991z"
-                                          opacity=".5"></path>
-                                        <circle cx="12" cy="9" r="2"></circle>
-                                        <path d="M16 15c0 1.105 0 2-4 2s-4-.895-4-2s1.79-2 4-2s4 .895 4 2Z"></path>
-                                      </g>
-                                    </svg>
-                                  </template></iconify-icon>
-                                User Profile
-                              </a>
-                            </li>
-                            <li class="sidebar-item">
-                              <a class="sidebar-link"
-                                href="https://bootstrapdemos.adminmart.com/matdash/dist/main/app-email.html"><iconify-icon
-                                  icon="solar:letter-line-duotone"><template shadowrootmode="open">
-                                    <style data-style="data-style">
-                                      :host {
-                                        display: inline-block;
-                                        vertical-align: 0
-                                      }
-
-                                      span,
-                                      svg {
-                                        display: block
-                                      }
-                                    </style><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
-                                      viewBox="0 0 24 24">
-                                      <g fill="none" stroke="currentColor" stroke-width="1.5">
-                                        <path
-                                          d="M2 12c0-3.771 0-5.657 1.172-6.828S6.229 4 10 4h4c3.771 0 5.657 0 6.828 1.172S22 8.229 22 12s0 5.657-1.172 6.828S17.771 20 14 20h-4c-3.771 0-5.657 0-6.828-1.172S2 15.771 2 12Z"
-                                          opacity=".5"></path>
-                                        <path stroke-linecap="round"
-                                          d="m6 8l2.159 1.8c1.837 1.53 2.755 2.295 3.841 2.295s2.005-.765 3.841-2.296L18 8">
-                                        </path>
-                                      </g>
-                                    </svg>
-                                  </template></iconify-icon>Email</a>
-                            </li>
-                            <li class="sidebar-item">
-                              <a class="sidebar-link"
-                                href="https://bootstrapdemos.adminmart.com/matdash/dist/main/app-calendar.html"><iconify-icon
-                                  icon="solar:calendar-mark-line-duotone"><template shadowrootmode="open">
-                                    <style data-style="data-style">
-                                      :host {
-                                        display: inline-block;
-                                        vertical-align: 0
-                                      }
-
-                                      span,
-                                      svg {
-                                        display: block
-                                      }
-                                    </style><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
-                                      viewBox="0 0 24 24">
-                                      <g fill="none" stroke="currentColor" stroke-width="1.5">
-                                        <path
-                                          d="M2 12c0-3.771 0-5.657 1.172-6.828S6.229 4 10 4h4c3.771 0 5.657 0 6.828 1.172S22 8.229 22 12v2c0 3.771 0 5.657-1.172 6.828S17.771 22 14 22h-4c-3.771 0-5.657 0-6.828-1.172S2 17.771 2 14z">
-                                        </path>
-                                        <path stroke-linecap="round" d="M7 4V2.5M17 4V2.5M2 9h20" opacity=".5"></path>
-                                        <circle cx="16.5" cy="16.5" r="1.5"></circle>
-                                      </g>
-                                    </svg>
-                                  </template></iconify-icon>Calendar</a>
-                            </li>
-                            <li class="sidebar-item">
-                              <a class="sidebar-link"
-                                href="https://bootstrapdemos.adminmart.com/matdash/dist/main/app-kanban.html"><iconify-icon
-                                  icon="solar:airbuds-case-minimalistic-line-duotone"><template shadowrootmode="open">
-                                    <style data-style="data-style">
-                                      :host {
-                                        display: inline-block;
-                                        vertical-align: 0
-                                      }
-
-                                      span,
-                                      svg {
-                                        display: block
-                                      }
-                                    </style><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
-                                      viewBox="0 0 24 24">
-                                      <g fill="none" stroke="currentColor" stroke-width="1.5">
-                                        <path
-                                          d="M3 11c0-3.75 0-5.625.955-6.939A5 5 0 0 1 5.06 2.955C6.375 2 8.251 2 12 2s5.625 0 6.939.955a5 5 0 0 1 1.106 1.106C21 5.375 21 7.251 21 11v2c0 3.75 0 5.625-.955 6.939a5 5 0 0 1-1.106 1.106C17.625 22 15.749 22 12 22s-5.625 0-6.939-.955a5 5 0 0 1-1.106-1.106C3 18.625 3 16.749 3 13z"
-                                          opacity=".5"></path>
-                                        <path stroke-linecap="round" d="M7 9h10"></path>
-                                      </g>
-                                    </svg>
-                                  </template></iconify-icon>Kanban</a>
-                            </li>
-                            <li class="sidebar-item">
-                              <a class="sidebar-link active"
-                                href="https://bootstrapdemos.adminmart.com/matdash/dist/main/app-chat.html"><iconify-icon
-                                  icon="solar:chat-round-line-line-duotone"><template shadowrootmode="open">
-                                    <style data-style="data-style">
-                                      :host {
-                                        display: inline-block;
-                                        vertical-align: 0
-                                      }
-
-                                      span,
-                                      svg {
-                                        display: block
-                                      }
-                                    </style><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
-                                      viewBox="0 0 24 24">
-                                      <g fill="none" stroke="currentColor" stroke-width="1.5">
-                                        <path
-                                          d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2S2 6.477 2 12c0 1.6.376 3.112 1.043 4.453c.178.356.237.763.134 1.148l-.595 2.226a1.3 1.3 0 0 0 1.591 1.592l2.226-.596a1.63 1.63 0 0 1 1.149.133A9.96 9.96 0 0 0 12 22Z">
-                                        </path>
-                                        <path stroke-linecap="round" d="M8 10.5h8M8 14h5.5" opacity=".5"></path>
-                                      </g>
-                                    </svg>
-                                  </template></iconify-icon>Chat</a>
-                            </li>
-                            <li class="sidebar-item">
-                              <a class="sidebar-link"
-                                href="https://bootstrapdemos.adminmart.com/matdash/dist/main/app-notes.html"><iconify-icon
-                                  icon="solar:document-text-line-duotone"><template shadowrootmode="open">
-                                    <style data-style="data-style">
-                                      :host {
-                                        display: inline-block;
-                                        vertical-align: 0
-                                      }
-
-                                      span,
-                                      svg {
-                                        display: block
-                                      }
-                                    </style><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
-                                      viewBox="0 0 24 24">
-                                      <g fill="none" stroke="currentColor" stroke-width="1.5">
-                                        <path
-                                          d="M3 10c0-3.771 0-5.657 1.172-6.828S7.229 2 11 2h2c3.771 0 5.657 0 6.828 1.172S21 6.229 21 10v4c0 3.771 0 5.657-1.172 6.828S16.771 22 13 22h-2c-3.771 0-5.657 0-6.828-1.172S3 17.771 3 14z"
-                                          opacity=".5"></path>
-                                        <path stroke-linecap="round" d="M8 12h8M8 8h8m-8 8h5"></path>
-                                      </g>
-                                    </svg>
-                                  </template></iconify-icon>Notes</a>
-                            </li>
-                            <li class="sidebar-item">
-                              <a class="sidebar-link"
-                                href="https://bootstrapdemos.adminmart.com/matdash/dist/main/app-contact.html"><iconify-icon
-                                  icon="solar:iphone-line-duotone"><template shadowrootmode="open">
-                                    <style data-style="data-style">
-                                      :host {
-                                        display: inline-block;
-                                        vertical-align: 0
-                                      }
-
-                                      span,
-                                      svg {
-                                        display: block
-                                      }
-                                    </style><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
-                                      viewBox="0 0 24 24">
-                                      <g fill="none" stroke="currentColor" stroke-width="1.5">
-                                        <path
-                                          d="M4 10c0-3.771 0-5.657 1.172-6.828S8.229 2 12 2s5.657 0 6.828 1.172S20 6.229 20 10v4c0 3.771 0 5.657-1.172 6.828S15.771 22 12 22s-5.657 0-6.828-1.172S4 17.771 4 14z">
-                                        </path>
-                                        <path stroke-linecap="round"
-                                          d="M15 19H9m7.748-16.622l-.084.126c-.756 1.134-1.134 1.701-1.686 2.044a3 3 0 0 1-.342.183c-.592.27-1.273.27-2.636.27s-2.045 0-2.636-.27a3 3 0 0 1-.342-.183c-.552-.343-.93-.91-1.686-2.044l-.084-.126"
-                                          opacity=".5"></path>
-                                      </g>
-                                    </svg>
-                                  </template></iconify-icon>Contact Table</a>
-                            </li>
-                            <li class="sidebar-item">
-                              <a class="sidebar-link"
-                                href="https://bootstrapdemos.adminmart.com/matdash/dist/main/app-contact2.html"><iconify-icon
-                                  icon="solar:phone-line-duotone"><template shadowrootmode="open">
-                                    <style data-style="data-style">
-                                      :host {
-                                        display: inline-block;
-                                        vertical-align: 0
-                                      }
-
-                                      span,
-                                      svg {
-                                        display: block
-                                      }
-                                    </style><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
-                                      viewBox="0 0 24 24">
-                                      <g fill="none" stroke="currentColor" stroke-width="1.5">
-                                        <path
-                                          d="m16.1 13.359l.456-.453c.63-.626 1.611-.755 2.417-.317l1.91 1.039c1.227.667 1.498 2.302.539 3.255l-1.42 1.412c-.362.36-.81.622-1.326.67M4.003 5.745c-.035-.62.255-1.178.689-1.61l1.57-1.56c.874-.87 2.348-.735 3.111.284l1.261 1.684c.617.824.55 1.952-.157 2.654l-.286.286">
-                                        </path>
-                                        <path
-                                          d="M18.676 18.965c-1.63.152-5.614-.016-9.86-4.238c-4.005-3.982-4.723-7.395-4.813-8.981"
-                                          opacity=".5"></path>
-                                        <path stroke-linecap="round"
-                                          d="M16.1 13.359s-1.082 1.076-4.037-1.862s-1.872-4.015-1.872-4.015"
-                                          opacity=".5"></path>
-                                      </g>
-                                    </svg>
-                                  </template></iconify-icon>Contact List</a>
-                            </li>
-                            <li class="sidebar-item">
-                              <a class="sidebar-link"
-                                href="https://bootstrapdemos.adminmart.com/matdash/dist/main/app-invoice.html"><iconify-icon
-                                  icon="solar:bill-list-line-duotone"><template shadowrootmode="open">
-                                    <style data-style="data-style">
-                                      :host {
-                                        display: inline-block;
-                                        vertical-align: 0
-                                      }
-
-                                      span,
-                                      svg {
-                                        display: block
-                                      }
-                                    </style><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
-                                      viewBox="0 0 24 24">
-                                      <g fill="none" stroke="currentColor" stroke-width="1.5">
-                                        <path
-                                          d="M16.755 2h-9.51c-1.159 0-1.738 0-2.206.163a3.05 3.05 0 0 0-1.881 1.936C3 4.581 3 5.177 3 6.37v14.004c0 .858.985 1.314 1.608.744a.946.946 0 0 1 1.284 0l.483.442a1.657 1.657 0 0 0 2.25 0a1.657 1.657 0 0 1 2.25 0a1.657 1.657 0 0 0 2.25 0a1.657 1.657 0 0 1 2.25 0a1.657 1.657 0 0 0 2.25 0l.483-.442a.946.946 0 0 1 1.284 0c.623.57 1.608.114 1.608-.744V6.37c0-1.193 0-1.79-.158-2.27a3.05 3.05 0 0 0-1.881-1.937C18.493 2 17.914 2 16.755 2Z"
-                                          opacity=".5"></path>
-                                        <path stroke-linecap="round"
-                                          d="M10.5 11H17M7 11h.5M7 7.5h.5m-.5 7h.5m3-7H17m-6.5 7H17"></path>
-                                      </g>
-                                    </svg>
-                                  </template></iconify-icon>Invoice</a>
-                            </li>
+                            
                           </ul>
                         </div>
                       </div>
@@ -966,7 +658,7 @@
               </nav>
 
               <!-- ---------------------------------- -->
-              <!-- Pages -->
+              <!-- Groupes -->
               <!-- ---------------------------------- -->
               <nav class="sidebar-nav scroll-sidebar" id="menu-right-mini-3" data-simplebar="init">
                 <div class="simplebar-wrapper" style="margin: 0px -20px -24px;">
@@ -976,7 +668,7 @@
                   <div class="simplebar-mask">
                     <div class="simplebar-offset" style="right: 0px; bottom: 0px;">
                       <div class="simplebar-content-wrapper" tabindex="0" role="region" aria-label="scrollable content"
-                        style="height: auto; overflow: hidden;">
+                      style="height: 100%; overflow: hidden scroll;">
                         <div class="simplebar-content" style="padding: 0px 20px 24px;">
                           <ul class="sidebar-menu" id="sidebarnav">
                             <!-- ---------------------------------- -->
@@ -1569,18 +1261,18 @@
                       </div>
                     </div>
                   </div>
-                  <div class="simplebar-placeholder" style="width: 0px; height: 0px;"></div>
+                  <div class="simplebar-placeholder" style="width: 240px; height: 864px;"></div>
                 </div>
                 <div class="simplebar-track simplebar-horizontal" style="visibility: hidden;">
                   <div class="simplebar-scrollbar" style="width: 0px; display: none;"></div>
                 </div>
-                <div class="simplebar-track simplebar-vertical" style="visibility: hidden;">
+                <div class="simplebar-track simplebar-vertical" style="visibility: visible;">
                   <div class="simplebar-scrollbar" style="height: 0px; display: none;"></div>
                 </div>
               </nav>
 
               <!-- ---------------------------------- -->
-              <!-- Forms -->
+              <!-- Classes -->
               <!-- ---------------------------------- -->
               <nav class="sidebar-nav scroll-sidebar" id="menu-right-mini-4" data-simplebar="init">
                 <div class="simplebar-wrapper" style="margin: 0px -20px -24px;">
@@ -1590,7 +1282,7 @@
                   <div class="simplebar-mask">
                     <div class="simplebar-offset" style="right: 0px; bottom: 0px;">
                       <div class="simplebar-content-wrapper" tabindex="0" role="region" aria-label="scrollable content"
-                        style="height: auto; overflow: hidden;">
+                      style="height: 100%; overflow: hidden scroll;">
                         <div class="simplebar-content" style="padding: 0px 20px 24px;">
                           <div>
                             <ul class="sidebar-menu" id="sidebarnav">
@@ -2217,7 +1909,7 @@
               </nav>
 
               <!-- ---------------------------------- -->
-              <!-- Tables -->
+              <!-- Work Space -->
               <!-- ---------------------------------- -->
               <nav class="sidebar-nav scroll-sidebar" id="menu-right-mini-5" data-simplebar="init">
                 <div class="simplebar-wrapper" style="margin: 0px -20px -24px;">
@@ -2227,7 +1919,7 @@
                   <div class="simplebar-mask">
                     <div class="simplebar-offset" style="right: 0px; bottom: 0px;">
                       <div class="simplebar-content-wrapper" tabindex="0" role="region" aria-label="scrollable content"
-                        style="height: auto; overflow: hidden;">
+                        style="height: 100%; overflow: hidden scroll;">
                         <div class="simplebar-content" style="padding: 0px 20px 24px;">
                           <ul class="sidebar-menu" id="sidebarnav">
                             <!-- ---------------------------------- -->
@@ -2464,7 +2156,7 @@
                   <div class="simplebar-mask">
                     <div class="simplebar-offset" style="right: 0px; bottom: 0px;">
                       <div class="simplebar-content-wrapper" tabindex="0" role="region" aria-label="scrollable content"
-                        style="height: auto; overflow: hidden;">
+                       style="height: 100%; overflow: hidden scroll;">
                         <div class="simplebar-content" style="padding: 0px 20px 24px;">
                           <ul class="sidebar-menu" id="sidebarnav">
                             <!-- ---------------------------------- -->
@@ -2665,7 +2357,7 @@
               </nav>
 
               <!-- ---------------------------------- -->
-              <!-- Ui Components -->
+              <!-- Pomodoro -->
               <!-- ---------------------------------- -->
               <nav class="sidebar-nav scroll-sidebar" id="menu-right-mini-7" data-simplebar="init">
                 <div class="simplebar-wrapper" style="margin: 0px -20px -24px;">
@@ -2675,7 +2367,7 @@
                   <div class="simplebar-mask">
                     <div class="simplebar-offset" style="right: 0px; bottom: 0px;">
                       <div class="simplebar-content-wrapper" tabindex="0" role="region" aria-label="scrollable content"
-                        style="height: auto; overflow: hidden;">
+                        style="height: 100%; overflow: hidden scroll;">
                         <div class="simplebar-content" style="padding: 0px 20px 24px;">
                           <ul class="sidebar-menu" id="sidebarnav">
                             <!-- ---------------------------------- -->
@@ -3270,7 +2962,7 @@
               </nav>
 
               <!-- ---------------------------------- -->
-              <!-- Comoponents -->
+              <!-- Créer un Projet -->
               <!-- ---------------------------------- -->
               <nav class="sidebar-nav scroll-sidebar" id="menu-right-mini-8" data-simplebar="init">
                 <div class="simplebar-wrapper" style="margin: 0px -20px -24px;">
@@ -3280,7 +2972,7 @@
                   <div class="simplebar-mask">
                     <div class="simplebar-offset" style="right: 0px; bottom: 0px;">
                       <div class="simplebar-content-wrapper" tabindex="0" role="region" aria-label="scrollable content"
-                        style="height: auto; overflow: hidden;">
+                        style="height: 100%; overflow: hidden scroll;">
                         <div class="simplebar-content" style="padding: 0px 20px 24px;">
                           <ul class="sidebar-menu" id="sidebarnav">
                             <!-- ---------------------------------- -->
@@ -3589,7 +3281,7 @@
               </nav>
 
               <!-- ---------------------------------- -->
-              <!-- Auth Pages -->
+              <!-- Profile -->
               <!-- ---------------------------------- -->
               <nav class="sidebar-nav scroll-sidebar" id="menu-right-mini-9" data-simplebar="init">
                 <div class="simplebar-wrapper" style="margin: 0px -20px -24px;">
@@ -3599,7 +3291,7 @@
                   <div class="simplebar-mask">
                     <div class="simplebar-offset" style="right: 0px; bottom: 0px;">
                       <div class="simplebar-content-wrapper" tabindex="0" role="region" aria-label="scrollable content"
-                        style="height: auto; overflow: hidden;">
+                        style="height: 100%; overflow: hidden scroll;">
                         <div class="simplebar-content" style="padding: 0px 20px 24px;">
                           <ul class="sidebar-menu" id="sidebarnav">
                             <!-- ---------------------------------- -->
@@ -3918,7 +3610,7 @@
               </nav>
 
               <!-- ---------------------------------- -->
-              <!-- Docs & Other -->
+              <!-- Logout -->
               <!-- ---------------------------------- -->
               <nav class="sidebar-nav scroll-sidebar" id="menu-right-mini-10" data-simplebar="init">
                 <div class="simplebar-wrapper" style="margin: 0px -20px -24px;">
@@ -3928,7 +3620,7 @@
                   <div class="simplebar-mask">
                     <div class="simplebar-offset" style="right: 0px; bottom: 0px;">
                       <div class="simplebar-content-wrapper" tabindex="0" role="region" aria-label="scrollable content"
-                        style="height: auto; overflow: hidden;">
+                        style="height: 100%; overflow: hidden scroll;">
                         <div class="simplebar-content" style="padding: 0px 20px 24px;">
                           <ul class="sidebar-menu" id="sidebarnav">
                             <li class="nav-small-cap">
@@ -4101,19 +3793,88 @@
     </div>
   
   <div class="dark-transparent sidebartoggler"></div>
-  <script src="{% static 'MatDash Bootstrap Admin_files/vendor.min.js.téléchargement' %}"></script>
+  <!-- <script src="{% static 'MatDash Bootstrap Admin_files/vendor.min.js.téléchargement' %}"></script> -->
   <!-- Import Js Files -->
-  <script src="{% static 'MatDash Bootstrap Admin_files/bootstrap.bundle.min.js.téléchargement' %}"></script>
-  <script src="{% static 'MatDash Bootstrap Admin_files/simplebar.min.js.téléchargement' %}"></script>
-  <script src="{% static 'MatDash Bootstrap Admin_files/app.init.js.téléchargement' %}"></script>
-  <script src="{% static 'MatDash Bootstrap Admin_files/theme.js.téléchargement' %}"></script>
-  <script src="{% static 'MatDash Bootstrap Admin_files/app.min.js.téléchargement' %}"></script>
-  <script src="{% static 'MatDash Bootstrap Admin_files/sidebarmenu.js.téléchargement' %}"></script>
+  <!-- <script src="{% static 'MatDash Bootstrap Admin_files/bootstrap.bundle.min.js.téléchargement' %}"></script> -->
+  <!-- <script src="{% static 'MatDash Bootstrap Admin_files/simplebar.min.js.téléchargement' %}"></script> -->
+  <!-- <script src="{% static 'MatDash Bootstrap Admin_files/app.init.js.téléchargement' %}"></script> -->
+  <!-- <script src="{% static 'MatDash Bootstrap Admin_files/theme.js.téléchargement' %}"></script> -->
+  <!-- <script src="{% static 'MatDash Bootstrap Admin_files/app.min.js.téléchargement' %}"></script> -->
+  <!-- <script src="{% static 'MatDash Bootstrap Admin_files/sidebarmenu.js' %}"></script> -->
+  <script src="{% static 'MatDash Bootstrap Admin_files/index.global.min.js.téléchargement' %}"></script>
+  <script src="{% static 'MatDash Bootstrap Admin_files/calendar-init.js.téléchargement' %}"></script>
 
   <!-- solar icons -->
   <script src="{% static 'MatDash Bootstrap Admin_files/iconify-icon.min.js.téléchargement' %}"></script>
   <script src="{% static 'MatDash Bootstrap Admin_files/chat.js.téléchargement' %}"></script>
 
+  <!-- Select item in the sidebar -->
+  <script>
+    // Sélectionner tous les éléments <li>
+    const listItems = document.querySelectorAll('li.mini-nav-item');
+
+    // Sélectionner tous les éléments <nav>
+    const navItems = document.querySelectorAll('nav.sidebar-nav');
+
+    // Initialisation : afficher le premier <nav> et marquer le premier <li> comme sélectionné
+    navItems.forEach((nav, index) => {
+      if (index === 0) {
+        // Le premier <nav> est affiché par défaut
+        nav.classList.add('d-block', 'simplebar-scrollable-y');
+        nav.classList.remove('scroll-sidebar');
+      } else {
+        // Les autres <nav> restent cachés
+        nav.classList.remove('d-block', 'simplebar-scrollable-y');
+        nav.classList.add('scroll-sidebar');
+      }
+    });
+
+    // Ajouter un événement de clic à chaque <li>
+    listItems.forEach((li) => {
+      li.addEventListener('click', () => {
+        // Récupérer l'ID de l'élément <li> et extraire le numéro
+        const liId = li.id.replace('mini-', '');
+
+        // Cacher tous les <nav> et réinitialiser les classes
+        navItems.forEach((nav) => {
+          nav.classList.remove('d-block', 'simplebar-scrollable-y');
+          nav.classList.add('scroll-sidebar');
+        });
+
+        // Supprimer la classe `selected` de tous les <li>
+        listItems.forEach((item) => {
+          item.classList.remove('selected');
+        });
+
+        // Afficher uniquement le <nav> correspondant
+        const navToShow = document.getElementById(`menu-right-mini-${liId}`);
+        if (navToShow) {
+          navToShow.classList.add('d-block', 'simplebar-scrollable-y');
+          navToShow.classList.remove('scroll-sidebar');
+        }
+
+        // Ajouter la classe `selected` au <li> cliqué
+        li.classList.add('selected');
+      });
+    });
+  </script>
+
+  <!-- Select item in menu -->
+  <script>
+    // Sélectionne tous les éléments <li> avec la classe 'sidebar-item'
+    const sidebarItems = document.querySelectorAll('.sidebar-item');
+
+    // Ajoute un écouteur d'événements 'click' à chaque élément
+    sidebarItems.forEach(item => {
+      item.addEventListener('click', () => {
+        // Supprime la classe 'active' de tous les éléments
+        sidebarItems.forEach(i => i.classList.remove('active'));
+        
+        // Ajoute la classe 'active' à l'élément cliqué
+        item.classList.add('active');
+      });
+    });
+  </script>
 
 </body>
 

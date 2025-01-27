@@ -13,10 +13,6 @@
     src: url(../fonts/tabler-icons/fonts/tabler-icons.eot?#iefix-v2.11.0) format("embedded-opentype"), url(../fonts/tabler-icons/fonts/tabler-icons.woff2?v2.11.0) format("woff2"), url(../fonts/tabler-icons/fonts/tabler-icons.woff?) format("woff"), url(../fonts/tabler-icons/fonts/tabler-icons.ttf?v2.11.0) format("truetype")
 }
 
-.img-pofile-class{
-    width: 70px;
-    height: 70px;
-}
 
 .ti {
     font-family: tabler-icons !important;
@@ -27467,7 +27463,7 @@ fieldset:disabled .btn {
 }
 
 .w-70 {
-    width: 100% !important
+    width: 70% !important
 }
 
 .w-75 {
@@ -38768,12 +38764,11 @@ body {
 }
 
 .body-wrapper {
-    height: 100%;
-    margin-top: 0px;
-    /* margin-left: calc(30px / 2); */
-    /* margin-right: calc(30px / 2); */
-    /* margin-bottom: 30px; */
-    /* border-radius: 20px; */
+    margin-top: 72px;
+    margin-left: calc(30px / 2);
+    margin-right: calc(30px / 2);
+    margin-bottom: 30px;
+    border-radius: 20px;
     background: #f4f7fb;
     min-height: calc(100% - 102px)
 }
