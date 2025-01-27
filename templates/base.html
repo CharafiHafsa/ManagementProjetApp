@@ -3861,20 +3861,28 @@
 
   <!-- Select item in menu -->
   <script>
-    // Sélectionne tous les éléments <li> avec la classe 'sidebar-item'
-    const sidebarItems = document.querySelectorAll('.sidebar-item');
-
-    // Ajoute un écouteur d'événements 'click' à chaque élément
+    const sidebarItems = document.querySelectorAll('.sidebar-link');
+  
+    // Ajouter une classe 'active' au clic
     sidebarItems.forEach(item => {
       item.addEventListener('click', () => {
-        // Supprime la classe 'active' de tous les éléments
         sidebarItems.forEach(i => i.classList.remove('active'));
-        
-        // Ajoute la classe 'active' à l'élément cliqué
         item.classList.add('active');
       });
     });
+  
+    // Comparer l'URL actuelle pour définir l'élément actif
+    document.addEventListener('DOMContentLoaded', () => {
+      const currentUrl = window.location.pathname;
+      sidebarItems.forEach(item => {
+        if (item.getAttribute('href') === currentUrl) {
+          item.classList.add('active');
+        }
+      });
+    });
   </script>
+  
+  
 
 </body>
 
