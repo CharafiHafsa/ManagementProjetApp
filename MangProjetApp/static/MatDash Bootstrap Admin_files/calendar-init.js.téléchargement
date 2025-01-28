@@ -184,7 +184,7 @@ document.addEventListener("DOMContentLoaded", function () {
     },
     customButtons: {
       addEventButton: {
-        text: "Add Event",
+        text: "Ajouter événement",
         click: calendarAddEvent,
       },
     },
