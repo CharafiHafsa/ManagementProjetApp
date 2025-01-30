@@ -7,4 +7,6 @@ urlpatterns = [
     path('accueil/todo/', views.todo_home, name='todo_home'),
     path('accueil/calendrier/', views.calender_home, name='calender_home'),
     path('accueil/classes/', views.classes, name='classes'),
+    path('accueil/notifications/', views.notifications, name='notifications'),
+    path('groupes/', views.groupes, name='groupes'),
 ]

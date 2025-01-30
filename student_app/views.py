@@ -14,3 +14,9 @@ def calender_home(request):
 
 def classes(request):
     return render(request, 'home/classes.html')
+
+def notifications(request):
+    return render(request, 'home/notifications.html')
+
+def groupes(request):
+    return render(request, 'groupes/groupes.html')

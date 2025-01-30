@@ -13,6 +13,24 @@
     src: url(../fonts/tabler-icons/fonts/tabler-icons.eot?#iefix-v2.11.0) format("embedded-opentype"), url(../fonts/tabler-icons/fonts/tabler-icons.woff2?v2.11.0) format("woff2"), url(../fonts/tabler-icons/fonts/tabler-icons.woff?) format("woff"), url(../fonts/tabler-icons/fonts/tabler-icons.ttf?v2.11.0) format("truetype")
 }
 
+.disp-x{
+    position: relative;
+    transition: all 1s ;
+}
+
+.btn-notif-x{
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+
+}
+
+
+.disp-x:hover .btn-notif-x{
+  opacity: 1;
+  visibility: visible;
+
+}
 .img-pofile-class{
     width: 70px;
     height: 70px;
@@ -20412,7 +20430,7 @@ progress {
 
 .table>:not(caption)>*>* {
     padding: 14px 24px;
-    color: var(--bs-table-color-state, var(--bs-table-color-type, var(--bs-table-color)));
+    color: var(--bs-table-color-state, var(--bs-table-color-type, #3d709b));
     background-color: var(--bs-table-bg);
     border-bottom-width: var(--bs-border-width);
     box-shadow: inset 0 0 0 9999px var(--bs-table-bg-state, var(--bs-table-bg-type, var(--bs-table-accent-bg)))

@@ -1,6 +1,80 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
-# Create your models here.
+# class Etudiant(models.Model):
+#     filiere = models.CharField(max_length=255)
+#     departement = models.CharField(max_length=255)
+#     projets = models.ManyToManyField('Project', related_name="etudiants")
+#     classes = models.ManyToManyField('Classe', related_name="etudiants")
+#     groupes = models.ManyToManyField('Groupe', related_name="membres")
+    
+#     def __str__(self):
+#         return f"{self.last_name} {self.first_name}"
+
+# class Professeur(models.Model):
+#     departement = models.CharField(max_length=255)
+#     specialite = models.CharField(max_length=255)
+    
+#     def __str__(self):
+#         return f"{self.last_name} {self.first_name}"
+
+# class Classe(models.Model):
+#     code_classe = models.CharField(max_length=255, primary_key=True)
+#     nom_classe = models.CharField(max_length=255)
+#     professeur = models.ForeignKey(Professeur, on_delete=models.CASCADE, related_name="classes")
+    
+#     def __str__(self):
+#         return self.nom_classe
+
+# class Project(models.Model):
+#     description = models.TextField()
+#     date_debut = models.DateField()
+#     date_fin = models.DateField()
+#     nom_project = models.CharField(max_length=255)
+#     code_classe = models.ForeignKey(Classe, on_delete=models.CASCADE, related_name="projets")
+    
+#     def __str__(self):
+#         return self.nom_project
+
+# class Groupe(models.Model):
+#     nom_groupe = models.CharField(max_length=255)
+#     nbr_membre = models.PositiveIntegerField()
+#     projet = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="groupes")
+    
+#     def __str__(self):
+#         return self.nom_groupe
+
+# class Taches(models.Model):
+#     groupe = models.ForeignKey(Groupe, on_delete=models.CASCADE, related_name="taches")
+#     etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE, related_name="taches")
+#     description_tache = models.TextField()
+#     status_choices = [
+#         ('En cours', 'En cours'),
+#         ('Terminé', 'Terminé'),
+#     ]
+#     status = models.CharField(max_length=25, choices=status_choices)
+#     deadline = models.DateField(null=False, blank=False)
+
+#     class Meta:
+#         verbose_name = "Tâche"
+#         verbose_name_plural = "Tâches"
+
+    
+#     def __str__(self):
+#         return f"{self.description_tache[:30]} - {self.status}"
+
+# class Calendrier(models.Model):
+#     couleurs = [
+#         ('rouge', 'rouge'),
+#         ('vert', 'vert'),
+#         ('bleu', 'bleu'),
+#         ('jaune', 'jaune'),
+#     ]
+#     etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE, related_name="line_time")
+#     evenement = models.CharField(max_length=255, null=True)
+#     date_debut = models.DateField(null=True)
+#     date_fin = models.DateField(null=True)
+#     status = models.CharField(max_length=10, choices=couleurs)
 
 class Etudiant(models.Model):
     IDETUDIANT = models.AutoField(primary_key=True)
