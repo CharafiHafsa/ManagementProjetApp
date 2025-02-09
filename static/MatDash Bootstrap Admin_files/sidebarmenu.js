@@ -6,13 +6,10 @@ if ((at = "vertical")) {
 
   document.addEventListener("DOMContentLoaded", function () {
     "use strict";
+  
     var isSidebar = document.getElementsByClassName("side-mini-panel");
     if (isSidebar.length > 0) {
-      var url = window.location + "";
-      var path = url.replace(
-        window.location.protocol + "//" + window.location.host + "/",
-        ""
-      );
+      
 
       //****************************
       // This is for
@@ -32,6 +29,7 @@ if ((at = "vertical")) {
       }
 
       var elements = findMatchingElement();
+      console.log('elm: ', elements);
 
       if (elements) {
         // Do something with the matching element
@@ -85,15 +83,17 @@ if ((at = "vertical")) {
       // This is for show menu
       //****************************
 
-      var closestNav = elements.closest("nav[class^=sidebar-nav]");
-      var menuid = (closestNav && closestNav.id) || "menu-right-mini-1";
-      var menu = menuid[menuid.length - 1];
 
-      document
-        .getElementById("menu-right-mini-" + menu)
-        .classList.add("d-block");
-      document.getElementById("mini-" + menu).classList.add("selected");
+      if(elements!=null){
+        var closestNav = elements.closest("nav[class^=sidebar-nav]");
+        var menuid = (closestNav && closestNav.id) || "menu-right-mini-1";
+        var menu = menuid[menuid.length - 1];
 
+        document
+          .getElementById("menu-right-mini-" + menu)
+          .classList.add("d-block");
+        document.getElementById("mini-" + menu).classList.add("selected");
+      }
       //****************************
       // This is for mini sidebar
       //****************************
@@ -123,6 +123,17 @@ if ((at = "vertical")) {
               .getElementById("menu-right-" + id)
               .classList.add("d-block");
             document.body.setAttribute("data-sidebartype", "full");
+
+            document.querySelectorAll('#mini-4').forEach(element => {
+              element.addEventListener('click', imposerMarginLeftZero);
+            });
+
+            document.querySelectorAll('#mini-1').forEach(element => {
+              element.addEventListener('click', imposerMarginLeftZero);
+            });
+
+            
+
           });
         });
     }

@@ -13,6 +13,30 @@
     src: url(../fonts/tabler-icons/fonts/tabler-icons.eot?#iefix-v2.11.0) format("embedded-opentype"), url(../fonts/tabler-icons/fonts/tabler-icons.woff2?v2.11.0) format("woff2"), url(../fonts/tabler-icons/fonts/tabler-icons.woff?) format("woff"), url(../fonts/tabler-icons/fonts/tabler-icons.ttf?v2.11.0) format("truetype")
 }
 
+
+.selected-badge {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 5px;
+    background: #007bff;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 14px;
+}
+.selected-badge img {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+.dropdown-menu {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+
+
 .disp-x{
     position: relative;
     transition: all 1s ;
@@ -17175,6 +17199,16 @@
 .flag-icon-zw {
     background-image: url(../fonts/flag-icon-css/flags/zw.svg)
 }
+
+[data-bs-theme="dark"] .todo-btns {
+    --bs-table-border-color: #313e54;
+    background-color: #1a2537;
+  }
+  
+  .todo-btns {
+    --bs-table-color: var(--bs-body-color);
+    background-color: #fff;
+  }
 
 [data-bs-theme=dark] {
     --bs-heading-color: rgba(255, 255, 255, 0.85);
@@ -38773,7 +38807,8 @@ body {
 .page-wrapper {
     width: 100%;
     transition: .2s ease-in;
-    overflow-x: hidden
+    overflow-x: hidden;
+    /* z-index: 100; */
 }
 
 .page-wrapper .container-fluid,
@@ -38805,7 +38840,10 @@ body {
     padding: 30px
 }
 
-@media (max-width:991.98px) {
+@media (max-width:1300px) {
+    .topbar {
+        background-color: var(--bs-body-bg);
+    }
     .body-wrapper {
         margin-top: 80px;
         min-height: unset
@@ -38984,7 +39022,7 @@ html[data-boxed-layout=boxed] .container-xxl {
     height: calc(100vh - 72px);
     width: 240px;
     background: var(--bs-white);
-    top: 72px;
+    top: 0px;
     transition: left .4s ease-in-out;
     left: 80px;
     display: none;
@@ -39257,7 +39295,7 @@ html[data-boxed-layout=boxed] .container-xxl {
     position: fixed;
     top: 0;
     width: 100%;
-    background: var(--bs-body-bg);
+    background: transparent; /* var(--bs-body-bg); */
     z-index: 9;
     padding: 0 15px
 }
@@ -51822,3 +51860,11 @@ h6 {
     border-radius: 50%;
     opacity: 20%
 }
+
+
+
+
+.force-margin-left {
+    margin-left: 80px !important;
+}
+

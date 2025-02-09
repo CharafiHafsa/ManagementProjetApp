@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message</title>
+    <style>
+        :root {
+            --couleur-principale: #70a1ff;  /* Bleu clair */
+            --couleur-principale_claire: #a3c9ff;  /* Bleu très clair */
+            --couleur-secondaire: #1e5c9b;  /* Bleu foncé pour le bouton */
+            --couleur-fond: #ffffff;  /* Blanc pour le fond */
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--couleur-fond);
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 500px;
+            background-color: var(--couleur-principale_claire);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            animation: fadeInAnimation 1.5s ease-out;
+        }
+
+        h1 {
+            font-size: 32px;
+            color: var(--couleur-secondaire);
+            margin-bottom: 20px;
+        }
+
+        .message {
+            font-size: 18px;
+            color: #555;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            background-color: var(--couleur-secondaire);
+            color: var(--couleur-fond);
+            font-size: 16px;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #145b8a;  /* Bleu foncé */
+        }
+
+        @keyframes fadeInAnimation {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+                padding: 20px;
+            }
+            h1 {
+                font-size: 28px;
+            }
+            .message {
+                font-size: 16px;
+            }
+            .btn {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% if message == 'the password is not the same' %}
+            <h1>Erreur</h1>
+            <p class="message">Passwords do not match.</p>
+            <a href="{% url 'signup' %}" class="btn">Back to sign up</a>
+
+        {% elif message == 'This email is already taken' %}
+            <h1>Erreur</h1>
+            <p class="message">This email is already in use.</p>
+            <a href="{% url 'signup' %}" class="btn">Back to sign up</a>
+
+        {% elif message == 'welcome' %}
+            <h1>Bienvenue</h1>
+            <p class="message">Your registration was successful!</p>
+            <a href="{% url 'login' %}" class="btn">Login</a>
+        
+        {% elif message == 'Invalid email format. Use "@enset-media.ac.ma" for professors or "-etu@etu.univh2c.ma" for students'%}
+            <h1>Invalid Email Format</h1>
+            <p class="message">The email format is incorrect. Please use an email of the type '@enset-media.ac.ma' for professors or '-etu@etu.univh2c.ma' for students.</p>
+            <a href="{% url 'signup' %}" class="btn">Back to sign up</a>
+
+        {% elif message == 'the professor is not exist' %}
+        <h1>Erreur</h1>
+        <p class="message">the professor is not exist.</p>
+        <a href="{% url 'signup' %}" class="btn">Back to sign up</a>
+
+        {% elif message == 'the student is not exist' %}
+        <h1>Erreur</h1>
+        <p class="message">the student is not exist.</p>
+        <a href="{% url 'signup' %}" class="btn">Back to sign up</a>
+
+        {% elif message == 'the password is incorrect' %}
+        <h1>Erreur</h1>
+        <p class="message">the password is incorrect.</p>
+        <a href="{% url 'login' %}" class="btn">login</a>
+
+        {% elif message == 'Login successful! Welcome to the platform' %}
+        <h1>Welcome</h1>
+        <p class="message">Login successful! Welcome to the platform.</p>
+        <a href="{% url 'chat' %}" class="btn">chat</a>
+
+        {% elif message ==  "Please enter a valid email. Professors should use '@enset-media.ac.ma' and students should use '-etu@etu.univh2c.ma'" %}
+        <h1>Invalid Email Format</h1>
+        <p class="message">Please enter a valid email. Professors should use '@enset-media.ac.ma' and students should use '-etu@etu.univh2c.ma'.</p>
+        <a href="{% url 'login' %}" class="btn">login</a>
+
+        {% elif message ==  'Your password has been successfully updated' %}
+        <h1>Password updated</h1>
+        <p class="message">Your password has been successfully updated.</p>
+        <a href="{% url 'login' %}" class="btn">login</a>
+
+        {% elif message ==  'Your email has been sent successfully' %}
+        <h1>Email sent</h1>
+        <p class="message">Your email has been sent successfully.</p>
+
+        {% elif message == 'Invalid email format'%}
+            <h1>Invalid Email Format</h1>
+            <p class="message">The email format is incorrect. Please use an email of the type '@enset-media.ac.ma' for professors or '-etu@etu.univh2c.ma' for students.</p>
+            <a href="{% url 'forget_password' %}" class="btn">Back</a>
+
+        {% elif message == 'the two password is not the same'%}
+        <h1>Password incorrect</h1>
+        <p class="message">>Passwords do not match.</p>
+        <a href="{% url 'update_password' %}" class="btn">Back</a>
+        
+        {% endif %}
+    </div>
+</body>
+</html>

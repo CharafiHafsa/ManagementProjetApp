@@ -1,165 +1,146 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.hashers import check_password
+import datetime
 
-# class Etudiant(models.Model):
-#     filiere = models.CharField(max_length=255)
-#     departement = models.CharField(max_length=255)
-#     projets = models.ManyToManyField('Project', related_name="etudiants")
-#     classes = models.ManyToManyField('Classe', related_name="etudiants")
-#     groupes = models.ManyToManyField('Groupe', related_name="membres")
-    
-#     def __str__(self):
-#         return f"{self.last_name} {self.first_name}"
 
-# class Professeur(models.Model):
-#     departement = models.CharField(max_length=255)
-#     specialite = models.CharField(max_length=255)
-    
-#     def __str__(self):
-#         return f"{self.last_name} {self.first_name}"
+# Manager personnalisé pour Professeur
+class ProfesseurManager(models.Manager):
+    def authenticate(self, email, password):
+        try:
+            professeur = self.get(email=email)  
+            if check_password(password,professeur.password):  
+                return professeur
+            else:
+                return 'incorrect_password'
+        except Professeur.DoesNotExist:
+            return None
 
-# class Classe(models.Model):
-#     code_classe = models.CharField(max_length=255, primary_key=True)
-#     nom_classe = models.CharField(max_length=255)
-#     professeur = models.ForeignKey(Professeur, on_delete=models.CASCADE, related_name="classes")
-    
-#     def __str__(self):
-#         return self.nom_classe
-
-# class Project(models.Model):
-#     description = models.TextField()
-#     date_debut = models.DateField()
-#     date_fin = models.DateField()
-#     nom_project = models.CharField(max_length=255)
-#     code_classe = models.ForeignKey(Classe, on_delete=models.CASCADE, related_name="projets")
-    
-#     def __str__(self):
-#         return self.nom_project
-
-# class Groupe(models.Model):
-#     nom_groupe = models.CharField(max_length=255)
-#     nbr_membre = models.PositiveIntegerField()
-#     projet = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="groupes")
-    
-#     def __str__(self):
-#         return self.nom_groupe
-
-# class Taches(models.Model):
-#     groupe = models.ForeignKey(Groupe, on_delete=models.CASCADE, related_name="taches")
-#     etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE, related_name="taches")
-#     description_tache = models.TextField()
-#     status_choices = [
-#         ('En cours', 'En cours'),
-#         ('Terminé', 'Terminé'),
-#     ]
-#     status = models.CharField(max_length=25, choices=status_choices)
-#     deadline = models.DateField(null=False, blank=False)
-
-#     class Meta:
-#         verbose_name = "Tâche"
-#         verbose_name_plural = "Tâches"
-
-    
-#     def __str__(self):
-#         return f"{self.description_tache[:30]} - {self.status}"
-
-# class Calendrier(models.Model):
-#     couleurs = [
-#         ('rouge', 'rouge'),
-#         ('vert', 'vert'),
-#         ('bleu', 'bleu'),
-#         ('jaune', 'jaune'),
-#     ]
-#     etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE, related_name="line_time")
-#     evenement = models.CharField(max_length=255, null=True)
-#     date_debut = models.DateField(null=True)
-#     date_fin = models.DateField(null=True)
-#     status = models.CharField(max_length=10, choices=couleurs)
+# Manager personnalisé pour Etudiant
+class EtudiantManager(models.Manager):
+    def authenticate(self, email, password):
+        try:
+            etudiant = self.get(email_etudiant=email)  
+            if check_password(password,etudiant.password):  
+                return etudiant
+            else:
+                return 'incorrect_password'
+        except Etudiant.DoesNotExist:
+            return None
 
 class Etudiant(models.Model):
-    IDETUDIANT = models.AutoField(primary_key=True)
-    FILIERE = models.CharField(max_length=255, null=False)
-    EMAIL_ETUDIANT = models.EmailField(null=False)
-    PASSWORD = models.CharField(max_length=255, null=False)
-    NOM = models.CharField(max_length=255, null=False)
-    PRENOM = models.CharField(max_length=255, null=False)
-    DEPARTEMENT = models.CharField(max_length=255, null=False)
-
+    filiere = models.CharField(max_length=255, null=False)
+    photo_profil = models.ImageField(upload_to='images/', default='images/profile.jpeg')
+    departement = models.CharField(max_length=255, null=False)
+    email_etudiant = models.EmailField(null=False)
+    password = models.CharField(max_length=255, null=False)
+    nom = models.CharField(max_length=255, null=False)
+    prenom = models.CharField(max_length=255, null=False)
+    last_login = models.DateTimeField(null=True, blank=True) 
+    objects = EtudiantManager()
+    projets = models.ManyToManyField('Project', related_name="etudiants", null=True, blank=True)
+    classes = models.ManyToManyField('Classe', related_name="etudiants", null=True, blank=True)
+    groupes = models.ManyToManyField('Groupe', related_name="membres", null=True, blank=True)
     
+    def str(self):
+        return f"{self.nom} {self.prenom}"
 
 class Professeur(models.Model):
-    IDPROFESSEUR = models.AutoField(primary_key=True)
-    DEPARTEMENT = models.CharField(max_length=255, null=False)
-    SPECIALITE = models.CharField(max_length=255, null=False)
-    EMAIL = models.EmailField(null=False)
-    PASSWORD = models.CharField(max_length=255, null=False)
-    NOM = models.CharField(max_length=255, null=False)
-    PRENOM = models.CharField(max_length=255, null=False)
-
+    departement = models.CharField(max_length=255, null=False)
+    photo_profil = models.ImageField(upload_to='images/', default='images/profile.jpeg')
+    specialite = models.CharField(max_length=255, null=False)
+    email = models.EmailField(null=False)
+    password = models.CharField(max_length=255, null=False)
+    nom = models.CharField(max_length=255, null=False)
+    prenom = models.CharField(max_length=255, null=False)
+    last_login = models.DateTimeField(null=True, blank=True) 
+    objects = ProfesseurManager()
     
+    
+    def str(self):
+        return f"{self.nom} {self.prenom}"
 
 class Classe(models.Model):
-    CODECLASSE = models.CharField(max_length=255, primary_key=True)
-    NOM_CLASSE = models.CharField(max_length=255, null=False)
-
+    code_classe = models.CharField(max_length=255, primary_key=True)
+    nom_classe = models.CharField(max_length=255)
+    professeur = models.ForeignKey(Professeur, on_delete=models.CASCADE, related_name="classes")
     
+    def str(self):
+        return self.nom_classe
 
 class Project(models.Model):
-    IDPROJECT = models.AutoField(primary_key=True)
-    CODECLASSE = models.ForeignKey(Classe, on_delete=models.CASCADE)
-    DESCRIPTION = models.TextField(null=False)
-    DATE_DEBUT = models.DateField(null=False)
-    DATE_FIN = models.DateField(null=False)
-    NOM_PROJECT = models.CharField(max_length=255, null=False)
+    description = models.TextField()
+    date_debut = models.DateField(default=datetime.date.today)
+    date_fin = models.DateField()
+    nom_project = models.CharField(max_length=255)
+    code_classe = models.ForeignKey(Classe, on_delete=models.CASCADE, related_name="projets")
 
-   
+    def clean(self):
+        if self.date_fin and self.date_debut and self.date_fin <= self.date_debut:
+            raise ValidationError({'date_fin': "La date de fin doit être postérieure à la date de début."})
+    
+    def str(self):
+        return self.nom_project
+
 class Groupe(models.Model):
-    ID_GROUPE = models.AutoField(primary_key=True)
-    IDPROJECT = models.ForeignKey(Project, on_delete=models.CASCADE)
-    NOM_GROUPE = models.CharField(max_length=255, null=False)
-    NBR_MEMBRE = models.IntegerField(null=False)
+    nom_groupe = models.CharField(max_length=255)
+    nbr_membre = models.PositiveIntegerField()
+    projet = models.ForeignKey(
+        Project, 
+        on_delete=models.SET_NULL,  # Permet de garder le groupe même si le projet est supprimé
+        null=True,   # Autorise NULL dans la base de données
+        blank=True   # Autorise un formulaire vide en Django admin
+    )
 
-    def _str_(self):
-        return self.NOM_GROUPE
+    def str(self):
+        return self.nom_groupe
 
-class Avoir(models.Model):
-    IDETUDIANT = models.ForeignKey(Etudiant, on_delete=models.CASCADE)
-    IDPROJECT = models.ForeignKey(Project, on_delete=models.CASCADE)
+class Taches(models.Model):
+    groupe = models.ForeignKey(Groupe, on_delete=models.CASCADE, related_name="taches")
+    etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE, related_name="taches")
+    description_tache = models.TextField()
+    status_choices = [
+        ('En cours', 'En cours'),
+        ('Terminé', 'Terminé'),
+    ]
+    status = models.CharField(max_length=25, choices=status_choices, default='En cours')
+    deadline = models.DateField(null=False, blank=False)
 
     class Meta:
-        unique_together = ('IDETUDIANT', 'IDPROJECT')
+        verbose_name = "Tâche"
+        verbose_name_plural = "Tâches"
 
     
+    def str(self):
+        return f"{self.description_tache[:30]} - {self.status}"
 
-class Composer(models.Model):
-    IDETUDIANT = models.ForeignKey(Etudiant, on_delete=models.CASCADE)
-    CODECLASSE = models.ForeignKey(Classe, on_delete=models.CASCADE)
+class Calendrier(models.Model):
+    couleurs = [
+        ('rouge', 'rouge'),
+        ('vert', 'vert'),
+        ('bleu', 'bleu'),
+        ('jaune', 'jaune'),
+    ]
+    etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE, related_name="line_time")
+    evenement = models.CharField(max_length=255, null=True)
+    date_debut = models.DateField(null=True)
+    date_fin = models.DateField(null=True)
+    status = models.CharField(max_length=10, choices=couleurs)
 
-    class Meta:
-        unique_together = ('IDETUDIANT', 'CODECLASSE')
+class Event(models.Model):
+    title = models.CharField(max_length=255)
+    start_date = models.DateField()
+    end_date = models.DateField(null=True, blank=True)
+    category = models.CharField(max_length=50)  # Correspond à "calendar" dans tes données
 
+    def clean(self):
+        if self.end_date and self.start_date and self.end_date <= self.start_date:
+            raise ValidationError({'end_date': "La date de fin doit être postérieure à la date de début."})
 
-class Construire(models.Model):
-    IDETUDIANT = models.ForeignKey(Etudiant, on_delete=models.CASCADE)
-    ID_GROUPE = models.ForeignKey(Groupe, on_delete=models.CASCADE)
+    def __str__(self):
+        return self.title
 
-    class Meta:
-        unique_together = ('IDETUDIANT', 'ID_GROUPE')
-
-    
-
-class Creer(models.Model):
-    IDPROFESSEUR = models.ForeignKey(Professeur, on_delete=models.CASCADE)
-    CODECLASSE = models.ForeignKey(Classe, on_delete=models.CASCADE)
-
-    class Meta:
-        unique_together = ('IDPROFESSEUR', 'CODECLASSE')
-
-    
-
-class Todoliste(models.Model):
-    ID = models.AutoField(primary_key=True)
-    IDETUDIANT = models.ForeignKey(Etudiant, on_delete=models.CASCADE)
-    DESCRIPTIONTACHE = models.TextField(null=False)
-    STATUS = models.CharField(max_length=255, null=False)
-    DEADLINE = models.DateField(null=False)
+class Message(models.Model):
+    groupe = models.ForeignKey(Groupe, on_delete=models.CASCADE, related_name="messages")
+    etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE, related_name="messages")
+    contenu = models.TextField()
+    date_envoi = models.DateTimeField(auto_now_add=True)

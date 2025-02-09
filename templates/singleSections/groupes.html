@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+{% load static %}
+
+<div class="card card-body py-3" style="margin-bottom: 20px;">
+    <div class="row align-items-center">
+      <div class="col-12">
+        <div class="d-sm-flex align-items-center justify-space-between">
+          <h4 class="mb-4 mb-sm-0 card-title">Mes Groupes</h4>
+          <nav aria-label="breadcrumb" class="ms-auto">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item d-flex align-items-center">
+                <button style="display: flex; justify-content: center; align-items: center;" type="button" class="btn mb-1 bg-primary-subtle text-primary px-4 fs-4 " data-bs-toggle="modal" data-bs-target="#primary-header-modal">
+                    <iconify-icon icon="solar:add-square-outline" class="fs-7"></iconify-icon>
+                    <span style="padding: 5px;"></span>
+                    Créer un groupe
+                </button>
+              </li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+    </div>
+</div>
+
+    <div class="row">
+
+        {% for groupe in groupes %}
+
+            <div class="col-md-4 d-flex align-items-stretch">
+                <div class="card w-100">
+                <div class="card-body">
+                    <div class="form-group">
+                    <center><h4 class="">{{groupe.nom_groupe}}</h4></center>
+                    
+                    <p class="card-subtitle mb-3">
+                        {% if groupe.projet.nom_project %}
+                        <b>Projet : </b>{{groupe.projet.nom_project}}
+                        <br>
+                        <b>Classes : </b>{{ groupe.projet.code_classe.nom_classe }}
+                        {% endif %}
+                    </p>
+                    <form method="post">
+                        {% csrf_token %}
+                
+                        <input type="submit" value="Ouvrir" name="ouvrir" class="btn d-block w-100 fw-medium bg-info-subtle text-info without-msg">
+                        <input type="hidden" value="{{ groupe.id }}" name="groupe_id">
+                    </form>
+                    </div>
+                </div>
+                </div>
+                    </div>
+        {% endfor %}
+        
+    </div>
+   
+    <!-- Modal -->
+
+    <div id="primary-header-modal" class="modal fade" tabindex="-1" aria-labelledby="primary-header-modalLabel" style="display: none;" aria-hidden="true" style="z-index: 200;">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg" style="z-index: 200;">
+        <div class="modal-content">
+            <div class="modal-header modal-colored-header bg-primary text-white">
+            <h4 class="modal-title text-white" id="primary-header-modalLabel">
+                Créer un nouveau groupe
+            </h4>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            <form id="taskForm">
+                <div class="mb-3">
+                    <label for="taskName" class="form-label">Nom de groupe</label>
+                    <input type="text" class="form-control" id="taskName" required>
+                </div>
+
+                <h4>Ajouter des membres par email</h4>
+                <div class="mb-3">
+                    <input type="email" id="emailInput" class="form-control" placeholder="Entrez un email et appuyez sur Entrée">
+                </div>
+                <button style="visibility: hidden;" id="addEmailBtn" class="btn btn-primary mb-2">Ajouter</button>
+                <div id="emailList"></div>
+
+                <!-- <input type="hidden" id="editIndex"> -->
+            </form>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+                Fermer
+            </button>
+            <button type="button" class="btn bg-primary-subtle text-primary ">
+                Créer
+            </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+        </div>
+    </div>
+
+{% endblock content %}
