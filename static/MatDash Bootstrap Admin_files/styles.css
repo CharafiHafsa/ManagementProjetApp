@@ -17200,6 +17200,16 @@
     background-image: url(../fonts/flag-icon-css/flags/zw.svg)
 }
 
+[data-bs-theme="dark"] .todo-btns {
+    --bs-table-border-color: #313e54;
+    background-color: #1a2537;
+  }
+  
+  .todo-btns {
+    --bs-table-color: var(--bs-body-color);
+    background-color: #fff;
+  }
+
 [data-bs-theme=dark] {
     --bs-heading-color: rgba(255, 255, 255, 0.85);
     --bs-body-color: rgba(255, 255, 255, 0.6) !important;

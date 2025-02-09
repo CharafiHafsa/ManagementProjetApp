@@ -301,7 +301,7 @@ def classes(request):
         'classes': classes_data
     }
 
-    return render(request, 'singleSetions/classes.html', context)
+    return render(request, 'singleSections/classes.html', context)
 
 def notifications(request):
     return render(request, 'singleSections/notifications.html')
@@ -311,7 +311,7 @@ def groupes(request):
         groupe_id = request.POST.get('groupe_id')
         groupe = get_object_or_404(Groupe, id=groupe_id)
         taches = Taches.objects.filter(groupe=groupe)
-        return render(request, 'todo.html', {'groupe': groupe, 'taches': taches})
+        return render(request, 'workSpace/todo.html', {'groupe': groupe, 'taches': taches})
     groupes = Groupe.objects.select_related("projet__code_classe").all()
     return render(request, 'singleSections/groupes.html', {'groupes': groupes})
 
