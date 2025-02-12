@@ -81,7 +81,7 @@
             <td>
              
               <div style="display: flex; align-items: center">
-                <form method="POST" action="{% url 'todo_ws' %}"> 
+                <form method="POST" action="{% url 'todo_home' %}"> 
                   {% csrf_token %}
                   <input type="hidden" name="id_tache" value="{{ tache.id }}">
                   <button  style="border: none; background-color: transparent;" class="fs-6 text-muted delete-task"  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Supprimer" name="delete">

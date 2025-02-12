@@ -61,7 +61,7 @@
         {% for tache in taches %}
           <tr>
               <td>
-                <form id="check-form" method="POST" action="{% url 'todo_ws'  %}">
+                <form id="check-form" method="POST" action="{% url 'todo_ws' %}">
                   {% csrf_token %}
                   <input type="hidden" name="id_tache" value="{{ tache.id }}">
                   <div class="form-check mb-0">
@@ -105,8 +105,6 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M7 12a2 2 0 1 1-4 0a2 2 0 0 1 4 0m7 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0m7 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0"/></svg>
                   </a>
                 </div>
-
-
               </td>
           </tr>
         {% endfor %}

@@ -502,7 +502,7 @@
                             
                             <li class="sidebar-item">
                               <a href="#"
-                                class="sidebar-link">
+                                class="sidebar-link" id="ws-chat" data-url="{% url 'chat' %}">
                                 <iconify-icon icon="solar:chat-round-line-linear"></iconify-icon>
                                 <span class="hide-menu">Chat</span>
                               </a>
@@ -510,7 +510,7 @@
 
                             <li class="sidebar-item">
                               <a href="#"
-                                class="sidebar-link">
+                                class="sidebar-link" id="ws-todo" data-url="{% url 'todo_ws' %}">
                                 <iconify-icon icon="solar:checklist-minimalistic-line-duotone"></iconify-icon>
                                 <span class="hide-menu">To-Do liste</span>
                               </a>
@@ -518,15 +518,15 @@
                             
                             <li class="sidebar-item">
                               <a href="#"
-                                class="sidebar-link">
-                                <iconify-icon icon="solar:calendar-mark-line-duotone"></iconify-icon>
-                                <span class="hide-menu">Calendrier</span>
+                                class="sidebar-link" id="ws-membres" data-url="{% url 'membres' %}">
+                                <iconify-icon icon="solar:users-group-two-rounded-broken"></iconify-icon>
+                                <span class="hide-menu">Membres</span>
                               </a>
                             </li>
 
                             <li class="sidebar-item">
                               <a href="#"
-                                class="sidebar-link">
+                                class="sidebar-link" id="ws-documents" data-url="{% url 'documents' %}">
                                 <iconify-icon icon="solar:folder-with-files-linear"></iconify-icon>
                                 <span class="hide-menu">Documents</span>
                               </a>
@@ -534,7 +534,7 @@
                             
                             <li class="sidebar-item">
                               <a href="#"
-                                class="sidebar-link">
+                                class="sidebar-link" id="ws-chatBot" data-url="">
                                 <iconify-icon icon="solar:chat-square-call-line-duotone"></iconify-icon>
                                 <span class="hide-menu">Chat Bot</span>
                               </a>
@@ -637,6 +637,7 @@
   <script src="{% static 'MatDash Bootstrap Admin_files/sidebarmenu.js' %}"></script>
   <script src="{% static 'MatDash Bootstrap Admin_files/index.global.min.js.téléchargement' %}"></script>
   <script src="{% static 'MatDash Bootstrap Admin_files/calendar-init.js' %}"></script>
+  <script src="{% static 'MatDash Bootstrap Admin_files/contact.js.téléchargement' %}"></script>
 
   
   <!-- solar icons -->
@@ -779,6 +780,50 @@
         }
     });
   </script>
+
+  <!-- sous-menu de WorkSpace -->
+   <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      if (window.location.href.includes('etu/ws/') || window.location.href.includes('etu/espaceDeTravail/')) {
+        document
+          .getElementById("menu-right-mini-3")
+          .classList.add("d-block");
+        document.getElementById("mini-3").classList.add("selected");
+      }
+
+    });
+   </script>
+
+  <!-- adapter le WorkSpace au groupe choisi -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // const currentUrl = window.location.href;
+        // const hasId = /\/\d+\//.test(currentUrl);
+
+        // Récupère les liens de WorkSpace
+        const chatLink = document.getElementById('ws-chat');
+        const todoLink = document.getElementById('ws-todo');
+        const membresLink = document.getElementById('ws-membres');
+        const docsLink = document.getElementById('ws-documents');
+
+        if (window.location.href.includes('etu/ws/') || window.location.href.includes('etu/espaceDeTravail/')) {
+          const url_chat = chatLink.getAttribute('data-url');
+          chatLink.setAttribute('href', url_chat);
+          const url_todo = todoLink.getAttribute('data-url');
+          todoLink.setAttribute('href', url_todo);
+          const url_membres = membresLink.getAttribute('data-url');
+          membresLink.setAttribute('href', url_membres);
+          const url_docs = docsLink.getAttribute('data-url');
+          docsLink.setAttribute('href', url_docs);
+        } else {
+          chatLink.setAttribute('href', '#');
+          todoLink.setAttribute('href', '#');
+          membresLink.setAttribute('href', '#');
+          docsLink.setAttribute('href', '#');
+        }
+        
+      })
+    </script>
 
 </body>
 

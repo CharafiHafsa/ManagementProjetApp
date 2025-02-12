@@ -3,7 +3,7 @@ from django.contrib.auth.hashers import make_password
 from django.views.decorators.csrf import csrf_protect
 from django.shortcuts import render,redirect,get_object_or_404
 from django.http import JsonResponse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.core.mail import send_mail
 from django.contrib.auth import login
 from django.utils import timezone
@@ -218,15 +218,36 @@ def update_password(request):
     return render(request, 'authentification/update_password.html')
 
 
+def ws_reception(request, groupe_id):
+    request.session['groupe_id'] = groupe_id
+    return render(request, 'workSpace/ws_reception.html', {'groupe_id':groupe_id})
 
 def chat(request):
-    groupe_id = request.GET.get('groupe_id', 1)  
-    groupe = Groupe.objects.get(id=groupe_id)
-    messages = Message.objects.filter(groupe=groupe).order_by("date_envoi")
-    return render(request, 'workSpace/chat.html', {'messages': messages, 'groupe': groupe})
+    # Récupérer l'ID du groupe depuis la session
+    print("chat: ", request.session.get('groupe_id', None))
+    groupe_id = request.session.get('groupe_id', None)
+
+    # groupe_id = request.GET.get('groupe_id', 1)  
+    if groupe_id:
+        groupe = Groupe.objects.get(id=groupe_id)
+        messages = Message.objects.filter(groupe=groupe).order_by("date_envoi")
+        return render(request, 'workSpace/chat.html', {'messages': messages, 'groupe': groupe})
+    else:
+        return HttpResponse('Aucun groupe choisi.')   
+
+def memberes(request):
+    
+    return render(request, 'workSpace/membres.html')
+
+def documents(request):
+
+    return render(request, 'workSpace/documents.html')
 
 def todo_ws(request):
-    groupe_id=1
+    # Récupérer l'ID du groupe depuis la session
+    print("todo: ", request.session.get('groupe_id', None))
+    groupe_id = request.session.get('groupe_id', None)
+
     groupe = get_object_or_404(Groupe, id=groupe_id)
     if request.method == 'POST' :
         # SUPPRIMER
@@ -268,7 +289,7 @@ def todo_ws(request):
     
     taches = Taches.objects.filter(groupe=groupe)
     etudiants=Etudiant.objects.filter(groupes=groupe)
-    return render(request, 'workSpace/todo.html', {'taches': taches,'etudiants':etudiants})
+    return render(request, 'workSpace/todo.html', {'taches':taches,'etudiants':etudiants, 'groupe_id':groupe_id})
 
 def todo_home(request):
     if request.method == 'POST' :
@@ -307,11 +328,11 @@ def notifications(request):
     return render(request, 'singleSections/notifications.html')
 
 def groupes(request):
-    if request.method =='POST':
-        groupe_id = request.POST.get('groupe_id')
-        groupe = get_object_or_404(Groupe, id=groupe_id)
-        taches = Taches.objects.filter(groupe=groupe)
-        return render(request, 'workSpace/todo.html', {'groupe': groupe, 'taches': taches})
+    # if request.method =='POST':
+    #     groupe_id = request.POST.get('groupe_id')
+    #     groupe = get_object_or_404(Groupe, id=groupe_id)
+    #     taches = Taches.objects.filter(groupe=groupe)
+    #     return render(request, 'workSpace/todo.html', {'groupe': groupe, 'taches': taches})
     groupes = Groupe.objects.select_related("projet__code_classe").all()
     return render(request, 'singleSections/groupes.html', {'groupes': groupes})
 
@@ -342,7 +363,32 @@ def projets(request):
     return render(request, 'singleSections/projet.html')
 
 def profil(request):
-    return render(request, 'singleSections/profil.html')
+    etudiant = get_object_or_404(Etudiant, id=1)
+
+    if request.method == "POST":
+        nom = request.POST.get("nom")
+        prenom = request.POST.get("prenom")
+        photo = request.FILES.get("photo_profil")
+
+        # Mettre à jour les informations
+        if nom:
+            etudiant.nom = nom
+        if prenom:
+            etudiant.prenom = prenom
+        if photo:
+            # Supprimer l'ancienne photo si ce n'est pas la photo par défaut
+            if etudiant.photo_profil and etudiant.photo_profil.name != "images/profile.jpeg":
+                default_storage.delete(etudiant.photo_profil.path)
+            etudiant.photo_profil = photo
+
+        etudiant.save()  # Enregistrer les modifications dans la base de données
+
+    nombre_classes = etudiant.classes.count()
+
+    return render(request, 'singleSections/profil.html', {
+        'etudiant': etudiant,
+        "nombre_classes": nombre_classes
+    })
 
 def get_events(request):
     events = Event.objects.all()

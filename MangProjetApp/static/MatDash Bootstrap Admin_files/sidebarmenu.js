@@ -29,7 +29,6 @@ if ((at = "vertical")) {
       }
 
       var elements = findMatchingElement();
-      console.log('elm: ', elements);
 
       if (elements) {
         // Do something with the matching element
@@ -83,7 +82,6 @@ if ((at = "vertical")) {
       // This is for show menu
       //****************************
 
-
       if(elements!=null){
         var closestNav = elements.closest("nav[class^=sidebar-nav]");
         var menuid = (closestNav && closestNav.id) || "menu-right-mini-1";
@@ -97,6 +95,8 @@ if ((at = "vertical")) {
       //****************************
       // This is for mini sidebar
       //****************************
+
+
       document
         .querySelectorAll("ul#sidebarnav ul li a.active")
         .forEach(function (link) {
@@ -119,6 +119,7 @@ if ((at = "vertical")) {
               .forEach(function (nav) {
                 nav.classList.remove("d-block");
               });
+            
             document
               .getElementById("menu-right-" + id)
               .classList.add("d-block");

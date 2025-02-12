@@ -2,7 +2,10 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path('espaceDeTravail/<int:groupe_id>/', views.ws_reception, name='ws_reception'),
     path('ws/chat/', views.chat, name='chat'),
+    path('ws/memberes/', views.memberes, name='membres'),
+    path('ws/documents/', views.documents, name='documents'),
     path('ws/todo/', views.todo_ws, name='todo_ws'),
     path('accueil/todo/', views.todo_home, name='todo_home'),
     path('accueil/calendrier/', views.calender_home, name='calender_home'),
