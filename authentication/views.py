@@ -88,7 +88,8 @@ def signup_view(request):
                 last_login=None  # Le champ peut être laissé à None lors de l'inscription
             )
             professeur.save()
-            return render(request, 'authentification/message.html', {'message': 'Welcome Professor!'})
+            # return render(request, 'authentification/message.html', {'message': 'Welcome Professor!'})
+            return redirect('prof_accueil')
 
         elif email.endswith('-etu@etu.univh2c.ma'):
             etudiant = Etudiant(

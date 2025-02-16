@@ -1,0 +1,91 @@
+{% extends 'prof/index.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="fw-bold text-dark">Projet: Système de Gestion des Étudiants</h2>
+    <p class="text-muted">Une application permettant aux étudiants de mieux organiser leurs études et de collaborer efficacement.</p>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-light p-3">
+                <h5 class="fw-bold">Informations du Projet</h5>
+                <p><strong>Date de début:</strong> 01 Février 2025</p>
+                <p><strong>Date de fin:</strong> 30 Avril 2025</p>
+                <p><strong>Statut:</strong> <span class="badge bg-warning">En cours</span></p>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm border-light p-3">
+                <h5 class="fw-bold">Statistiques</h5>
+                <canvas id="progressChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-4 shadow-sm border-light p-3">
+        <h5 class="fw-bold">Instructions du Projet</h5>
+        <textarea class="form-control" rows="3" placeholder="Ajouter des instructions..." id="instructions"></textarea>
+        <button class="btn btn-primary mt-2">Enregistrer</button>
+    </div>
+
+    <div class="card mt-4 shadow-sm border-light p-3">
+        <h5 class="fw-bold">Tâches & Livrables</h5>
+        <ul class="list-group" id="taskList">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                Définition du Cahier des Charges <span class="badge bg-success">Terminé</span>
+            </li>
+        </ul>
+        <input type="text" class="form-control mt-2" placeholder="Ajouter une tâche..." id="newTask">
+        <button class="btn btn-primary mt-2" onclick="addTask()">Ajouter</button>
+    </div>
+
+    <div class="card mt-4 shadow-sm border-light p-3">
+        <h5 class="fw-bold">Fichiers</h5>
+        <input type="file" class="form-control">
+        <button class="btn btn-success mt-2">Téléverser</button>
+    </div>
+
+    <div class="card mt-4 shadow-sm border-light p-3">
+        <h5 class="fw-bold">Discussions & Mises à Jour</h5>
+        <div class="chat-box" style="max-height: 300px; overflow-y: auto;">
+            <div class="p-2 text-start">
+                <strong>Professeur:</strong> Merci de me fournir un premier prototype d'ici la fin du mois.
+                <small class="text-muted d-block">12 Février 2025</small>
+            </div>
+        </div>
+        <div class="input-group mt-2">
+            <input type="text" class="form-control" placeholder="Écrire un message...">
+            <button class="btn btn-primary">Envoyer</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    var ctx = document.getElementById('progressChart').getContext('2d');
+    var progressChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Complété', 'Restant'],
+            datasets: [{
+                data: [45, 55],
+                backgroundColor: ['#007bff', '#ddd']
+            }]
+        }
+    });
+
+    function addTask() {
+        var task = document.getElementById('newTask').value;
+        if (task) {
+            var list = document.getElementById('taskList');
+            var li = document.createElement('li');
+            li.className = 'list-group-item d-flex justify-content-between align-items-center';
+            li.innerHTML = task + '<span class="badge bg-secondary">Non commencé</span>';
+            list.appendChild(li);
+            document.getElementById('newTask').value = '';
+        }
+    }
+</script>
+{% endblock content %}

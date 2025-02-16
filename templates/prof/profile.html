@@ -1,0 +1,35 @@
+{% extends 'prof/index.html' %} 
+{% load static %}
+{% block content %} 
+<h1>Profile</h1>
+<div class="container mt-5">
+    <div class="row">
+        <!-- Profile Card -->
+        <div class="col-md-4">
+            <div class="card shadow-lg text-center p-4">
+                <img src="" alt="Profile Picture" class="rounded-circle mx-auto d-block" width="150" height="150">
+                <h4 class="mt-3">hafsa </h4>
+                <p class="text-muted">hafsa@gamil</p>
+                <p class="text-muted">not ava</p>
+
+                <a href="{% url 'edit_professor_profile' %}" class="btn btn-primary btn-sm mt-3">Edit Profile</a>
+            </div>
+        </div>
+
+        <!-- Professor Details & Courses -->
+        <div class="col-md-8">
+            <div class="card shadow-lg p-4">
+                <h5 class="mb-4">Professor Details</h5>
+                <ul class="list-group">
+                    <li class="list-group-item"><strong>Username:</strong> name</li>
+                    <li class="list-group-item"><strong>Email:</strong> main</li>
+                    <li class="list-group-item"><strong>Department:</strong> sma</li>
+                    <li class="list-group-item"><strong>Joined:</strong> year</li>
+                </ul>
+            </div>
+
+            
+        </div>
+    </div>
+</div>
+{% endblock content %}

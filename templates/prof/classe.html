@@ -1,0 +1,380 @@
+{% extends 'prof/index.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container mb-3">
+    
+    {% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} fade-message">{{ message }}</div>
+  {% endfor %}
+{% endif %}
+
+
+    
+
+    <div class="row g-4">
+        <!-- Action Buttons -->
+        <div class="card shadow-lg p-4 text-center bg-white border-0 raduise-for-all">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+                <h2 class="fw-bold text-primary mb-0">La Classe : {{ classe.nom_classe }}</h2>
+                
+                <!-- Clickable Code -->
+                <p class="mb-0">
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#codeModal" class="text-decoration-none text-dark fw-bold">
+                        <span class="iconify" data-icon="solar:rounded-magnifer-zoom-in-linear" style="font-size: 24px;"></span>
+                        <strong class="ms-2">Code :</strong> {{ classe.code_classe }}
+                    </a>
+                </p>
+            </div>
+            
+
+            <!-- Modal Structure -->
+            <div class="modal fade" id="codeModal" tabindex="-1" aria-labelledby="codeModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
+                        <div class="modal-header text-white" style="background-color: #635bff;">
+                            <h5 class="modal-title text-white" id="codeModalLabel">Classe Code</h5>
+                            <button type="button" class="btn-close custom-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body text-center">
+                            <p style="font-size: 30px; font-weight: bold;">
+                                {{ classe.code_classe }}
+                            </p>
+                            <!-- Share Button (Example with Share Icon) -->
+                            <button class="btn btn-ret" onclick="shareCode()">
+                                <span class="iconify" data-icon="solar:share-linear" style="font-size: 24px;"></span> Share
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script>
+                function shareCode() {
+                    const code = '{{ classe.code_classe }}';
+                    if (navigator.share) {
+                        navigator.share({
+                            title: 'Classe Code',
+                            text: 'Check out this code: ' + code,
+                            url: window.location.href
+                        }).then(() => {
+                            console.log('Successfully shared');
+                        }).catch((error) => {
+                            console.error('Error sharing:', error);
+                        });
+                    } else {
+                        alert('Sharing is not supported on your browser.');
+                    }
+                }
+            </script>
+
+            <div class="d-flex justify-content-between flex-wrap gap-3">
+                <button class="btn btn-dashboard p-3 flex-fill" onclick="changeContent('default', this)">
+                    <span class="iconify me-2" data-icon="solar:folder-open-linear" style="font-size: 24px;"></span>
+                    Projets
+                </button>
+                <button class="btn btn-dashboard p-3 flex-fill" onclick="changeContent('edit', this)">
+                    <span class="iconify me-2" data-icon="solar:pen-linear" style="font-size: 24px;"></span>
+                    Modifier Classe
+                </button>
+    
+                <button class="btn btn-dashboard p-3 flex-fill" onclick="changeContent('delete', this)">
+                    <span class="iconify me-2" data-icon="solar:trash-bin-2-linear" style="font-size: 24px;"></span>
+                    Supprimer Classe
+                </button>
+    
+                <button class="btn btn-dashboard p-3 flex-fill" onclick="changeContent('students', this)">
+                    <span class="iconify me-2" data-icon="solar:user-id-linear" style="font-size: 24px;"></span>
+                    Gérer Étudiants
+                </button>
+    
+                <button class="btn btn-dashboard p-3 flex-fill" onclick="changeContent('add_project', this)">
+                    <span class="iconify me-2" data-icon="solar:add-square-linear" style="font-size: 24px;"></span>
+                    Ajouter Projet
+                </button>
+            </div>
+            <script>
+                function changeContent(view, button) {
+                    // Hide all sections
+                    document.getElementById('default-view').style.display = 'none';
+                    document.getElementById('edit-form').style.display = 'none';
+                    document.getElementById('delete-confirmation').style.display = 'none';
+                    document.getElementById('students-management').style.display = 'none';
+                    document.getElementById('add-project').style.display = 'none';
+
+                    // Show selected view
+                    if (view === 'edit') {
+                        document.getElementById('edit-form').style.display = 'block';
+                    } else if (view === 'delete') {
+                        document.getElementById('delete-confirmation').style.display = 'block';
+                    } else if (view === 'students') {
+                        document.getElementById('students-management').style.display = 'block';
+                    } else if (view === 'add_project') {
+                        document.getElementById('add-project').style.display = 'block';
+                    } else {
+                        document.getElementById('default-view').style.display = 'block';
+                    }
+
+                    // Remove 'selected' class from all buttons
+                    let buttons = document.querySelectorAll('.btn-dashboard');
+                    buttons.forEach(function(btn) {
+                        btn.classList.remove('selected1');
+                    });
+
+                    // Add 'selected' class to the clicked button
+                    button.classList.add('selected1');
+                }
+
+            </script>
+        </div>
+    </div>
+    
+    <div class="row g-4 ">
+        <!-- Class Details -->
+            <div id="class-details" class="card shadow-lg p-4 bg-white border-0 raduise-for-all">
+                <!-- Default View -->
+                <div id="default-view">
+                    <div class="d-flex flex-column gap-2">
+                        <h5 class="fw-bold text-dark text-center mb-3">
+                            <span class="iconify me-2" data-icon="solar:clipboard-list-linear" style="font-size: 24px;"></span>
+                            Les Projets
+                        </h5>
+                        {% if projects %}
+                        <div class="row">
+                            {% for project in projects %}
+                                <div class="col-md-4 mb-4">
+                                    <a href="{% url 'projet_detail' project.id %}" class="text-decoration-none">
+                                        <div class="card card-project shadow-sm border-light raduise-for-all position-relative">
+                                            <!-- Menu Icon for Edit/Delete -->
+                                            <div class="position-absolute top-0 end-0 p-2">
+                                                <span class="menu-icon" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <span class="iconify" data-icon="solar:menu-dots-square-linear"></span>
+                                                </span>
+                                                <ul class="dropdown-menu raduise-for-all">
+                                                    <li><a class="dropdown-item" href="#">Edit</a></li>
+                                                    <li><a class="dropdown-item" href="#">Delete</a></li>
+                                                </ul>
+                                            </div>
+    
+                                            <div class="card-body">
+                                                <h5 class="card-title text-primary">{{ project.nom_project }}</h5>
+                                                <p class="card-text text-muted">{{ project.description }}</p>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <small class="text-muted">Du {{ project.date_debut }} au {{ project.date_fin }}</small>
+                                                    <a href="{% url 'projet_detail' project.id %}" class="btn btn-sm btn-outline-primary raduise-for-all">Details</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-center text-muted">Aucun projet disponible.</p>
+                    {% endif %}
+
+
+                    </div>
+                </div>
+
+                <!-- Edit Form (Hidden by Default) -->
+                <div id="edit-form" style="display: none;">
+                    <h5 class="fw-bold text-dark text-center mb-3">
+                        <span class="iconify me-2" data-icon="solar:pen-linear" style="font-size: 24px;"></span>
+                        Modifier Classe
+                    </h5>
+                    <form method="POST" action="{% url 'edit_classe' class_id=classe.id %}?next={{ request.path }}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="nom_classe" class="form-label" style="color: #635bff;">
+                            <span class="iconify" data-icon="solar:ruler-cross-pen-broken" style="font-size: 24px;"></span>
+                                Nom de la classe
+                            </label>
+                            <input type="text" class="form-control raduise-for-all" id="nom_classe" name="className" value="{{ classe.nom_classe }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="code_classe" class="form-label" style="color: #635bff">
+                                <span class="iconify" data-icon="solar:password-minimalistic-input-linear" style="font-size: 24px;"></span>
+                                Code de la classe
+                            </label>
+                            <input type="text" class="form-control raduise-for-all" id="code_classe" name="code_classe" value="{{ classe.code_classe }}" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label" style="color: #635bff">
+                            <span class="iconify" data-icon="solar:clipboard-list-linear" style="font-size: 24px;"></span>
+                                Description
+                            </label>
+                            <textarea class="form-control raduise-for-all" id="description" name="classdesc" rows="4">{{ classe.description }}</textarea>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-form-classe flex-fill p-3">Enregistrer les modifications</button>
+                            <button type="button" class="btn btn-ret flex-fill p-3" onclick="changeContent('default')">Retour</button>
+                        </div>                        
+                    </form>
+                </div>
+
+                <!-- Delete Confirmation (Hidden by Default) -->
+                <div id="delete-confirmation" style="display: none;">
+                    <h5 class="fw-bold text-dark text-center mb-3">
+                        <span class="iconify me-2" data-icon="solar:trash-bin-2-linear" style="font-size: 24px;"></span>
+                        Supprimer Classe
+                    </h5>
+                    <h6 class="fw-bold text-danger">Êtes-vous sûr de vouloir supprimer cette classe ?</h6>
+                    <form method="POST" action="{% url 'delete_classe' class_id=classe.id %}?next={{ request.path }}">
+                        {% csrf_token %}
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-danger flex-fill p-3 raduise-for-all">Oui, Supprimer</button>
+                            <button type="button" class="btn btn-ret flex-fill p-3" onclick="changeContent('default')">Annuler</button>
+                        </div>
+                    </form>
+                    
+                    
+                    
+                </div>
+
+                <!-- Manage Students (Hidden by Default) -->
+                <div id="students-management" style="display: none;">
+                        <h5 class="fw-bold text-dark text-center mb-3">
+                            <span class="iconify me-2" data-icon="solar:user-id-linear" style="font-size: 24px;"></span>
+                            Gestion des Étudiants
+                        </h5>
+                
+                    <!-- Students List -->
+                    <div class="list-group">
+                        <!-- Student Item -->
+                        <div class="list-group-item student-card d-flex align-items-center justify-content-between p-3">
+                            <div class="d-flex align-items-center">
+                                <div class="avatar me-3">
+                                    <span class="iconify" data-icon="solar:user-circle-linear" style="font-size: 40px;"></span>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Ali Bennani</h6>
+                                    <p class="mb-0 text-muted small">ali.bennani@example.com</p>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-success me-3">Actif</span>
+                                <!-- Action Menu -->
+                                <div class="dropdown">
+                                    <span class="menu-icon" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <span class="iconify" data-icon="solar:menu-dots-square-linear"></span>
+                                    </span>
+                                    <ul class="dropdown-menu raduise-for-all">
+                                        <li><a class="dropdown-item" href="#"><span class="iconify me-2" data-icon="solar:eye-linear"></span>Voir</a></li>
+                                        <li><a class="dropdown-item" href="#"><span class="iconify me-2" data-icon="solar:pen-line-duotone"></span>Éditer</a></li>
+                                        <li><a class="dropdown-item text-danger" href="#"><span class="iconify me-2" data-icon="solar:trash-bin-trash-linear"></span>Supprimer</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                
+                        <div class="list-group-item student-card d-flex align-items-center justify-content-between p-3">
+                            <div class="d-flex align-items-center">
+                                <div class="avatar me-3">
+                                    <span class="iconify" data-icon="solar:user-circle-linear" style="font-size: 40px;"></span>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Sara El Idrissi</h6>
+                                    <p class="mb-0 text-muted small">sara.idrissi@example.com</p>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-danger me-3">Inactif</span>
+                                <div class="dropdown raduise-for-all">
+                                    <span class="menu-icon" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <span class="iconify" data-icon="solar:menu-dots-square-linear"></span>
+                                    </span>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#"><span class="iconify me-2" data-icon="solar:eye-linear"></span>Voir</a></li>
+                                        <li><a class="dropdown-item" href="#"><span class="iconify me-2" data-icon="solar:pen-line-duotone"></span>Éditer</a></li>
+                                        <li><a class="dropdown-item text-danger" href="#"><span class="iconify me-2" data-icon="solar:trash-bin-trash-linear"></span>Supprimer</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <!-- Add Project (Hidden by Default) -->
+                <div id="add-project" style="display: none;">
+                    <h5 class="fw-bold text-dark text-center mb-3">
+                        <span class="iconify me-2" data-icon="solar:add-square-linear" style="font-size: 24px;"></span>
+                        Ajouter un Projet
+                    </h5>
+                
+                    <!-- Add Project Form -->
+                    <form id="add-project-form" method="POST" action="{% url 'add_project' classe.id %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="nom_project" class="form-label" style="color: #635bff;">
+                            <span class="iconify me-2" data-icon="solar:ruler-cross-pen-broken" style="font-size: 24px;"></span>
+                                Nom du Projet
+                            </label>
+                            <input type="text" class="form-control raduise-for-all" id="nom_project" name="nom_project" required>
+                        </div>
+                
+                        <div class="mb-3">
+                            <label for="description" class="form-label" style="color: #635bff;">
+                            <span class="iconify me-2" data-icon="solar:clipboard-list-linear" style="font-size: 24px;"></span>
+                            Description
+                        </label>
+                            <textarea class="form-control raduise-for-all" id="description" name="description" rows="3"></textarea>
+                        </div>
+                
+                        <div class="mb-3">
+                            <label for="date_debut" class="form-label" style="color: #635bff;">
+                            <span class="iconify me-2" data-icon="solar:calendar-date-outline" style="font-size: 24px;"></span>
+                            Date de Début
+                            </label>
+                            <input type="date" class="form-control raduise-for-all" id="date_debut" name="date_debut" required>
+                        </div>
+                
+                        <div class="mb-3">
+                            <label for="date_fin" class="form-label" style="color: #635bff;">
+                            <span class="iconify me-2" data-icon="solar:calendar-date-line-duotone" style="font-size: 24px;"></span>
+                            Date de Fin
+                            </label>
+                            <input type="date" class="form-control raduise-for-all" id="date_fin" name="date_fin" required>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-form-classe flex-fill p-3">Ajouter Projet</button>
+                            <button type="button" class="btn btn-ret flex-fill p-3" onclick="changeContent('default')">Retour</button>
+                        </div> 
+                    </form>
+                </div>
+                
+                
+
+            </div>
+            <!-- Stats & Extra Info -->
+    
+        
+    </div>
+    <div class="row g-4 mt-4">
+        <div class="col-md">
+            <div class="card shadow-lg p-4 text-center bg-light border-0 raduise-for-all">
+                <h6 class="fw-bold text-secondary">
+                    <span class="iconify me-2" data-icon="solar:users-group-two-rounded-line-duotone" style="font-size: 27px; margin-right: 10px;"></span>
+                    Nombre d'Étudiants
+                </h6>
+                <h3 class="fw-bold text-primary">{{ classe.etudiants.count }}</h3>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="card shadow-lg p-4 text-center bg-light border-0 raduise-for-all">
+                <h6 class="fw-bold text-secondary">
+                    <span class="iconify me-2" data-icon="solar:folder-open-linear" style="font-size: 27px; margin-right: 10px;"></span>
+                    Nombre de Projets
+                </h6>
+                <h3 class="fw-bold text-primary">{{ classe.projets.count }}</h3>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+{% endblock content %}

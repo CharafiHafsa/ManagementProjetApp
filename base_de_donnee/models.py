@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.hashers import check_password
+import uuid
 
 # Manager personnalisé pour Professeur
 class ProfesseurManager(models.Manager):
@@ -25,92 +26,124 @@ class EtudiantManager(models.Manager):
         except Etudiant.DoesNotExist:
             return None
 
+from django.contrib.auth.models import AbstractUser
+
 class Etudiant(models.Model):
-    IDETUDIANT = models.AutoField(primary_key=True)
-    FILIERE = models.CharField(max_length=255, null=False)
-    EMAIL_ETUDIANT = models.EmailField(null=False)
-    PASSWORD = models.CharField(max_length=255, null=False)
-    NOM = models.CharField(max_length=255, null=False)
-    PRENOM = models.CharField(max_length=255, null=False)
-    DEPARTEMENT = models.CharField(max_length=255, null=False)
-    last_login = models.DateTimeField(null=True, blank=True) 
-    objects = EtudiantManager()
-    
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    email = models.EmailField(unique=True, null=True, blank=True)
+
+    password = models.CharField(max_length=255)  # Store hashed passwords
+    filiere = models.CharField(max_length=255)
+    departement = models.CharField(max_length=255)
+    projets = models.ManyToManyField('Project', related_name="etudiants")
+    classes = models.ManyToManyField('Classe', related_name="etudiants")
+    groupes = models.ManyToManyField('Groupe', related_name="membres")
+
+    def __str__(self):
+        return f"{self.last_name} {self.first_name}"
+
+    def set_password(self, raw_password):
+        """Hashes and sets the password"""
+        self.password = make_password(raw_password)
+
+    def check_password(self, raw_password):
+        """Checks if the provided password is correct"""
+        return check_password(raw_password, self.password)
+
 
 class Professeur(models.Model):
-    IDPROFESSEUR = models.AutoField(primary_key=True)
-    DEPARTEMENT = models.CharField(max_length=255, null=False)
-    SPECIALITE = models.CharField(max_length=255, null=False)
-    EMAIL = models.EmailField(null=False)
-    PASSWORD = models.CharField(max_length=255, null=False)
-    NOM = models.CharField(max_length=255, null=False)
-    PRENOM = models.CharField(max_length=255, null=False)
-    last_login = models.DateTimeField(null=True, blank=True) 
-    objects = ProfesseurManager()
-    
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    email = models.EmailField(unique=True)
+    password = models.CharField(max_length=255)
+    departement = models.CharField(max_length=255)
+    specialite = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f"{self.last_name} {self.first_name}"
+
+    def set_password(self, raw_password):
+        """Hashes and sets the password"""
+        self.password = make_password(raw_password)
+
+    def check_password(self, raw_password):
+        """Checks if the provided password is correct"""
+        return check_password(raw_password, self.password)
 
 class Classe(models.Model):
-    CODECLASSE = models.CharField(max_length=255, primary_key=True)
-    NOM_CLASSE = models.CharField(max_length=255, null=False)
+    id = models.AutoField(primary_key=True)
+    code_classe = models.CharField(max_length=255, unique=True)
+    nom_classe = models.CharField(max_length=255)
+    professeur = models.ForeignKey(Professeur, on_delete=models.CASCADE, related_name="classes")
+    description =models.CharField(default='nouveau classe')
 
-    
 
-class Project(models.Model):
-    IDPROJECT = models.AutoField(primary_key=True)
-    CODECLASSE = models.ForeignKey(Classe, on_delete=models.CASCADE)
-    DESCRIPTION = models.TextField(null=False)
-    DATE_DEBUT = models.DateField(null=False)
-    DATE_FIN = models.DateField(null=False)
-    NOM_PROJECT = models.CharField(max_length=255, null=False)
+    def save(self, *args, **kwargs):
+        if not self.code_classe:
+            self.code_classe = self.generate_unique_code()
+        super().save(*args, **kwargs)
 
-   
-class Groupe(models.Model):
-    ID_GROUPE = models.AutoField(primary_key=True)
-    IDPROJECT = models.ForeignKey(Project, on_delete=models.CASCADE)
-    NOM_GROUPE = models.CharField(max_length=255, null=False)
-    NBR_MEMBRE = models.IntegerField(null=False)
+    def generate_unique_code(self):
+        return str(uuid.uuid4())[:8].upper()  # Generates an 8-character unique code
+
+    def __str__(self):
+        return f"{self.nom_classe} ({self.code_classe})"
+
 
     def _str_(self):
-        return self.NOM_GROUPE
+        return self.nom_classe
 
-class Avoir(models.Model):
-    IDETUDIANT = models.ForeignKey(Etudiant, on_delete=models.CASCADE)
-    IDPROJECT = models.ForeignKey(Project, on_delete=models.CASCADE)
+class Project(models.Model):
+    description = models.TextField()
+    date_debut = models.DateField()
+    date_fin = models.DateField()
+    nom_project = models.CharField(max_length=255)
+    code_classe = models.ForeignKey(Classe, on_delete=models.CASCADE, related_name="projets")
+    
+    def _str_(self):
+        return self.nom_project
+
+    def save(self, *args, **kwargs):
+        print(f"Saving project: {self.nom_project}")
+        super().save(*args, **kwargs)
+
+class Groupe(models.Model):
+    nom_groupe = models.CharField(max_length=255)
+    nbr_membre = models.PositiveIntegerField()
+    projet = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="groupes")
+    
+    def _str_(self):
+        return self.nom_groupe
+
+class Taches(models.Model):
+    groupe = models.ForeignKey(Groupe, on_delete=models.CASCADE, related_name="taches")
+    etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE, related_name="taches")
+    description_tache = models.TextField()
+    status_choices = [
+        ('En cours', 'En cours'),
+        ('Terminé', 'Terminé'),
+    ]
+    status = models.CharField(max_length=25, choices=status_choices)
+    deadline = models.DateField(null=False, blank=False)
 
     class Meta:
-        unique_together = ('IDETUDIANT', 'IDPROJECT')
+        verbose_name = "Tâche"
+        verbose_name_plural = "Tâches"
 
     
+    def _str_(self):
+        return f"{self.description_tache[:30]} - {self.status}"
 
-class Composer(models.Model):
-    IDETUDIANT = models.ForeignKey(Etudiant, on_delete=models.CASCADE)
-    CODECLASSE = models.ForeignKey(Classe, on_delete=models.CASCADE)
-
-    class Meta:
-        unique_together = ('IDETUDIANT', 'CODECLASSE')
-
-
-class Construire(models.Model):
-    IDETUDIANT = models.ForeignKey(Etudiant, on_delete=models.CASCADE)
-    ID_GROUPE = models.ForeignKey(Groupe, on_delete=models.CASCADE)
-
-    class Meta:
-        unique_together = ('IDETUDIANT', 'ID_GROUPE')
-
-    
-
-class Creer(models.Model):
-    IDPROFESSEUR = models.ForeignKey(Professeur, on_delete=models.CASCADE)
-    CODECLASSE = models.ForeignKey(Classe, on_delete=models.CASCADE)
-
-    class Meta:
-        unique_together = ('IDPROFESSEUR', 'CODECLASSE')
-
-    
-
-class Todoliste(models.Model):
-    ID = models.AutoField(primary_key=True)
-    IDETUDIANT = models.ForeignKey(Etudiant, on_delete=models.CASCADE)
-    DESCRIPTIONTACHE = models.TextField(null=False)
-    STATUS = models.CharField(max_length=255, null=False)
-    DEADLINE = models.DateField(null=False)
+class Calendrier(models.Model):
+    couleurs = [
+        ('rouge', 'rouge'),
+        ('vert', 'vert'),
+        ('bleu', 'bleu'),
+        ('jaune', 'jaune'),
+    ]
+    etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE, related_name="line_time")
+    evenement = models.CharField(max_length=255, null=True)
+    date_debut = models.DateField(null=True)
+    date_fin = models.DateField(null=True)
+    status = models.CharField(max_length=10, choices=couleurs)
