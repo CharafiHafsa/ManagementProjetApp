@@ -72,7 +72,6 @@ class Professeur(models.Model):
         return check_password(raw_password, self.password)
 
 class Classe(models.Model):
-    id = models.AutoField(primary_key=True)
     code_classe = models.CharField(max_length=255, unique=True)
     nom_classe = models.CharField(max_length=255)
     professeur = models.ForeignKey(Professeur, on_delete=models.CASCADE, related_name="classes")
@@ -115,6 +114,24 @@ class Groupe(models.Model):
     
     def _str_(self):
         return self.nom_groupe
+
+class Instruction(models.Model):
+    projet = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="instructions")
+    titre = models.CharField(max_length=255)  # Title of the instruction
+    date_limite = models.DateField(null=True, blank=True)  # Optional deadline
+    livrable_requis = models.BooleanField(default=False)  # If a deliverable is required
+
+    def __str__(self):
+        return f"Instruction: {self.titre} ({self.projet.nom_project})"
+
+class InstructionStatus(models.Model):
+    instruction = models.ForeignKey(Instruction, on_delete=models.CASCADE, related_name="statuses")
+    groupe = models.ForeignKey(Groupe, on_delete=models.CASCADE, related_name="instructions_status")
+    est_termine = models.BooleanField(default=False)  # Whether the group marked it as done
+    fichier_livrable = models.FileField(upload_to='livrables/', null=True, blank=True)  # Optional file upload
+
+    def __str__(self):
+        return f"{self.groupe.nom_groupe} - {self.instruction.titre} ({'Done' if self.est_termine else 'Pending'})"
 
 class Taches(models.Model):
     groupe = models.ForeignKey(Groupe, on_delete=models.CASCADE, related_name="taches")

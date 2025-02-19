@@ -2,90 +2,303 @@
 {% load static %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2 class="fw-bold text-dark">Projet: Système de Gestion des Étudiants</h2>
-    <p class="text-muted">Une application permettant aux étudiants de mieux organiser leurs études et de collaborer efficacement.</p>
 
-    <div class="row mt-4">
-        <div class="col-md-6">
-            <div class="card shadow-sm border-light p-3">
-                <h5 class="fw-bold">Informations du Projet</h5>
-                <p><strong>Date de début:</strong> 01 Février 2025</p>
-                <p><strong>Date de fin:</strong> 30 Avril 2025</p>
-                <p><strong>Statut:</strong> <span class="badge bg-warning">En cours</span></p>
+<div class="row g-4">
+    
+    <div class="d-flex justify-content-between flex-wrap gap-3">
+        <button class="btn btn-dashboard p-3 flex-fill selected1" onclick="changeContent('default', this)" id="default-btn">
+            <span class="iconify me-2" data-icon="solar:folder-open-linear" style="font-size: 24px;"></span>
+            Details
+        </button>
+        <button class="btn btn-dashboard p-3 flex-fill" onclick="changeContent('instruction', this)">
+            <span class="iconify me-2" data-icon="solar:checklist-minimalistic-outline" style="font-size: 24px;"></span>
+            Instrution
+        </button>
+        <button class="btn btn-dashboard p-3 flex-fill" onclick="changeContent('announce', this)">
+            <span class="iconify me-2" data-icon="solar:chat-round-line-outline" style="font-size: 24px;"></span>
+            Announce
+        </button>
+        <button class="btn btn-dashboard p-3 flex-fill" onclick="changeContent('ressource', this)">
+            <span class="iconify me-2" data-icon="solar:book-bookmark-minimalistic-linear" style="font-size: 24px;"></span>
+            Ressources
+        </button>
+        <button class="btn btn-dashboard p-3 flex-fill" onclick="changeContent('groupes', this)">
+            <span class="iconify me-2" data-icon="solar:users-group-rounded-linear" style="font-size: 24px;"></span>
+            Groups
+        </button>
+        <button class="btn btn-dashboard p-3 flex-fill" onclick="changeContent('edite', this)">
+            <span class="iconify me-2" data-icon="solar:pen-linear" style="font-size: 24px;"></span>
+            Editer
+        </button>
+        <button class="btn btn-dashboard p-3 flex-fill" onclick="changeContent('supprimer', this)">
+            <span class="iconify me-2" data-icon="solar:trash-bin-2-linear" style="font-size: 24px;"></span>
+            Supprimer
+        </button>
+    </div>
+
+<div class="row g-4">
+
+    <div class="card shadow-lg p-4 bg-white border-0 raduise-for-all">
+        <div id="default-view" style="display: none;">
+            <h5 class="fw-bold text-dark text-center mb-3">
+                <span class="iconify me-2" data-icon="solar:clipboard-list-linear" style="font-size: 24px;"></span>
+                Project Dashboard
+            </h5>
+        
+            <!-- Dashboard Grid -->
+            <div class="d-flex flex-wrap gap-3">
+                
+                <!-- Project Overview -->
+                <div class="flex-fill card shadow-sm border-light rounded p-3">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">
+                            <span class="iconify me-2" data-icon="mdi:project-outline"></span> 
+                            {{ projet.nom_project }}
+                        </h5>
+                        <p class="card-text text-muted">
+                            <strong>Description:</strong> {{ projet.description }}
+                        </p>
+                        <small class="text-muted">
+                            <strong>Timeline:</strong> {{ projet.date_debut }} - {{ projet.date_fin }}
+                        </small>
+                    </div>
+                </div>
+        
+                <!-- Project Progress Chart (Bar) -->
+                <div class="flex-fill card shadow-sm border-light rounded p-3">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">
+                            <span class="iconify me-2" data-icon="mdi:chart-bar"></span> 
+                            Project Progress
+                        </h5>
+                        <canvas id="progressChart" style="max-height: 200px;"></canvas> <!-- Adjusted size -->
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Additional Data -->
+            <div class="d-flex flex-wrap gap-3 mt-3">
+                
+                <!-- Milestones/Deadlines -->
+                <div class="flex-fill card shadow-sm border-light rounded p-3">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">
+                            <span class="iconify me-2" data-icon="mdi:calendar-clock"></span> 
+                            Important Milestones
+                        </h5>
+                        <ul class="list-group">
+                            <li class="list-group-item">Phase 1 Deadline: <strong>{{ projet.milestone1 }}</strong></li>
+                            <li class="list-group-item">Phase 2 Deadline: <strong>{{ projet.milestone2 }}</strong></li>
+                            <li class="list-group-item">Final Submission: <strong>{{ projet.date_fin }}</strong></li>
+                        </ul>
+                    </div>
+                </div>
+        
+                <!-- Groups & Students Overview -->
+                <div class="flex-fill card shadow-sm border-light rounded p-3">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">
+                            <span class="iconify me-2" data-icon="mdi:account-group"></span> 
+                            Groups & Students
+                        </h5>
+                        <p class="card-text">
+                            <strong>Total Groups:</strong> {{ total_groups }} <br>
+                            <strong>Total Students:</strong> {{ total_students }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Chart Row -->
+            <div class="d-flex flex-wrap gap-3 mt-3">
+                
+                <!-- Donut Chart for Task Distribution -->
+                <div class="flex-fill card shadow-sm border-light rounded p-3">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">
+                            <span class="iconify me-2" data-icon="mdi:chart-pie"></span> 
+                            Task Distribution
+                        </h5>
+                        <canvas id="taskChart" style="max-height: 200px;"></canvas> <!-- Adjusted size -->
+                    </div>
+                </div>
+        
+                <!-- Donut Chart for Group Participation -->
+                <div class="flex-fill card shadow-sm border-light rounded p-3">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">
+                            <span class="iconify me-2" data-icon="mdi:chart-pie"></span> 
+                            Group Participation
+                        </h5>
+                        <canvas id="groupChart" style="max-height: 200px;"></canvas> <!-- Adjusted size -->
+                    </div>
+                </div>
             </div>
         </div>
+        
+        <!-- Chart.js Script -->
 
-        <div class="col-md-6">
-            <div class="card shadow-sm border-light p-3">
-                <h5 class="fw-bold">Statistiques</h5>
-                <canvas id="progressChart"></canvas>
+        
+        <div id="instruction-view" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold text-dark">
+                    <span class="iconify me-2" data-icon="solar:checklist-minimalistic-outline" style="font-size: 24px;"></span>
+                    Instructions
+                </h5>
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addInstructionModal">
+                    + Ajouter une instruction
+                </button>
+            </div>
+            
+            <!-- Display List of Instructions -->
+            <div class="card shadow-sm p-3">
+                {% if instruction_stats %}
+                    <ul class="list-group">
+                        {% for item in instruction_stats %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="fw-bold text-primary">{{ item.instruction.titre }}</h6>
+                                    {% if item.instruction.date_limite %}
+                                        <small class="text-danger">Date limite: {{ item.instruction.date_limite }}</small>
+                                    {% endif %}
+                                </div>
+                                {% if item.instruction.livrable_requis %}
+                                    <span class="badge bg-warning">Livrable requis</span>
+                                {% endif %}
+                                
+                                <!-- Display Completion Status for this instruction -->
+                                <div>
+                                    <p><strong>Completed:</strong> {{ item.completed_groups }} / {{ item.total_groups }}</p>
+                                    <p><strong>Pending:</strong> {{ item.pending_groups }} / {{ item.total_groups }}</p>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted text-center">Pas d'instructions pour ce projet.</p>
+                {% endif %}
+            </div>
+        
+            <!-- Statistics Card for All Instructions -->
+            <div class="card shadow-sm p-3 mt-4">
+                <h6 class="fw-bold">Task Completion Statistics</h6>
+                <p><strong>Total Instructions:</strong> {{ total_instructions }}</p>
+                <p><strong>Completed Instructions:</strong> {{ completed_instructions }}</p>
+                <p><strong>Pending Instructions:</strong> {{ pending_instructions }}</p>
+                <p><strong>Completion Rate:</strong> {{ completion_percentage|floatformat:2 }}%</p>
             </div>
         </div>
-    </div>
-
-    <div class="card mt-4 shadow-sm border-light p-3">
-        <h5 class="fw-bold">Instructions du Projet</h5>
-        <textarea class="form-control" rows="3" placeholder="Ajouter des instructions..." id="instructions"></textarea>
-        <button class="btn btn-primary mt-2">Enregistrer</button>
-    </div>
-
-    <div class="card mt-4 shadow-sm border-light p-3">
-        <h5 class="fw-bold">Tâches & Livrables</h5>
-        <ul class="list-group" id="taskList">
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                Définition du Cahier des Charges <span class="badge bg-success">Terminé</span>
-            </li>
-        </ul>
-        <input type="text" class="form-control mt-2" placeholder="Ajouter une tâche..." id="newTask">
-        <button class="btn btn-primary mt-2" onclick="addTask()">Ajouter</button>
-    </div>
-
-    <div class="card mt-4 shadow-sm border-light p-3">
-        <h5 class="fw-bold">Fichiers</h5>
-        <input type="file" class="form-control">
-        <button class="btn btn-success mt-2">Téléverser</button>
-    </div>
-
-    <div class="card mt-4 shadow-sm border-light p-3">
-        <h5 class="fw-bold">Discussions & Mises à Jour</h5>
-        <div class="chat-box" style="max-height: 300px; overflow-y: auto;">
-            <div class="p-2 text-start">
-                <strong>Professeur:</strong> Merci de me fournir un premier prototype d'ici la fin du mois.
-                <small class="text-muted d-block">12 Février 2025</small>
+        
+        <!-- Add Instruction Modal -->
+        <div class="modal fade" id="addInstructionModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Ajouter une instruction</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" action="{% url 'add_instruction' projet.id %}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label class="form-label">Titre</label>
+                                <input type="text" name="titre" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Date limite (optionnel)</label>
+                                <input type="date" name="date_limite" class="form-control">
+                            </div>
+                            <div class="form-check mb-3">
+                                <input type="checkbox" name="livrable_requis" class="form-check-input">
+                                <label class="form-check-label">Livrable requis</label>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Ajouter</button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="input-group mt-2">
-            <input type="text" class="form-control" placeholder="Écrire un message...">
-            <button class="btn btn-primary">Envoyer</button>
+        
+        <div id="announce-view" style="display: none;">
+            <h5 class="fw-bold text-dark text-center mb-3">
+                <span class="iconify me-2" data-icon="solar:chat-round-line-outline" style="font-size: 24px;"></span>
+                announce
+            </h5>
+        </div>
+        <div id="ressources-view" style="display: none;">
+            <h5 class="fw-bold text-dark text-center mb-3">
+                <span class="iconify me-2" data-icon="solar:book-bookmark-minimalistic-linear" style="font-size: 24px;"></span>
+                ressources
+            </h5>
+        </div>
+        <div id="groupes-view" style="display: none;">
+            <h5 class="fw-bold text-dark text-center mb-3">
+                <span class="iconify me-2" data-icon="solar:group-rounded-linear" style="font-size: 24px;"></span>
+                groupes
+            </h5>
+        </div>
+        <div id="edite-view" style="display: none;">
+            <h5 class="fw-bold text-dark text-center mb-3">
+                <span class="iconify me-2" data-icon="solar:pen-linear" style="font-size: 24px;"></span>
+                edite
+            </h5>
+        </div>
+        <div id="supprimer-view" style="display: none;">
+            <h5 class="fw-bold text-dark text-center mb-3">
+                <span class="iconify me-2" data-icon="solar:trash-bin-2-linear" style="font-size: 24px;"></span>
+                edite
+            </h5>
         </div>
     </div>
-</div>
+    <script>
+        function changeContent(view, button) {
+    // Hide all sections
+    document.getElementById('default-view').style.display = 'none';
+    document.getElementById('instruction-view').style.display = 'none';
+    document.getElementById('announce-view').style.display = 'none';
+    document.getElementById('ressources-view').style.display = 'none';
+    document.getElementById('groupes-view').style.display = 'none';
+    document.getElementById('edite-view').style.display = 'none';
+    document.getElementById('supprimer-view').style.display = 'none';
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    var ctx = document.getElementById('progressChart').getContext('2d');
-    var progressChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Complété', 'Restant'],
-            datasets: [{
-                data: [45, 55],
-                backgroundColor: ['#007bff', '#ddd']
-            }]
-        }
+    // Show selected view
+    if (view === 'instruction') {
+        document.getElementById('instruction-view').style.display = 'block';
+    } else if (view === 'announce') {
+        document.getElementById('announce-view').style.display = 'block';
+    } else if (view === 'ressource') {
+        document.getElementById('ressources-view').style.display = 'block';
+    } else if (view === 'groupes') {
+        document.getElementById('groupes-view').style.display = 'block';
+    } else if (view === 'edite') {
+        document.getElementById('edite-view').style.display = 'block';
+    } else if (view === 'supprimer') {
+        document.getElementById('supprimer-view').style.display = 'block';
+    } else {
+        document.getElementById('default-view').style.display = 'block';
+    }
+
+    // Remove 'selected1' class from all buttons
+    let buttons = document.querySelectorAll('.btn-dashboard');
+    buttons.forEach(function(btn) {
+        btn.classList.remove('selected1');
     });
 
-    function addTask() {
-        var task = document.getElementById('newTask').value;
-        if (task) {
-            var list = document.getElementById('taskList');
-            var li = document.createElement('li');
-            li.className = 'list-group-item d-flex justify-content-between align-items-center';
-            li.innerHTML = task + '<span class="badge bg-secondary">Non commencé</span>';
-            list.appendChild(li);
-            document.getElementById('newTask').value = '';
-        }
-    }
-</script>
+    // Add 'selected1' class to the clicked button
+    button.classList.add('selected1');
+}
+
+// Set "Projets" as default on page load
+window.onload = function() {
+    document.getElementById("default-btn").click();
+};
+
+
+
+    </script>
+</div>
+</div>
+
+
+
 {% endblock content %}

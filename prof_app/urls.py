@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import create_class, edit_classe , delete_classe , add_project
+from .views import create_class, edit_classe , delete_classe , add_project, add_instruction , update_instruction_status
 
 urlpatterns = [
     path('', views.prof_accueil, name='prof_accueil'),  # Home page
@@ -16,4 +16,10 @@ urlpatterns = [
     path('classe/<int:class_id>/', views.classe_detail, name="classe_detail"),
     path('classe/<int:class_id>/add_project', add_project, name='add_project'),
     path('classe/<int:projet_id>/detail_projet', views.projet_detail, name='projet_detail'),
+    path('classe/<int:projet_id>/detail_projet/add-instruction/', add_instruction, name='add_instruction'),
+
+
+    path('update_instructions/<int:project_id>/<int:groupe_id>/', update_instruction_status, name='update_instruction_status'),
+
+
 ]

@@ -48,7 +48,7 @@
         <!-- ============================================================== -->
         <header class="topbar" data-navbarbg="skin6">
             <nav class="navbar top-navbar navbar-expand-lg">
-                <div class="navbar-header" data-logobg="skin6">
+                <div class="navbar-header" data-logobg="skin6"  style="background-color: #f9fbfd;">
                     <!-- This is for the sidebar toggle which is visible on mobile only -->
                     <a class="nav-toggler waves-effect waves-light d-block d-lg-none" href="javascript:void(0)"><i
                             class="ti-menu ti-close"></i></a>
@@ -57,9 +57,12 @@
                     <!-- ============================================================== -->
                     <div class="navbar-brand">
                         <!-- Logo icon -->
-                        <a href="{% url 'prof_accueil' %}">
-                            <img src="{% static 'css/prof/assets/images/logo-sans-bg.png' %}" alt="" class="img-fluid">
-                        </a>
+                            <a class="sidebar-link" href="#" aria-expanded="false">
+                                <div class="icon-text">
+                                    <span class="iconify pl-1" data-icon="solar:hamburger-menu-line-duotone" style="font-size: 25px;"></span>
+                                    <!-- <span class="hide-menu">Home</span> -->
+                                </div>
+                            </a>
                     </div>
                     <!-- ============================================================== -->
                     <!-- End Logo -->
@@ -221,7 +224,8 @@
         <!-- ============================================================== -->
         <!-- Left Sidebar - style you can find in sidebar.scss  -->
         <!-- ============================================================== -->
-        <aside class="left-sidebar" data-sidebarbg="skin6">
+        <!-- Menu Toggle Button -->
+        <aside class="left-sidebar" data-sidebarbg="skin6" style="background-color: #f9fbfd;">
             <!-- Sidebar scroll-->
             <div class="scroll-sidebar" data-sidebarbg="skin6">
                 <!-- Sidebar navigation-->
@@ -229,35 +233,36 @@
                     <ul id="sidebarnav">
                         
                         <li class="sidebar-item">
-                            <a class="sidebar-link" href="{% url 'prof_accueil' %}" aria-expanded="false">
+                            <a class="sidebar-link" href="{% url 'prof_accueil' %}" aria-expanded="false" data-bs-toggle="tooltip" data-bs-placement="right" title="Accueil">
                                 <div class="icon-text">
-                                    <span class="iconify" data-icon="solar:home-angle-linear"></span>
-                                    <span class="hide-menu">Home</span>
+                                    <span class="iconify pl-1" data-icon="solar:home-angle-linear" style="font-size: 25px;"></span>
+                                    <!-- <span class="tooltip">Accueil</span> -->
                                 </div>
                             </a>
                         </li>
+                        
 
                         <li class="sidebar-item">
-                            <a class="sidebar-link" href="{% url 'prof_classes' %}" aria-expanded="false">
+                            <a class="sidebar-link" href="{% url 'prof_classes' %}" aria-expanded="false" data-bs-toggle="tooltip" data-bs-placement="right" title="Classes">
                                 <div class="icon-text">
-                                    <span class="iconify" data-icon="solar:users-group-rounded-linear"></span>
-                                    <span class="hide-menu">Classes</span>
+                                    <span class="iconify" data-icon="solar:users-group-rounded-linear" style="font-size: 25px;"></span>
+                                    <!-- <span class="hide-menu">Classes</span> -->
                                 </div>
                             </a>
                         </li>
                         <li class="sidebar-item"> 
-                            <a class="sidebar-link sidebar-link" href="app-chat.html" aria-expanded="false">
+                            <a class="sidebar-link sidebar-link" href="app-chat.html" aria-expanded="false" data-bs-toggle="tooltip" data-bs-placement="right" title="Chat">
                                 <div class="icon-text">
-                                    <span class="iconify" data-icon="solar:chat-dots-linear"></span>
-                                    <span class="hide-menu">Chat</span>
+                                    <span class="iconify" data-icon="solar:chat-dots-linear" style="font-size: 25px;"></span>
+                                    <!-- <span class="hide-menu">Chat</span> -->
                                 </div>
                             </a>
                         </li>
                         <li class="sidebar-item"> 
-                            <a class="sidebar-link sidebar-link" href="{% url 'prof_calender' %}" aria-expanded="false">
+                            <a class="sidebar-link sidebar-link" href="{% url 'prof_calender' %}" aria-expanded="false" data-bs-toggle="tooltip" data-bs-placement="right" title="Calenderier">
                                 <div class="icon-text">
-                                    <span class="iconify" data-icon="solar:calendar-date-outline"></span>
-                                    <span class="hide-menu">Calenderier</span>
+                                    <span class="iconify" data-icon="solar:calendar-date-outline" style="font-size: 25px;"></span>
+                                    <!-- <span class="hide-menu">Calenderier</span> -->
                                 </div>
                             </a>
                         </li>
@@ -268,10 +273,20 @@
                             <a class="sidebar-link sidebar-link" href="{url 'login'}" aria-expanded="false">
                                 <div class="icon-text">
                                     <span class="iconify" data-icon="solar:logout-2-outline"></span>
-                                    <span class="hide-menu">Logout</span>
+                                    <!-- <span class="hide-menu">Logout</span> -->
                                 </div>
                             </a>
                         </li>
+
+                        <script>
+                            document.addEventListener("DOMContentLoaded", function () {
+                                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                                var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                                    return new bootstrap.Tooltip(tooltipTriggerEl);
+                                });
+                            });
+
+                        </script>
                                     
                     </ul>
                 </nav>
@@ -312,7 +327,7 @@
             <!-- ============================================================== -->
             <!-- Container fluid  -->
             <!-- ============================================================== -->
-            <div class="container-fluid" >
+            <div class="container-fluid" style="padding: 12px;">
                 {% block content %} 
 
                 {% endblock content %}
@@ -344,6 +359,7 @@
     <!-- All Jquery -->
     <!-- ============================================================== -->
     <script src="{% static 'css/prof/assets/libs/jquery/dist/jquery.min.js' %}"></script>
+    
     <script src="{% static 'css/prof/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
     <!-- apps -->
     <!-- apps -->

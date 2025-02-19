@@ -2,7 +2,53 @@ from django.shortcuts import render , redirect , get_object_or_404
 from django.contrib import messages
 from django.http import JsonResponse
 from base_de_donnee.models import Professeur
-from base_de_donnee.models import Classe , Etudiant , Project
+from base_de_donnee.models import Classe , Etudiant , Project , Groupe, InstructionStatus, Instruction
+from django.core.files.storage import FileSystemStorage
+
+
+def update_instruction_status(request, project_id, groupe_id):
+    project = get_object_or_404(Project, id=project_id)
+    group = get_object_or_404(Groupe, id=groupe_id, projet=project)
+    instructions = Instruction.objects.filter(projet=project)
+
+    instruction_statuses = [
+        {'instruction': instruction, 'status': InstructionStatus.objects.filter(groupe=group, instruction=instruction).first()}
+        for instruction in instructions
+    ]
+
+    if request.method == 'POST':
+        instruction_id = request.POST.get("instruction_id")
+        status = request.POST.get("status") == "on"
+        instruction = get_object_or_404(Instruction, id=instruction_id)
+
+        instruction_status, created = InstructionStatus.objects.get_or_create(
+            instruction=instruction,
+            groupe=group,
+            defaults={'est_termine': status}
+        )
+
+        if not created:
+            instruction_status.est_termine = status
+
+        if 'upload_file' in request.FILES:
+            file = request.FILES['upload_file']
+            fs = FileSystemStorage()
+            filename = fs.save(file.name, file)
+            instruction_status.fichier_livrable = filename
+
+        instruction_status.save()
+
+        return redirect('update_instruction_status', project_id=project.id, groupe_id=group.id)
+
+    return render(request, 'prof/student_instructions.html', {
+        'project': project,
+        'group': group,
+        'instruction_statuses': instruction_statuses,
+        'instructions': instructions
+    })
+
+
+
 
 def prof_accueil(request):
     # Hardcoded email for testing
@@ -152,8 +198,61 @@ def add_project(request, class_id):
 
 
 def projet_detail(request, projet_id):
+    projet = get_object_or_404(Project, id=projet_id)
+    instructions = projet.instructions.all()  # Fetch all instructions for this project
+    total_groups_count = Groupe.objects.filter(projet=projet).count()
+    instruction_stats = []
+    for instruction in instructions:
+        if InstructionStatus.objects.filter(instruction=instruction).exists():
+            completed_groups_count = InstructionStatus.objects.filter(
+                instruction=instruction, est_termine=True
+            ).count()
+            pending_groups_count = total_groups_count - completed_groups_count
+            
 
-    return render(request, 'prof/projet.html')
+        else:
+            completed_groups_count = 0
+            pending_groups_count = total_groups_count
+
+        instruction_stats.append({
+            'instruction': instruction,
+            'completed_groups': completed_groups_count,
+            'pending_groups': pending_groups_count,
+            'total_groups': total_groups_count
+        })
+
+    total_instructions = len(instruction_stats)
+    completed_instructions = sum(1 for stat in instruction_stats if stat['completed_groups'] == stat['total_groups'] and stat['total_groups']>0)
+    pending_instructions = total_instructions - completed_instructions
+    completion_percentage = (completed_instructions / total_instructions) * 100 if total_instructions else 0
+
+    return render(request, 'prof/projet.html', {
+        'projet': projet,
+        'total_instructions': total_instructions,
+        'instruction_stats': instruction_stats,
+        'completed_instructions': completed_instructions,
+        'pending_instructions': pending_instructions,
+        'completion_percentage': completion_percentage
+    })
+
+def add_instruction(request, projet_id):
+    if request.method == "POST":
+        titre = request.POST.get("titre")
+        date_limite = request.POST.get("date_limite")
+        livrable_requis = request.POST.get("livrable_requis") == "on"
+
+        projet = get_object_or_404(Project, id=projet_id)
+        instruction = Instruction.objects.create(
+            projet=projet,
+            titre=titre,
+            date_limite=date_limite if date_limite else None,
+            livrable_requis=livrable_requis
+        )
+        return redirect('projet_detail', projet_id=projet.id)
+
+    return JsonResponse({"error": "Invalid request"}, status=400)
+
+
 def prof_notification(request):
     return render(request, 'prof/notification.html')
 

@@ -70,7 +70,7 @@
             </script>
 
             <div class="d-flex justify-content-between flex-wrap gap-3">
-                <button class="btn btn-dashboard p-3 flex-fill" onclick="changeContent('default', this)">
+                <button class="btn btn-dashboard p-3 flex-fill selected1" onclick="changeContent('default', this)" id="default-btn">
                     <span class="iconify me-2" data-icon="solar:folder-open-linear" style="font-size: 24px;"></span>
                     Projets
                 </button>
@@ -78,22 +78,20 @@
                     <span class="iconify me-2" data-icon="solar:pen-linear" style="font-size: 24px;"></span>
                     Modifier Classe
                 </button>
-    
                 <button class="btn btn-dashboard p-3 flex-fill" onclick="changeContent('delete', this)">
                     <span class="iconify me-2" data-icon="solar:trash-bin-2-linear" style="font-size: 24px;"></span>
                     Supprimer Classe
                 </button>
-    
                 <button class="btn btn-dashboard p-3 flex-fill" onclick="changeContent('students', this)">
                     <span class="iconify me-2" data-icon="solar:user-id-linear" style="font-size: 24px;"></span>
                     Gérer Étudiants
                 </button>
-    
                 <button class="btn btn-dashboard p-3 flex-fill" onclick="changeContent('add_project', this)">
                     <span class="iconify me-2" data-icon="solar:add-square-linear" style="font-size: 24px;"></span>
                     Ajouter Projet
                 </button>
             </div>
+
             <script>
                 function changeContent(view, button) {
                     // Hide all sections
@@ -116,17 +114,22 @@
                         document.getElementById('default-view').style.display = 'block';
                     }
 
-                    // Remove 'selected' class from all buttons
+                    // Remove 'selected1' class from all buttons
                     let buttons = document.querySelectorAll('.btn-dashboard');
                     buttons.forEach(function(btn) {
                         btn.classList.remove('selected1');
                     });
 
-                    // Add 'selected' class to the clicked button
+                    // Add 'selected1' class to the clicked button
                     button.classList.add('selected1');
                 }
 
+                // Set "Projets" as default on page load
+                window.onload = function() {
+                    document.getElementById("default-btn").click();
+                };
             </script>
+
         </div>
     </div>
     
@@ -144,7 +147,6 @@
                         <div class="row">
                             {% for project in projects %}
                                 <div class="col-md-4 mb-4">
-                                    <a href="{% url 'projet_detail' project.id %}" class="text-decoration-none">
                                         <div class="card card-project shadow-sm border-light raduise-for-all position-relative">
                                             <!-- Menu Icon for Edit/Delete -->
                                             <div class="position-absolute top-0 end-0 p-2">
@@ -166,7 +168,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </a>
                                 </div>
                             {% endfor %}
                         </div>

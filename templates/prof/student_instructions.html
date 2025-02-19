@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Instructions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .instruction-container {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .done {
+            color: green;
+            font-weight: bold;
+        }
+        .pending {
+            color: red;
+            font-weight: bold;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+        }
+        .btn-upload {
+            padding: 8px 16px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Instructions for Project: {{ project.nom_project }} - Group: {{ group.nom_groupe }}</h2>
+
+    {% for instruction_status in instruction_statuses %}
+    <div class="instruction-container">
+        <h3>{{ instruction_status.instruction.titre }}</h3>
+        <p><strong>Deadline:</strong> {{ instruction_status.instruction.date_limite }}</p>
+        <p><strong>Status:</strong>
+            <span class="{% if instruction_status.status.est_termine %}done{% else %}pending{% endif %}">
+                {% if instruction_status.status.est_termine %}Completed{% else %}Pending{% endif %}
+            </span>
+        </p>
+
+        <form method="post" enctype="multipart/form-data" action="{% url 'update_instruction_status' project_id=project.id groupe_id=group.id %}">
+            {% csrf_token %}
+            <input type="hidden" name="instruction_id" value="{{ instruction_status.instruction.id }}">
+        
+            <label>
+                <input type="checkbox" name="status" {% if instruction_status.status.est_termine %}checked{% endif %}> Mark as Done
+            </label>
+        
+            <h4>Upload Report:</h4>
+            <input type="file" name="upload_file">
+            <button type="submit" class="btn-upload">Submit</button>
+        </form>
+
+        {% if instruction_status.status.fichier_livrable %}
+            <p>Uploaded Report: <a href="{{ instruction_status.status.fichier_livrable.url }}" target="_blank">{{ instruction_status.status.fichier_livrable.name }}</a></p>
+        {% endif %}
+    </div>
+{% empty %}
+    <p>No instructions available for this project.</p>
+{% endfor %}
+
+
+</body>
+</html>
