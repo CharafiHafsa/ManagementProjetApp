@@ -4,7 +4,7 @@
 {% block content %}
 {% load static %}
 
-<div class="card card-body py-3" style="margin-bottom: 20px;">
+<div class="card card-body py-3" style="margin-bottom: 20px; background: transparent; box-shadow: none;">
   <div class="row align-items-center">
     {% load static %}  <!-- Charger les fichiers statiques -->
 
@@ -14,11 +14,12 @@
         <div class="card">
             <div class="position-relative">
                 <a href="javascript:void(0)">
-                    <img src="{% static 'MatDash Bootstrap Admin_files/blog-img3.jpg' %}" class="card-img-top" alt="matdash-img">
+                    <img src="{% static 'MatDash Bootstrap Admin_files/blog-img1.jpg' %}" class="card-img-top" alt="matdash-img">
                 </a>
                 <span class="badge text-bg-light text-dark fs-2 lh-sm mb-9 me-9 py-1 px-2 fw-semibold position-absolute bottom-0 end-0" style="visibility: hidden;">Nouveau projet</span>
              
-                <img src="{{ classe.professeur.photo_profil.url }}" 
+                <img src="{{ classe.professeur.photo_profil.url }}"
+                     style="height: 60px; width: 60px;" 
                      alt="matdash-img" 
                      class="img-pofile-class img-fluid rounded-circle position-absolute bottom-0 start-0 mb-n9 ms-9" 
                      width="40" height="40" 
@@ -33,7 +34,7 @@
                 </span>
                 
                
-                <a class="d-block my-4 fs-5 text-dark fw-semibold link-primary" href="">
+                <a id="classe_link" class="d-block my-4 fs-5 text-dark fw-semibold link-primary" href="{% url 'projets' classe.code_classe %}">
                     {{ classe.nom_classe }}
                 </a>
                 

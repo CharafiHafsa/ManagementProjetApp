@@ -8,6 +8,8 @@ from .models import Taches
 from .models import Calendrier
 from .models import Event
 from .models import Message
+from .models import Document
+from .models import Notification
 
 admin.site.register(Classe)
 admin.site.register(Etudiant)
@@ -18,3 +20,5 @@ admin.site.register(Taches)
 admin.site.register(Calendrier)
 admin.site.register(Event)
 admin.site.register(Message)
+admin.site.register(Document)
+admin.site.register(Notification)

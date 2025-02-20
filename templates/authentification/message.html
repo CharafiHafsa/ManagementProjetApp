@@ -129,7 +129,7 @@
         {% elif message == 'Login successful! Welcome to the platform' %}
         <h1>Welcome</h1>
         <p class="message">Login successful! Welcome to the platform.</p>
-        <a href="{% url 'chat' %}" class="btn">chat</a>
+        <a href="{% url 'todo_home' %}" class="btn">Welcome</a>
 
         {% elif message ==  "Please enter a valid email. Professors should use '@enset-media.ac.ma' and students should use '-etu@etu.univh2c.ma'" %}
         <h1>Invalid Email Format</h1>
@@ -154,7 +154,16 @@
         <h1>Password incorrect</h1>
         <p class="message">>Passwords do not match.</p>
         <a href="{% url 'update_password' %}" class="btn">Back</a>
-        
+        {% elif message == 'Échec de la vérification'%}
+        <h1>Échec</h1>
+        <p class="message">Échec de la vérification.</p>
+        {% elif message == 'Vérification réussie'%}
+        <h1>Reussie</h1>
+        <p class="message">Vérification réussie.</p>
+        <a href="{% url 'todo_home' %}" class="btn">Welcome</a>
+        {% elif message == "Le compte n'est pas activé"%}
+        <h1>Erreur</h1>
+        <p class="message">Le compte n'est pas activé.</p>
         {% endif %}
     </div>
 </body>

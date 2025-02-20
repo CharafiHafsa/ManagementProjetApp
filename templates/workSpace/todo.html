@@ -81,26 +81,39 @@
                   <p class="mb-0">{{ tache.deadline|date:"Y-m-d" }}</p>
               </td>
               <td>
-                  <div class="d-flex status align-items-center">
-                    <span class="text-bg-{% if tache.status == 'En cours' %}danger{% else %}success{% endif %} p-1 rounded-circle"></span>
-                      <p class="mb-0 ms-2">{{ tache.status }}</p>
+                <div style="display: flex; justify-content: start;">
+                  <div class="d-flex status_date align-items-center">
+                    {% if tache.deadline|date:"Y-m-d" == today %}
+                      <span class="text-bg-warning p-1 rounded-circle" style="width: 3px; height: 3px;"></span>
+                      <p class="mb-0 ms-2">Aujourd'hui</p>
+                    {% elif tache.deadline|date:"Y-m-d" > today  %}
+                      <span class="text-bg-success p-1 rounded-circle" style="width: 3px; height: 3px;"></span>
+                      <p class="mb-0 ms-2">À venir</p>
+                    {% else %}
+                      <span class="text-bg-danger p-1 rounded-circle" style="width: 3px; height: 3px;"></span>
+                      <p class="mb-0 ms-2">Dépassée</p>
+                    {% endif %}
                   </div>
+                  <span class="status" style="visibility: hidden; display: none;">
+                    <p >{{ tache.status }}</p>
+                  </span>
+                </div>
+                
               </td>
               <td>
                   {{ tache.description_tache }}
               </td>
               <td>
+                
+
                 <div style="display: flex; align-items: center">
-                  <form method="POST" action="{% url 'todo_ws' %}"> 
-                    {% csrf_token %}
-                    <input type="hidden" name="id_tache" value="{{ tache.id }}">
-                    <button  style="border: none; background-color: transparent;" class="fs-6 text-muted delete-task"  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Supprimer" name="delete">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                          <path fill="currentColor" d="M9.878 4.25a2.251 2.251 0 0 1 4.244 0a.75.75 0 1 0 1.415-.5a3.751 3.751 0 0 0-7.073 0a.75.75 0 1 0 1.414.5M2.75 6a.75.75 0 0 1 .75-.75h17a.75.75 0 0 1 0 1.5h-17A.75.75 0 0 1 2.75 6m2.367 1.752a.75.75 0 0 1 .798.698l.46 6.9c.09 1.347.154 2.285.294 2.99c.137.685.327 1.047.6 1.303c.274.256.648.422 1.34.512c.714.093 1.654.095 3.004.095h.774c1.35 0 2.29-.002 3.004-.095c.692-.09 1.066-.256 1.34-.512c.273-.256.463-.618.6-1.303c.14-.705.204-1.643.294-2.99l.46-6.9a.75.75 0 1 1 1.497.1l-.464 6.952c-.085 1.282-.154 2.318-.316 3.132c-.169.845-.455 1.551-1.047 2.104s-1.315.793-2.17.904c-.822.108-1.86.108-3.145.108h-.88c-1.285 0-2.323 0-3.145-.108c-.855-.111-1.579-.35-2.17-.904c-.592-.553-.878-1.26-1.047-2.104c-.162-.814-.23-1.85-.316-3.132L4.418 8.55a.75.75 0 0 1 .699-.798"/>
-                      </svg>
-                    </button>
-                    <input type="hidden" id="id-hidd" name="id_tache" value="{{ tache.id }}">
-                  </form>
+                  <input type="hidden" id="id_tache" value="{{ tache.id }}">
+                  <button  style="border: none; background-color: transparent;" class="fs-6 text-muted delete-task"  data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" id="btn-delete">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                      <path fill="currentColor" d="M9.878 4.25a2.251 2.251 0 0 1 4.244 0a.75.75 0 1 0 1.415-.5a3.751 3.751 0 0 0-7.073 0a.75.75 0 1 0 1.414.5M2.75 6a.75.75 0 0 1 .75-.75h17a.75.75 0 0 1 0 1.5h-17A.75.75 0 0 1 2.75 6m2.367 1.752a.75.75 0 0 1 .798.698l.46 6.9c.09 1.347.154 2.285.294 2.99c.137.685.327 1.047.6 1.303c.274.256.648.422 1.34.512c.714.093 1.654.095 3.004.095h.774c1.35 0 2.29-.002 3.004-.095c.692-.09 1.066-.256 1.34-.512c.273-.256.463-.618.6-1.303c.14-.705.204-1.643.294-2.99l.46-6.9a.75.75 0 1 1 1.497.1l-.464 6.952c-.085 1.282-.154 2.318-.316 3.132c-.169.845-.455 1.551-1.047 2.104s-1.315.793-2.17.904c-.822.108-1.86.108-3.145.108h-.88c-1.285 0-2.323 0-3.145-.108c-.855-.111-1.579-.35-2.17-.904c-.592-.553-.878-1.26-1.047-2.104c-.162-.814-.23-1.85-.316-3.132L4.418 8.55a.75.75 0 0 1 .699-.798"/>
+                    </svg>
+                  </button>
+                  <input type="hidden" id="id-hidd" name="id_tache" value="{{ tache.id }}">
                   <a class="fs-6 text-muted edit-task" href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Editer">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M7 12a2 2 0 1 1-4 0a2 2 0 0 1 4 0m7 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0m7 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0"/></svg>
                   </a>
@@ -114,8 +127,43 @@
   </div>
 
 
+<!-- MODAL SUPPRIMER -->
 
-<!-- MODAL -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">Confirmation</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+          </div>
+          <div class="modal-body">
+              Êtes-vous sûr de vouloir supprimer cette tache ?
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+              <form method="POST" action="{% url 'todo_home' %}">
+                {% csrf_token %}
+                <input type="hidden" name="id_tache" id="id_tache_mod">
+                <input type="submit" class="btn btn-danger" id="confirmDeleteBtn"  name="delete" value="Supprimer">
+              </form>
+          </div>
+      </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById("btn-delete").addEventListener("click", function() {
+      id_etu = document.getElementById('id_tache').value
+      document.getElementById('id_tache_mod').value = id_etu
+  });
+  document.getElementById("confirmDeleteBtn").addEventListener("click", function() {
+      var modal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+      modal.hide();
+  });
+</script>
+
+
+<!-- MODAL EDIT -->
 
 <div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -291,9 +339,14 @@
             <p class="mb-0">${date}</p>
           </td>
           <td>
-            <div class="d-flex status align-items-center">
-              <span class="text-bg-danger p-1 rounded-circle"></span>
-              <p class="mb-0 ms-2">En cours</p>
+            <div style="display: flex; justify-content: start;">
+              <div class="d-flex status_date align-items-center">
+                <span class="text-bg-${dws} p-1 rounded-circle" style="width: 3px; height: 3px;"></span>
+                <p class="mb-0 ms-2">${date_status}</p>
+              </div>
+              <span class="status" style="visibility: hidden; display: none;">
+                  <p >En cours</p>
+              </span>
             </div>
           </td>
           <td>
@@ -363,7 +416,7 @@
         var row = document.querySelector("table tbody").rows[index - 1];
         row.cells[1].textContent = name;
         row.cells[2].textContent = date;
-        // row.cells[3].innerHTML = <span class="text-bg-success p-1 rounded-circle"></span> <span>${status}</span>;
+        // row.cells[3].innerHTML = <span class="text-bg-success p-1 rounded-circle" style="width: 3px; height: 3px;"></span> <span>${status}</span>;
         row.cells[4].textContent = description;
     }
 

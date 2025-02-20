@@ -8,6 +8,7 @@
     <div class="row align-items-center">
       <div class="col-12">
         <div class="d-sm-flex align-items-center justify-space-between">
+            
           <h4 class="mb-4 mb-sm-0 card-title">Documents de groupe</h4>
           <nav aria-label="breadcrumb" class="ms-auto">
             <ol class="breadcrumb">
@@ -25,28 +26,36 @@
     </div>
 </div>
 
-    <div class="row">
+    <div class="row" id="documents-container">
 
-        {% for groupe in groupes %}
+        {% for d in doc %}
 
             <div class="col-md-4 d-flex align-items-stretch">
                 <div class="card w-100">
                 <div class="card-body">
                     <div class="form-group">
-                    <center><h4 class="">{{groupe.nom_groupe}}</h4></center>
+
+                    <!-- Bouton Menu 3 points -->
+                    <div class="dropdown position-absolute top-0 end-0 m-2">
+                        <button class="three-points-menu" type="button" id="dropdownMenuButton{{ d.id }}" data-bs-toggle="dropdown" aria-expanded="false" style="background: transparent;">
+                            <iconify-icon icon="solar:menu-dots-bold" class="fs-6"></iconify-icon>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ d.id }}">
+                            <li><button class="dropdown-item text-danger"  data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" id="btn-delete">Supprimer</button></li>
+                        </ul>
+                    </div>
+
+                    <div class="card-photo-container">
+                        <img src="{% static 'img/doc-photo.png' %}" class="card-photo-center" alt="rien !">
+                    </div>
                     
-                    <p class="card-subtitle mb-3">
-                        {% if groupe.projet.nom_project %}
-                        <b>Projet : </b>{{groupe.projet.nom_project}}
-                        <br>
-                        <b>Classes : </b>{{ groupe.projet.code_classe.nom_classe }}
-                        {% endif %}
-                    </p>
-                    <form method="post">
+                        
+                    
+                    <h4 style="font-size: 17px;">{{d.title}}</h4>
+                    <form method="POST" action="{% url 'ouvrir_doc' %}">
                         {% csrf_token %}
-                
-                        <a type="submit" href="{% url 'ws_reception' groupe_id=groupe.id  %}" value="Ouvrir" name="ouvrir" class="btn d-block w-100 fw-medium bg-info-subtle text-info without-msg ouvrir_groupe">Ouvrir</a>
-                        <!-- <input type="hidden" value="{{ groupe.id }}" name="groupe_id"> -->
+                        <input type="hidden" name="file_path" value="{{d.file.url}}">
+                        <input type="submit"  value="Consulter le document" name="ouvrir" class="btn d-block w-100 fw-medium bg-primary-subtle text-primary without-msg ouvrir_groupe">
                     </form>
                     </div>
                 </div>
@@ -55,9 +64,32 @@
         {% endfor %}
         
     </div>
-   
-    <!-- Modal -->
 
+    <!-- MODAL Supprimer -->
+
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    Êtes-vous sûr de vouloir supprimer ce document ?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <form method="POST"> 
+                      {% csrf_token %}
+                      <input type="hidden" name="" id="">
+                      <input type="submit" class="btn btn-danger" id="confirmDeleteBtn"  name="delete" value="Supprimer">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+    <!-- Modal Ajouter-->
     <div id="primary-header-modal" class="modal fade" tabindex="-1" aria-labelledby="primary-header-modalLabel" style="display: none;" aria-hidden="true" style="z-index: 200;">
         <div class="modal-dialog modal-dialog-scrollable modal-lg" style="z-index: 200;">
         <div class="modal-content">
@@ -69,10 +101,11 @@
                 aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="taskForm">
+                <form id="taskForm" enctype="multipart/form-data">
+                    {% csrf_token %}
                     <div class="mb-3">
                       <label for="imageInput" class="form-label">Document</label>
-                      <input type="file" class="form-control" id="imageInput" accept="*" onchange="previewImage(event)">
+                      <input type="file" class="form-control" id="imageInput" name="file" accept="*">
                     </div>
                 </form>
             </div>
@@ -80,7 +113,7 @@
             <button type="button" class="btn btn-light" data-bs-dismiss="modal">
                 Fermer
             </button>
-            <button type="button" class="btn bg-primary-subtle text-primary ">
+            <button type="button" class="btn bg-primary-subtle text-primary " id="upload-btn">
                 Ajouter
             </button>
             </div>
@@ -88,5 +121,80 @@
         <!-- /.modal-content -->
         </div>
     </div>
+  
+    
+    <script>
+                document.getElementById("upload-btn").addEventListener("click", function () {
+                let fileInput = document.getElementById("imageInput");
+                let file = fileInput.files[0];
+
+                if (!file) {
+                    alert("Veuillez sélectionner un fichier !");
+                    return;
+                }
+
+                let formData = new FormData();
+                formData.append("file", file);
+
+                fetch("{% url 'documents' %}", {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        "X-CSRFToken": getCookie("csrftoken")
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Fichier ajouté avec succès !");
+                        let modal = bootstrap.Modal.getInstance(document.querySelector('.modal'));
+                        modal.hide();
+                        fileInput.value = "";
+                        let docContainer = document.getElementById("documents-container");
+                        let newCard = document.createElement("div");
+                        newCard.className = "col-md-4 d-flex align-items-stretch";
+                        newCard.innerHTML = `
+                            <div class="card w-100">
+                                <div class="card-body">
+                                    <h4 class="">${file.name}</h4>
+                                    <form method="POST" action="{% url 'ouvrir_doc' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="file_path" value="${data.file_url}">
+                                        <input type="submit" value="Ouvrir" class="btn d-block w-100 fw-medium bg-primary-subtle text-primary">
+                                    </form>
+                                </div>
+                            </div>
+                        `;
+                        docContainer.prepend(newCard);
+                    } else {
+                        alert("Erreur : " + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error("Erreur réseau :", error);
+                    alert("Une erreur s'est produite !");
+                });
+            });
+
+            function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            let cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                let cookie = cookies[i].trim();
+                if (cookie.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+        
+
+    </script>       
+        
+        
 
 {% endblock content %}

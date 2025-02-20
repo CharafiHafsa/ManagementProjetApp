@@ -21,6 +21,16 @@
         document.addEventListener("DOMContentLoaded", function () {
             const emailInput = document.getElementById("emailInput");
             const emailList = document.getElementById("emailList");
+            const emailsHidden = document.getElementById("emailsHidden"); // Champ caché
+            //   mettre à jour le champ caché emailsHidden avec la liste des emails ajoutés.
+            function updateHiddenInput() {
+                let emails = [];
+                document.querySelectorAll("#emailList .badge").forEach(span => {
+                    emails.push(span.textContent.trim());
+                });
+                emailsHidden.value = emails.join(",");
+            }
+
 
             function addEmail() {
                 const email = emailInput.value.trim();
@@ -29,6 +39,7 @@
                     emailItem.className = "badge bg-primary m-1 p-2";
                     emailItem.innerHTML = `${email} <button type="button" class="btn-close btn-close-white ms-2" onclick="this.parentElement.remove()"></button>`;
                     emailList.appendChild(emailItem);
+                    updateHiddenInput();  // Mettre à jour le champ caché
                     emailInput.value = "";
                 } else {
                     alert("Veuillez entrer un email valide.");
@@ -158,7 +169,7 @@
                           <li class="mini-nav-item" id="mini-5">
                             <a href="{% url 'notifications' %}" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
                               data-bs-placement="right" data-bs-title="Notifications">
-                              <iconify-icon icon="solar:bell-line-duotone" class="fs-7"></iconify-icon>
+                              <iconify-icon icon="solar:bell-line-duotone" class="fs-7" id="icon_notification" style=""></iconify-icon>
                             </a>
                           </li>
                           <!-- --------------------------------------------------------------------------------------------------------- -->
@@ -208,8 +219,8 @@
                           <!-- Logout -->
                           <!-- --------------------------------------------------------------------------------------------------------- -->
                           <li class="mini-nav-item" id="mini-10">
-                            <a href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
-                              data-bs-placement="right" data-bs-title="Se déconnecter">
+                            <a href="{% url 'logout' %}" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
+                               data-bs-placement="right" data-bs-title="Se déconnecter">
                               <iconify-icon icon="solar:logout-2-outline" class="fs-7"></iconify-icon>
                             </a>
                           </li>
@@ -251,7 +262,7 @@
               <!-- ---------------------------------- -->
               <!-- Accueil -->
               <!-- ---------------------------------- -->
-              <nav class="sidebar-nav scroll-sidebar" id="menu-right-mini-1" data-simplebar="init">
+              <nav class="sidebar-nav scroll-sidebar make_it_red" id="menu-right-mini-1" data-simplebar="init">
                 <div class="simplebar-wrapper" style="margin: 0px -20px -24px;">
                   <div class="simplebar-height-auto-observer-wrapper">
                     <div class="simplebar-height-auto-observer"></div>
@@ -654,6 +665,16 @@
   
     // Récupérer l'URL actuelle
     const currentURL = window.location.href;
+
+    
+    // cette fonction elimine le margine pour la pages des projets
+    function selectionnerClasse() {
+        // Ajouter la classe 'selected' à l'élément avec l'ID 'mini-4'
+        document.getElementById("mini-4").classList.add('selected');
+
+        // Appeler la fonction imposerMarginLeftZero
+        imposerMarginLeftZero();
+    }
   
     // Fonction pour marquer l'élément actif
     function markActiveLink() {
@@ -670,9 +691,14 @@
         }
       });
 
+      if (window.location.href.includes('etu/projets/')){
+        selectionnerClasse()
+      }
+
       imposerMarginLeftZero();
-      
+    
     }
+
   
     // Exécuter la fonction après que la page a été chargée
     window.addEventListener('DOMContentLoaded', markActiveLink);
@@ -741,45 +767,51 @@
   <script>
     document.addEventListener("DOMContentLoaded", function () {
         let selectedStudents = [];
-
+  
         document.querySelectorAll(".student-item").forEach(item => {
             item.addEventListener("click", function () {
-                const studentId = this.getAttribute("data-id");
-                const studentName = this.getAttribute("data-name");
+              const studentId = this.getAttribute("data-id");
+                const studentNom = this.getAttribute("data-nom");
+                const studentPrenom = this.getAttribute("data-prenom");
                 const studentEmail = this.getAttribute("data-email");
                 const studentImg = this.getAttribute("data-img");
-
+  
                 // Vérifier si l'étudiant est déjà sélectionné
+                console.log(selectedStudents)
                 const existingIndex = selectedStudents.findIndex(s => s.id === studentId);
-
+  
                 if (existingIndex === -1) {
                     // Ajouter l'étudiant
-                    selectedStudents.push({ id: studentId, name: studentName, email: studentEmail, img: studentImg });
+                    selectedStudents.push({ id: studentId, nom: studentNom, prenom: studentPrenom, email: studentEmail, img: studentImg });
                 } else {
                     // Retirer l'étudiant s'il est déjà sélectionné
                     selectedStudents.splice(existingIndex, 1);
                 }
-
+  
                 updateSelectedStudents();
+                document.getElementById('inp-hidd-sel-stu').value = getStudentIdsString(selectedStudents)
             });
         });
-
+  
         function updateSelectedStudents() {
             const selectedContainer = document.getElementById("selectedStudents");
             selectedContainer.innerHTML = selectedStudents.map(student => `
                 <span class="selected-badge" style="margin-right: 20px">
-                    <img src="${student.img}" alt="Photo" class="rounded-circle me-2" style="height: 40px"> ${student.name}
+                    <img src="${student.img}" alt="Photo" class="rounded-circle me-2" width="40" height="40"> ${student.nom} ${student.prenom}
                 </span>
             `).join("");
-
+  
             // Mettre à jour le texte du bouton
             const dropdownButton = document.getElementById("dropdownMenuButton");
             dropdownButton.textContent = selectedStudents.length > 0 
-                ? `Sélectionné(s) : ${selectedStudents.length}` 
+                ? `Sélectionné(s) : ${selectedStudents.length}`
                 : "Sélectionner des étudiants";
         }
+        function getStudentIdsString(selectedStudents) {
+            return selectedStudents.map(s => s.id).join("-");
+        }
     });
-  </script>
+  </script>  
 
   <!-- sous-menu de WorkSpace -->
    <script>
@@ -824,6 +856,7 @@
         
       })
     </script>
+
 
 </body>
 

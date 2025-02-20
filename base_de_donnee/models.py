@@ -36,13 +36,16 @@ class Etudiant(models.Model):
     nom = models.CharField(max_length=255, null=False)
     prenom = models.CharField(max_length=255, null=False)
     last_login = models.DateTimeField(null=True, blank=True) 
+    is_verified = models.BooleanField(default=False)
     objects = EtudiantManager()
-    projets = models.ManyToManyField('Project', related_name="etudiants", null=True, blank=True)
-    classes = models.ManyToManyField('Classe', related_name="etudiants", null=True, blank=True)
-    groupes = models.ManyToManyField('Groupe', related_name="membres", null=True, blank=True)
+    projets = models.ManyToManyField('Project', related_name="etudiants", blank=True)
+    classes = models.ManyToManyField('Classe', related_name="etudiants",  blank=True)
+    groupes = models.ManyToManyField('Groupe', related_name="membres",  blank=True)
     
     def str(self):
         return f"{self.nom} {self.prenom}"
+    def get_email_field_name(self):
+        return 'email_etudiant'
 
 class Professeur(models.Model):
     departement = models.CharField(max_length=255, null=False)
@@ -52,12 +55,15 @@ class Professeur(models.Model):
     password = models.CharField(max_length=255, null=False)
     nom = models.CharField(max_length=255, null=False)
     prenom = models.CharField(max_length=255, null=False)
-    last_login = models.DateTimeField(null=True, blank=True) 
+    last_login = models.DateTimeField(null=True, blank=True)
+    is_verified = models.BooleanField(default=False) 
     objects = ProfesseurManager()
     
     
     def str(self):
         return f"{self.nom} {self.prenom}"
+    def get_email_field_name(self):
+        return 'email'
 
 class Classe(models.Model):
     code_classe = models.CharField(max_length=255, primary_key=True)
@@ -144,3 +150,14 @@ class Message(models.Model):
     etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE, related_name="messages")
     contenu = models.TextField()
     date_envoi = models.DateTimeField(auto_now_add=True)
+
+class Document(models.Model):
+    title = models.CharField(max_length=200)
+    file = models.FileField(upload_to='documents/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    groupe = models.ForeignKey(Groupe,on_delete=models.CASCADE, related_name='documents')
+
+class Notification(models.Model):
+    etudiant = models.ForeignKey(Etudiant,  on_delete=models.CASCADE, related_name='notifications' )
+    groupe = models.ForeignKey( Groupe,  on_delete=models.CASCADE, related_name='notifications')
+

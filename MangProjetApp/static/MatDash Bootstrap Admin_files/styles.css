@@ -29949,6 +29949,9 @@ fieldset:disabled .btn {
 }
 
 .rounded-circle {
+    width: 35px;
+    height: 35px;
+    object-fit: cover;
     border-radius: 50% !important
 }
 
@@ -38839,6 +38842,8 @@ body {
 .body-wrapper .container-xxl {
     padding: 30px
 }
+
+
 
 @media (max-width:1300px) {
     .topbar {
@@ -51868,3 +51873,26 @@ h6 {
     margin-left: 80px !important;
 }
 
+.make_it_red{
+    color: rgb(252, 114, 114) !important;
+}
+
+.card-photo-center{
+    width: 40%;
+    height: 40%;
+}
+
+.card-photo-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
+
+.three-points-menu{
+    border: none;
+    transition: all 0.25s;
+}
+.three-points-menu:hover{
+    color: #6610f2;
+}

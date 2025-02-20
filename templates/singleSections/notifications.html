@@ -9,7 +9,7 @@
         <h4 class="card-title">Notifications</h4>
         </div>
         <ul class="feeds ps-0">
-        <div class="feed-item mb-2 py-2 pe-3 ps-4">
+        <!-- <div class="feed-item mb-2 py-2 pe-3 ps-4">
             <div class="border-start border-2 border-info d-md-flex align-items-center disp-x">
                 <div class="d-flex align-items-center gap-6 ms-2">
                     <a href="javascript:void(0)" class=" round-40 bg-info-subtle text-info rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
@@ -25,7 +25,6 @@
                     ms-5 ms-md-auto
                     ps-4 ps-md-0
                     ">
-                    <span class="fs-2 text-muted">22:00 - 23 jan 2024</span>
                 </div>
                 <div class="btn-notif-x">
                     <button type="button" class="btn mb-1 btn-danger rounded-circle round-40 btn-sm d-inline-flex align-items-center justify-content-center" style="margin-left: 20px;">
@@ -33,82 +32,78 @@
                     </button>
                 </div>
             </div>
-        </div>
-        <div class="feed-item mb-2 py-2 pe-3 ps-4">
-            <div class="border-start border-2 border-success d-md-flex align-items-center disp-x">
-            <div class="d-flex align-items-center gap-6 ms-2">
-                <a href="javascript:void(0)" class=" round-40 bg-success-subtle text-success rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
-                    <iconify-icon icon="solar:users-group-rounded-broken" class="fs-7"></iconify-icon>
-                </a>
-                <div class="text-truncate">
-                <span class="text-dark fw-medium">Invitation pour rejoindre le groupe X.</span>
+        </div> -->
+        {% for notification in notifications %}
+            <div class="feed-item mb-2 py-2 pe-3 ps-4">
+                <div class="border-start border-2 border-success d-md-flex align-items-center disp-x">
+                    <div class="d-flex align-items-center gap-6 ms-2">
+                        <a href="javascript:void(0)" class=" round-40 bg-success-subtle text-success rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
+                            <iconify-icon icon="solar:users-group-rounded-broken" class="fs-7"></iconify-icon>
+                        </a>
+                        <div class="text-truncate">
+                        <span class="text-dark fw-medium">Invitation pour rejoindre le groupe <b>{{notification.groupe.nom_groupe}}</b>.</span>
+                        </div>
+                    </div>
+                    <div class="btn-notif-x">
+                        <button type="button" class="btn mb-1 btn-danger rounded-circle round-40 btn-sm d-inline-flex align-items-center justify-content-center" style="margin-left: 20px;">
+                            <iconify-icon icon="solar:close-circle-outline" class="fs-9"></iconify-icon>
+                        </button>
+                    </div>
                 </div>
             </div>
-            <div class="
-                    justify-content-end
-                    text-truncate
-                    ms-5 ms-md-auto
-                    ps-4 ps-md-0
-                    ">
-                    <span class="fs-2 text-muted">22:00 - 23 jan 2024</span>
+        {% endfor %}
+        {% for tache in taches_proches %}
+            <div class="feed-item mb-2 py-2 pe-3 ps-4">
+                <div class="border-start border-2 border-warning d-md-flex align-items-center disp-x">
+                <div class="d-flex align-items-center gap-6 ms-2">
+                    <a href="javascript:void(0)" class=" round-40 bg-warning-subtle text-warning rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
+                        <iconify-icon icon="solar:history-2-broken" class="fs-7"></iconify-icon>
+                    </a>
+                    <div class="text-truncate">
+                    <span class="text-dark fw-medium">Le délai pour la tâche : <b>{{tache.description_tache}}</b> dans le groupe <b>{{tache.groupe}}</b> s'approche ! </span>
+                    </div>
                 </div>
-                <div class="btn-notif-x">
-                    <button type="button" class="btn mb-1 btn-danger rounded-circle round-40 btn-sm d-inline-flex align-items-center justify-content-center" style="margin-left: 20px;">
-                        <iconify-icon icon="solar:close-circle-outline" class="fs-9"></iconify-icon>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <div class="feed-item mb-2 py-2 pe-3 ps-4">
-            <div class="border-start border-2 border-warning d-md-flex align-items-center disp-x">
-            <div class="d-flex align-items-center gap-6 ms-2">
-                <a href="javascript:void(0)" class=" round-40 bg-warning-subtle text-warning rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
-                    <iconify-icon icon="solar:history-2-broken" class="fs-7"></iconify-icon>
-                </a>
-                <div class="text-truncate">
-                <span class="text-dark fw-medium">Le délai pour la tâche X dans le projet Y s'approche ! </span>
-                </div>
-            </div>
-            <div class="
-                    justify-content-end
-                    text-truncate
-                    ms-5 ms-md-auto
-                    ps-4 ps-md-0
-                    ">
-                    <span class="fs-2 text-muted">22:00 - 23 jan 2024</span>
-                </div>
-                <div class="btn-notif-x">
-                    <button type="button" class="btn mb-1 btn-danger rounded-circle round-40 btn-sm d-inline-flex align-items-center justify-content-center" style="margin-left: 20px;">
-                        <iconify-icon icon="solar:close-circle-outline" class="fs-9"></iconify-icon>
-                    </button>
+                <div class="
+                        justify-content-end
+                        text-truncate
+                        ms-5 ms-md-auto
+                        ps-4 ps-md-0
+                        ">
+                    </div>
+                    <div class="btn-notif-x">
+                        <button type="button" class="btn mb-1 btn-danger rounded-circle round-40 btn-sm d-inline-flex align-items-center justify-content-center" style="margin-left: 20px;">
+                            <iconify-icon icon="solar:close-circle-outline" class="fs-9"></iconify-icon>
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="feed-item mb-2 py-2 pe-3 ps-4">
-            <div class="border-start border-2 border-danger d-md-flex align-items-center disp-x">
-            <div class="d-flex align-items-center gap-6 ms-2">
-                <a href="javascript:void(0)" class=" round-40 bg-danger-subtle text-danger rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
-                    <iconify-icon icon="solar:alarm-turn-off-outline" class="fs-7"></iconify-icon>
-                </a>
-                <div class="text-truncate">
-                <span class="text-dark fw-medium">La date limite de la tache X du projet Y est dépassée !!</span>
+        {% endfor %}
+        {% for tache in taches_depassees %}
+            <div class="feed-item mb-2 py-2 pe-3 ps-4">
+                <div class="border-start border-2 border-danger d-md-flex align-items-center disp-x">
+                <div class="d-flex align-items-center gap-6 ms-2">
+                    <a href="javascript:void(0)" class=" round-40 bg-danger-subtle text-danger rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
+                        <iconify-icon icon="solar:alarm-turn-off-outline" class="fs-7"></iconify-icon>
+                    </a>
+                    <div class="text-truncate">
+                    <span class="text-dark fw-medium">La date limite de la tâche : <b>{{tache.description_tache}}</b> dans le groupe <b>{{tache.groupe}}</b> est dépassée !!</span>
+                    </div>
+                </div>
+                <div class="
+                        justify-content-end
+                        text-truncate
+                        ms-5 ms-md-auto
+                        ps-4 ps-md-0
+                        ">
+                    </div>
+                    <div class="btn-notif-x">
+                        <button type="button" class="btn mb-1 btn-danger rounded-circle round-40 btn-sm d-inline-flex align-items-center justify-content-center" style="margin-left: 20px;">
+                            <iconify-icon icon="solar:close-circle-outline" class="fs-9"></iconify-icon>
+                        </button>
+                    </div>
                 </div>
             </div>
-            <div class="
-                    justify-content-end
-                    text-truncate
-                    ms-5 ms-md-auto
-                    ps-4 ps-md-0
-                    ">
-                    <span class="fs-2 text-muted">22:00 - 23 jan 2024</span>
-                </div>
-                <div class="btn-notif-x">
-                    <button type="button" class="btn mb-1 btn-danger rounded-circle round-40 btn-sm d-inline-flex align-items-center justify-content-center" style="margin-left: 20px;">
-                        <iconify-icon icon="solar:close-circle-outline" class="fs-9"></iconify-icon>
-                    </button>
-                </div>
-            </div>
-        </div>
+        {% endfor %}
         <div class="feed-item mb-2 py-2 pe-3 ps-4">
             <div class="border-start border-2 border-primary d-md-flex align-items-center disp-x">
                 <div class="d-flex align-items-center gap-6 ms-2">
@@ -125,7 +120,6 @@
                     ms-5 ms-md-auto
                     ps-4 ps-md-0
                     ">
-                    <span class="fs-2 text-muted">22:00 - 23 jan 2024</span>
                 </div>
                 <div class="btn-notif-x">
                     <button type="button" class="btn mb-1 btn-danger rounded-circle round-40 btn-sm d-inline-flex align-items-center justify-content-center" style="margin-left: 20px;">
