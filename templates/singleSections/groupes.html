@@ -27,16 +27,16 @@
 
     <div class="row">
 
-        {% for groupe in groupes %}
+        {% for groupe_data in groupes_data %}
             <div class="col-md-4 d-flex align-items-stretch">
                 <div class="card w-100">
                     <div class="card-body">
                         <!-- Bouton Menu 3 points -->
                         <div class="dropdown position-absolute top-0 end-0 m-2">
-                            <button class="three-points-menu" type="button" id="dropdownMenuButton{{ groupe.id }}" data-bs-toggle="dropdown" aria-expanded="false" style="background: transparent;">
+                            <button class="three-points-menu" type="button" id="dropdownMenuButton{{ groupe_data.groupe.id }}" data-bs-toggle="dropdown" aria-expanded="false" style="background: transparent;">
                                 <iconify-icon icon="solar:menu-dots-bold" class="fs-6"></iconify-icon>
                             </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ groupe.id }}">
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ groupe_data.groupe.id }}">
                                 <li><a class="dropdown-item text-danger"  data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" id="btn-delete">Quitter</a></li>
                                 <li><a class="dropdown-item text-primary btn_modifier_grp"  data-bs-toggle="modal" data-bs-target="#primary-header-modal-modifier">Modifier</a></li>
                             </ul>
@@ -44,19 +44,25 @@
 
                         <!-- Contenu du groupe -->
                         <div class="form-group">
-                            <center><h4 class="">{{groupe.nom_groupe}}</h4></center>
+                            <!-- Ring -->
+                            <div class="col d-flex align-items-center justify-content-center">
+                                <!-- <div data-label="60%" class="css-bar mb-0 css-bar-primary css-bar-60"></div> -->
+                                <div class="progress-ring" data-progress="{{groupe_data.progression}}%"  id="ring-{{ forloop.counter }}"> </div>
+                            </div>
+                            
+                            <h4 class="">{{groupe_data.groupe.nom_groupe}}</h4>
                             
                             <p class="card-subtitle mb-3">
-                                {% if groupe.projet.nom_project %}
-                                <b>Projet : </b>{{groupe.projet.nom_project}}
+                                {% if groupe_data.groupe.projet.nom_project %}
+                                <b>Projet : </b>{{groupe_data.groupe.projet.nom_project}}
                                 <br>
-                                <b>Classes : </b>{{ groupe.projet.code_classe.nom_classe }}
+                                <b>Classes : </b>{{ groupe_data.groupe.projet.code_classe.nom_classe }}
                                 {% endif %}
                             </p>
                             <form method="post">
                                 {% csrf_token %}
                         
-                                <a type="submit" href="{% url 'ws_reception' groupe_id=groupe.id  %}" value="Ouvrir" name="ouvrir" class="btn d-block w-100 fw-medium bg-primary-subtle text-primary without-msg ouvrir_groupe">Ouvrir</a>
+                                <a type="submit" href="{% url 'ws_reception' groupe_id=groupe_data.groupe.id  %}" value="Ouvrir" name="ouvrir" class="btn d-block w-100 fw-medium bg-primary-subtle text-primary without-msg ouvrir_groupe">Ouvrir</a>
                                 <!-- <input type="hidden" value="{{ groupe.id }}" name="groupe_id"> -->
                             </form>
                         </div>
@@ -66,6 +72,26 @@
         {% endfor %}
         
     </div>
+
+     <!-- ring of progress -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Sélectionne tous les éléments progress-ring
+            let rings = document.querySelectorAll(".progress-ring");
+
+            // Parcours chaque élément individuellement
+            rings.forEach(function (ring) {
+                // Récupère le pourcentage depuis l'attribut 'data-progress'
+                let progress = ring.getAttribute("data-progress").replace("%", "");
+
+                // Applique le style spécifique à chaque ring
+                ring.style.background = `conic-gradient(#635BFF ${progress}%, #e9ecef ${progress}%)`;
+            });
+        });
+    </script>
+
+
+
 
     <!-- MODAL MODIFIER -->
               

@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+{% load static %}
+
+<div class="container-fluid">
+    <div class="row">
+       
+        <div class="col-lg-7">
+            <!-- -------------------------------------------- -->
+            <!-- Revenue Forecast -->
+            <!-- -------------------------------------------- -->
+            <div class="card">
+                <div class="card-body pb-4">
+                    <!-- head -->
+                    <div class="d-md-flex align-items-center justify-content-between mb-4">
+                        <div class="hstack align-items-center gap-3">
+                            <span
+                                class="d-flex align-items-center justify-content-center round-48 bg-primary-subtle rounded flex-shrink-0">
+                                <iconify-icon icon="solar:layers-linear" class="fs-7 text-primary"></iconify-icon>
+                            </span>
+                            <div>
+                                <h5 class="card-title">Progression</h5>
+                                <p class="card-subtitle mb-0">État des tâches</p>
+                            </div>
+                        </div>
+
+                        <div class="hstack gap-9 mt-4 mt-md-0">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="d-block flex-shrink-0 round-8 bg-primary rounded-circle"></span>
+                                <span class="text-nowrap text-muted">En cours</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="d-block flex-shrink-0 round-8 bg-danger rounded-circle"></span>
+                                <span class="text-nowrap text-muted">En retard</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="d-block flex-shrink-0 round-8 bg-secondary rounded-circle"></span>
+                                <span class="text-nowrap text-muted">Términées</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- body -->
+                    <div style="height: 285px;" class="me-n7">
+                        <div id="revenue-forecast" style="min-height: 315px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="row">
+                <div class="col-md-6">
+                    <!-- -------------------------------------------- -->
+                    <!-- Customers -->
+                    <!-- -------------------------------------------- -->
+                    <div class="card">
+                        <div class="card-body">
+                            <!-- head -->
+                            <div class="d-flex align-items-start justify-content-between">
+                                <div>
+                                    <h5 class="card-title fw-semibold">Customers</h5>
+                                    <p class="card-subtitle mb-0">Last 7 days</p>
+                                </div>
+                                <span class="fs-11 text-success fw-semibold lh-lg">+26.5%</span>
+                            </div>
+                            <!-- body -->
+                            <div class="py-4 my-1">
+                                <div id="customers-area" style="min-height: 100px;"></div>
+                            </div> 
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <!-- -------------------------------------------- -->
+                    <!-- Sales Overview -->
+                    <!-- -------------------------------------------- -->
+                    <div class="card">
+                        <div class="card-body">
+                            <!-- head -->
+                            <h5 class="card-title fw-semibold">Sales Overview</h5>
+                            <p class="card-subtitle mb-1">Last 7 days</p>
+                            <!-- body -->
+                            <div class="position-relative labels-chart">
+                                <span class="fs-11 label-1">0%</span>
+                                <span class="fs-11 label-2">25%</span>
+                                <span class="fs-11 label-3">50%</span>
+                                <span class="fs-11 label-4">75%</span>
+                                <div id="sales-overview" style="min-height: 210.75px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+      <h4 class="card-title">Répartition des tâches par projet</h4>
+        <div id="chart-bar-stacked" style="min-height: 365px;"></div>
+    </div>
+</div>
+
+
+
+
+
+
+<script src="{% static 'MatDash Bootstrap Admin_files/highlight.min.js.téléchargement' %}"></script>
+<script>
+    hljs.initHighlightingOnLoad();
+
+
+    document.querySelectorAll("pre.code-view > code").forEach((codeBlock) => {
+        codeBlock.textContent = codeBlock.innerHTML;
+    });
+</script>
+<script src="{% static 'MatDash Bootstrap Admin_files/apexcharts.min.js.téléchargement' %}"></script>
+<script src="{% static 'MatDash Bootstrap Admin_files/dashboard1.js' %}"></script>
+<script src="{% static 'MatDash Bootstrap Admin_files/index.global.min.js.téléchargement' %}"></script>
+<script src="{% static 'MatDash Bootstrap Admin_files/apex.bar.init.js.' %}"></script>
+
+{% endblock content %}

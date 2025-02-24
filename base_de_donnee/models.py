@@ -137,6 +137,7 @@ class Event(models.Model):
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
     category = models.CharField(max_length=50)  # Correspond à "calendar" dans tes données
+    etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE, related_name="events", null=True, blank=True)
 
     def clean(self):
         if self.end_date and self.start_date and self.end_date <= self.start_date:

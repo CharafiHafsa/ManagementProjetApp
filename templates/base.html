@@ -355,7 +355,7 @@
 
                             <li class="sidebar-item">
                               <a class="sidebar-link"
-                                href="#">
+                                href="{% url 'dashBoard_home' %}">
                                 <iconify-icon
                                   icon="solar:chart-line-duotone"><template shadowrootmode="open">
                                     <style data-style="data-style">
@@ -508,45 +508,45 @@
                             </li>
 
                             <li class="nav-small-cap">
-                              <span class="hide-menu">Éspace de Travaille</span>
+                              <span class="hide-menu ws-link">Éspace de Travaille</span>
                             </li>
                             
                             <li class="sidebar-item">
                               <a href="#"
-                                class="sidebar-link" id="ws-chat" data-url="{% url 'chat' %}">
-                                <iconify-icon icon="solar:chat-round-line-linear"></iconify-icon>
+                                class="sidebar-link ws-link" id="ws-chat" data-url="{% url 'chat' %}">
+                                <iconify-icon class="ws-link" icon="solar:chat-round-line-linear"></iconify-icon>
                                 <span class="hide-menu">Chat</span>
                               </a>
                             </li>
 
                             <li class="sidebar-item">
                               <a href="#"
-                                class="sidebar-link" id="ws-todo" data-url="{% url 'todo_ws' %}">
-                                <iconify-icon icon="solar:checklist-minimalistic-line-duotone"></iconify-icon>
+                                class="sidebar-link ws-link" id="ws-todo" data-url="{% url 'todo_ws' %}">
+                                <iconify-icon class="ws-link" icon="solar:checklist-minimalistic-line-duotone"></iconify-icon>
                                 <span class="hide-menu">To-Do liste</span>
                               </a>
                             </li>
                             
                             <li class="sidebar-item">
                               <a href="#"
-                                class="sidebar-link" id="ws-membres" data-url="{% url 'membres' %}">
-                                <iconify-icon icon="solar:users-group-two-rounded-broken"></iconify-icon>
+                                class="sidebar-link ws-link" id="ws-membres" data-url="{% url 'membres' %}">
+                                <iconify-icon class="ws-link" icon="solar:users-group-two-rounded-broken"></iconify-icon>
                                 <span class="hide-menu">Membres</span>
                               </a>
                             </li>
 
                             <li class="sidebar-item">
                               <a href="#"
-                                class="sidebar-link" id="ws-documents" data-url="{% url 'documents' %}">
-                                <iconify-icon icon="solar:folder-with-files-linear"></iconify-icon>
+                                class="sidebar-link ws-link" id="ws-documents" data-url="{% url 'documents' %}">
+                                <iconify-icon class="ws-link" icon="solar:folder-with-files-linear"></iconify-icon>
                                 <span class="hide-menu">Documents</span>
                               </a>
                             </li>
                             
                             <li class="sidebar-item">
                               <a href="#"
-                                class="sidebar-link" id="ws-chatBot" data-url="">
-                                <iconify-icon icon="solar:chat-square-call-line-duotone"></iconify-icon>
+                                class="sidebar-link ws-link" id="ws-chatBot" data-url="">
+                                <iconify-icon class="ws-link" icon="solar:chat-square-call-line-duotone"></iconify-icon>
                                 <span class="hide-menu">Chat Bot</span>
                               </a>
                             </li>
@@ -821,6 +821,19 @@
           .getElementById("menu-right-mini-3")
           .classList.add("d-block");
         document.getElementById("mini-3").classList.add("selected");
+
+        // liens non grisé
+        let liens = document.querySelectorAll(".ws-link");
+        liens.forEach(lien => {
+            lien.classList.remove("disabled-link");
+        });
+      }
+      // liens grisé
+      else{
+        let liens = document.querySelectorAll(".ws-link");
+        liens.forEach(lien => {
+            lien.classList.add("disabled-link");
+        });
       }
 
     });

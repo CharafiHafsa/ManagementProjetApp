@@ -63,7 +63,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-
   function initialiserCalendrier(calendarEventsList){
     
 

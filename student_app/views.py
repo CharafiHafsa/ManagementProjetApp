@@ -1,20 +1,23 @@
-from base_de_donnee.models import *
-from django.contrib.auth.hashers import make_password
-from django.views.decorators.csrf import csrf_protect
-from django.shortcuts import render,redirect,get_object_or_404
-from django.http import JsonResponse
-from django.http import HttpResponseRedirect, HttpResponse
-from django.core.mail import send_mail
-from django.contrib.auth import login
-from django.utils import timezone
-from datetime import date
-import uuid
-import json
-from django.conf import settings
-import os
-from django.http import FileResponse
-from django.contrib import messages
 
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode 
+from django.http import JsonResponse ,HttpResponse,FileResponse,Http404
+from django.contrib.auth.tokens import default_token_generator
+from django.shortcuts import render,redirect,get_object_or_404
+from django.contrib.sites.shortcuts import get_current_site 
+from django.utils.encoding import force_bytes, force_str
+from django.contrib.auth.hashers import make_password
+from django.core.files.storage import default_storage
+from django.views.decorators.csrf import csrf_protect
+from django.contrib.auth import login,logout
+from django.core.mail import send_mail
+from base_de_donnee.models import *
+from django.contrib import messages
+from django.utils import timezone
+from django.conf import settings
+from datetime import date
+import json
+import uuid
+import os
 
 
 
@@ -316,6 +319,40 @@ def ws_reception(request, groupe_id):
     request.session['groupe_id'] = groupe_id
     return render(request, 'workSpace/ws_reception.html', {'groupe_id':groupe_id})
 
+def dashBoard_home(request):
+    id_etudiant = request.session.get('user_id')
+    etudiant = Etudiant.objects.filter(id=id_etudiant).first()
+    return render(request, 'home/dashBoard.html')
+
+def get_taches_stats(request):
+    id_etudiant = request.session.get('user_id')
+    etudiant = Etudiant.objects.filter(id=id_etudiant).first()
+    
+    if not etudiant:
+        return JsonResponse({"error": "Utilisateur non authentifié"}, status=403)
+
+    groupes = Groupe.objects.all()
+    data = []
+
+    for groupe in groupes:
+        taches = groupe.taches.all()  # Récupère toutes les tâches du groupe
+        total_taches = taches.count()
+        taches_terminees = taches.filter(status="Terminé").count()
+        taches_en_cours = taches.filter(status="En cours").count()
+        taches_depassees = taches.filter(deadline__lt=datetime.date.today(), status="En cours").count()
+        mes_taches = taches.filter(etudiant=etudiant).count()
+
+        data.append({
+            "nom_groupe": groupe.nom_groupe,
+            "total_taches": total_taches,
+            "taches_terminees": taches_terminees,
+            "taches_en_cours": taches_en_cours,
+            "taches_depassees": taches_depassees,
+            "mes_taches": mes_taches,
+        })
+
+    return JsonResponse({"stats": data})
+
 def chat(request):
     # Récupérer l'ID du groupe depuis la session
     print("chat: ", request.session.get('groupe_id', None))
@@ -541,6 +578,17 @@ def groupes(request):
     etudiant = Etudiant.objects.filter(id=id_etudiant).first()
     groupes = etudiant.groupes.all()
 
+    groupes_data = []
+    for groupe in groupes:
+        total_taches = groupe.taches.count()
+        taches_terminees = groupe.taches.filter(status="Terminé").count()
+        progression = (taches_terminees / total_taches * 100) if total_taches > 0 else 0
+
+        groupes_data.append({
+            "groupe": groupe,
+            "progression": int(progression) 
+        })
+
     if request.method == "POST":
         nom_groupe = request.POST.get("nom_groupe")
         # Récupérer les emails sous forme de liste
@@ -565,16 +613,18 @@ def groupes(request):
     
     
     
-    return render(request, 'singleSections/groupes.html', {'groupes': groupes})
+    return render(request, 'singleSections/groupes.html', {"groupes_data": groupes_data})
     
 def calender_home(request):
     if request.method == 'POST':
+        id_etudiant = request.session.get('user_id')
+        etudiant = Etudiant.objects.filter(id=id_etudiant).first()
         if 'ajouter' in request.POST:
             title = request.POST.get('title')
             category = request.POST.get('event-level')
             start_date = request.POST.get('start_date')
             end_date = request.POST.get('end_date')
-            data = Event(title=title, category=category, start_date=start_date, end_date=end_date)
+            data = Event(title=title, category=category, start_date=start_date, end_date=end_date, etudiant=etudiant)
             data.save()
 
         elif 'modifier' in request.POST:
@@ -591,7 +641,6 @@ def calender_home(request):
     return render(request, 'home/calender.html')
 
 def projets(request, classe_id):
-    # classe_id='def'
     classe= get_object_or_404(Classe, code_classe=classe_id)
     id_etudiant = request.session.get('user_id')
     if request.method =='POST' :
@@ -599,16 +648,18 @@ def projets(request, classe_id):
             nom_groupe=request.POST.get('nom_groupe')  
 
             selectedStudents = request.POST.get('selected-students')
-            # 1. Séparer la chaîne en une liste d'IDs et les convertir en entiers
+            # 1. Créer le groupe
             student_ids = [int(id) for id in selectedStudents.split('-')]
-            # 3. Filtrer les étudiants par leurs IDs
             selected_students = Etudiant.objects.filter(id__in=student_ids)
-
             projet_id=request.POST.get('projet_id')
             projet= get_object_or_404(Project, id= projet_id)
+            groupe=Groupe.objects.create(nom_groupe=nom_groupe, projet=projet, nbr_membre=4,)
 
-            groupe=Groupe.objects.create(nom_groupe=nom_groupe, projet=projet, nbr_membre=4,) 
+            # ajouter l'etudiant qui a créer le groupe au groupe
+            etudiant = Etudiant.objects.get(id=id_etudiant)
+            groupe.membres.add(etudiant)
 
+            # Envoyer les invitations
             notifications = [
                 Notification(etudiant=etudiant, groupe=groupe) for etudiant in selected_students
             ]
@@ -616,7 +667,7 @@ def projets(request, classe_id):
 
     etudiant = Etudiant.objects.filter(id=id_etudiant).first()
          
-    etudiants =classe.etudiants.all()
+    etudiants = classe.etudiants.all()
 
     projets_associés = Project.objects.filter(groupe__membres=etudiant).distinct()
 
@@ -663,7 +714,9 @@ def profil(request):
     })
 
 def get_events(request):
-    events = Event.objects.all()
+    id_etudiant = request.session.get('user_id')
+    etudiant = Etudiant.objects.get(id=id_etudiant)
+    events = Event.objects.filter(etudiant=etudiant)
     event_list = []
 
     for event in events:

@@ -52,10 +52,10 @@
 
             <!-- Bouton Menu 3 points -->
             <div class="dropdown position-absolute top-0 end-0 m-2">
-              <button class="three-points-menu" type="button" id="dropdownMenuButton{{ groupe.id }}" data-bs-toggle="dropdown" aria-expanded="false" style="background: transparent;">
+              <button class="three-points-menu" type="button" id="dropdownMenu3Button{{ groupe.id }}" data-bs-toggle="dropdown" aria-expanded="false" style="background: transparent;">
                   <iconify-icon icon="solar:menu-dots-bold" class="fs-6"></iconify-icon>
               </button>
-              <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ groupe.id }}">
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenu3Button{{ groupe.id }}">
                   <li><a class="dropdown-item text-danger"  data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" id="btn-delete">Quitter</a></li>
                   <li><a class="dropdown-item text-primary btn_modifier_grp"  data-bs-toggle="modal" data-bs-target="#primary-header-modal-modifier">Modifier</a></li>
               </ul>
@@ -72,11 +72,8 @@
                            <h4>{{ projet.groupe_set.first.nom_groupe }}</h4>
                         </div>
                     </div>
-                    <!-- Column -->
-                    <div class="col d-flex align-items-center justify-content-center">
-                        <div data-label="60%" class="css-bar mb-0 css-bar-primary css-bar-60"></div>
-                    </div>
-                    <a href="javascript:void(0)" class="btn btn-primary" style="margin-top: 20px;">Ouvrir</a>
+                    <!-- Ring -->
+                    <a href="{% url 'ws_reception' groupe_id=projet.groupe_set.first.id  %}" class="btn btn-primary" style="margin-top: 20px;">Ouvrir</a>
                 </div>
             </div>
         </div>
@@ -85,7 +82,6 @@
     <p>Aucun projet disponible.</p>
 {% endfor %}
 
-    
   
     
 </div>
