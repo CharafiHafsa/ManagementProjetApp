@@ -6,9 +6,9 @@
     <title>Message</title>
     <style>
         :root {
-            --couleur-principale: #635bff;  /* Bleu clair */
-            --couleur-principale_claire: #cac8ff;  /* Bleu très clair */
-            --couleur-secondaire: #3f35fb;  /* Bleu foncé pour le bouton */
+            --couleur-principale: #70a1ff;  /* Bleu clair */
+            --couleur-principale_claire: #a3c9ff;  /* Bleu très clair */
+            --couleur-secondaire: #1e5c9b;  /* Bleu foncé pour le bouton */
             --couleur-fond: #ffffff;  /* Blanc pour le fond */
         }
 
@@ -96,7 +96,7 @@
             <p class="message">Passwords do not match.</p>
             <a href="{% url 'signup' %}" class="btn">Back to sign up</a>
 
-        {% elif message == 'already_connected' %}
+        {% elif message == 'This email is already taken' %}
             <h1>Erreur</h1>
             <p class="message">This email is already in use.</p>
             <a href="{% url 'signup' %}" class="btn">Back to sign up</a>
@@ -106,7 +106,7 @@
             <p class="message">Your registration was successful!</p>
             <a href="{% url 'login' %}" class="btn">Login</a>
         
-        {% elif message == "The email format is incorrect. Please use an email of the type '@enset-media.ac.ma' for professors or '-etu@etu.univh2c.ma' for students." %}
+        {% elif message == 'Invalid email format. Use "@enset-media.ac.ma" for professors or "-etu@etu.univh2c.ma" for students'%}
             <h1>Invalid Email Format</h1>
             <p class="message">The email format is incorrect. Please use an email of the type '@enset-media.ac.ma' for professors or '-etu@etu.univh2c.ma' for students.</p>
             <a href="{% url 'signup' %}" class="btn">Back to sign up</a>
@@ -125,14 +125,45 @@
         <h1>Erreur</h1>
         <p class="message">the password is incorrect.</p>
         <a href="{% url 'login' %}" class="btn">login</a>
-        {% elif message == 'Login successful! Welcome to the platform.' %}
+
+        {% elif message == 'Login successful! Welcome to the platform' %}
         <h1>Welcome</h1>
         <p class="message">Login successful! Welcome to the platform.</p>
-        <a href="{% url 'login' %}" class="btn">login</a>
+        <a href="{% url 'todo_home' %}" class="btn">Welcome</a>
+
         {% elif message ==  "Please enter a valid email. Professors should use '@enset-media.ac.ma' and students should use '-etu@etu.univh2c.ma'" %}
         <h1>Invalid Email Format</h1>
         <p class="message">Please enter a valid email. Professors should use '@enset-media.ac.ma' and students should use '-etu@etu.univh2c.ma'.</p>
         <a href="{% url 'login' %}" class="btn">login</a>
+
+        {% elif message ==  'Your password has been successfully updated' %}
+        <h1>Password updated</h1>
+        <p class="message">Your password has been successfully updated.</p>
+        <a href="{% url 'login' %}" class="btn">login</a>
+
+        {% elif message ==  'Your email has been sent successfully' %}
+        <h1>Email sent</h1>
+        <p class="message">Your email has been sent successfully.</p>
+
+        {% elif message == 'Invalid email format'%}
+            <h1>Invalid Email Format</h1>
+            <p class="message">The email format is incorrect. Please use an email of the type '@enset-media.ac.ma' for professors or '-etu@etu.univh2c.ma' for students.</p>
+            <a href="{% url 'forget_password' %}" class="btn">Back</a>
+
+        {% elif message == 'the two password is not the same'%}
+        <h1>Password incorrect</h1>
+        <p class="message">>Passwords do not match.</p>
+        <a href="{% url 'update_password' %}" class="btn">Back</a>
+        {% elif message == 'Échec de la vérification'%}
+        <h1>Échec</h1>
+        <p class="message">Échec de la vérification.</p>
+        {% elif message == 'Vérification réussie'%}
+        <h1>Reussie</h1>
+        <p class="message">Vérification réussie.</p>
+        <a href="{% url 'todo_home' %}" class="btn">Welcome</a>
+        {% elif message == "Le compte n'est pas activé"%}
+        <h1>Erreur</h1>
+        <p class="message">Le compte n'est pas activé.</p>
         {% endif %}
     </div>
 </body>

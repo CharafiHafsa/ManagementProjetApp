@@ -2,7 +2,7 @@ from django.shortcuts import render , redirect , get_object_or_404
 from django.contrib import messages
 from django.http import JsonResponse
 from base_de_donnee.models import Professeur
-from base_de_donnee.models import Classe , Etudiant , Project , Groupe, InstructionStatus, Instruction
+from base_de_donnee.models import Classe , Etudiant , Project , Groupe, InstructionStatus, Instruction , Announce, P_ressources , Groupe  
 from django.core.files.storage import FileSystemStorage
 
 
@@ -198,42 +198,53 @@ def add_project(request, class_id):
 
 
 def projet_detail(request, projet_id):
+    prof = Professeur.objects.filter(email="hafsa.charafi@enset-media.ac.ma").first()
     projet = get_object_or_404(Project, id=projet_id)
-    instructions = projet.instructions.all()  # Fetch all instructions for this project
+    
+    instructions = projet.instructions.all()
     total_groups_count = Groupe.objects.filter(projet=projet).count()
+    total_students_count = sum(groupe.nbr_membre for groupe in Groupe.objects.filter(projet=projet))
+    
+    announces = Announce.objects.filter(projet=projet).order_by("-date_publication")
+    ressources = P_ressources.objects.filter(projet=projet).order_by("-date_ajout")
+    groupes = Groupe.objects.filter(projet=projet)
     instruction_stats = []
+    completed_instructions = 0
+    
     for instruction in instructions:
-        if InstructionStatus.objects.filter(instruction=instruction).exists():
-            completed_groups_count = InstructionStatus.objects.filter(
-                instruction=instruction, est_termine=True
-            ).count()
-            pending_groups_count = total_groups_count - completed_groups_count
-            
-
-        else:
-            completed_groups_count = 0
-            pending_groups_count = total_groups_count
-
+        completed_groups_count = InstructionStatus.objects.filter(instruction=instruction, est_termine=True).count()
+        pending_groups_count = total_groups_count - completed_groups_count
+        
         instruction_stats.append({
             'instruction': instruction,
             'completed_groups': completed_groups_count,
             'pending_groups': pending_groups_count,
-            'total_groups': total_groups_count
+            'total_groups': total_groups_count,
+            'deadline': instruction.date_limite
         })
-
+        
+        if completed_groups_count == total_groups_count and total_groups_count > 0:
+            completed_instructions += 1
+    
     total_instructions = len(instruction_stats)
-    completed_instructions = sum(1 for stat in instruction_stats if stat['completed_groups'] == stat['total_groups'] and stat['total_groups']>0)
     pending_instructions = total_instructions - completed_instructions
     completion_percentage = (completed_instructions / total_instructions) * 100 if total_instructions else 0
-
+    
     return render(request, 'prof/projet.html', {
+        'professeur': prof,
         'projet': projet,
+        'total_groups': total_groups_count,
+        'total_students': total_students_count,
         'total_instructions': total_instructions,
         'instruction_stats': instruction_stats,
         'completed_instructions': completed_instructions,
         'pending_instructions': pending_instructions,
-        'completion_percentage': completion_percentage
+        'completion_percentage': completion_percentage,
+        'announces': announces,
+        'ressources': ressources,
+        'groupes' : groupes
     })
+
 
 def add_instruction(request, projet_id):
     if request.method == "POST":
@@ -251,6 +262,79 @@ def add_instruction(request, projet_id):
         return redirect('projet_detail', projet_id=projet.id)
 
     return JsonResponse({"error": "Invalid request"}, status=400)
+
+def add_announce(request, projet_id):
+    projet = get_object_or_404(Project, id=projet_id)
+
+    if request.method == 'POST' :
+        contenu = request.POST.get("contenu")
+        if contenu:
+            Announce.objects.create(projet = projet, contenu=contenu)
+            messages.success(request, "Announce ajoutee avec succes")
+        else:
+            messages.error(request, "Le contenu ne peut pas etre vide")
+    return redirect("projet_detail", projet_id= projet.id)
+
+def delete_announce(request, announce_id):
+    announce = get_object_or_404(Announce, id=announce_id)
+    projet_id = announce.projet.id
+    announce.delete()
+    messages.success(request, "Announce supprimee ave succes ")
+    return redirect("projet_detail", projet_id=projet_id)
+
+def modify_announce(request, announce_id):
+    announce = get_object_or_404(Announce, id=announce_id)
+
+    if request.method == 'POST':
+        nouveau_contentu = request.POST.get("contenu")
+        if nouveau_contentu :
+            announce.contenu = nouveau_contentu
+            announce.save()
+            messages.success(request, "Announce modifee avec succes")
+        else:
+            messages.error(request, "Le contenu ne peut pas etre vide")
+    return redirect("projet_detail", projet_id=announce.projet.id)
+
+
+
+def add_ressource(request, projet_id):
+    projet = get_object_or_404(Project, id=projet_id)
+
+    if request.method == 'POST':
+        titre = request.POST.get("titre")
+        video_url = request.POST.get("video_url", "").strip()
+        file = request.FILES.get("file")
+        url = request.POST.get("url", "").strip()
+
+        if not titre:
+            messages.error(request, "Le titre est requis.")
+            return redirect("projet_detail", projet_id=projet.id)
+
+        if not file and not video_url and not url:
+            messages.error(request, "Vous devez ajouter une ressource !")
+            return redirect("projet_detail", projet_id=projet.id)
+
+        # Create and save resource in one step
+        ressource = P_ressources.objects.create(
+            projet=projet,
+            titre=titre,
+            file=file if file else None,
+            video_url=video_url if video_url else None,
+            url=url if url else None
+        )
+
+        messages.success(request, "Ressource ajoutée avec succès.")
+        
+    return redirect("projet_detail", projet_id=projet.id)
+
+
+
+def delete_ressource(request, ressource_id):
+    ressource = get_object_or_404(P_ressources, id=ressource_id)
+    projet_id = ressource.projet.id
+    ressource.delete()
+    messages.success(request, "Ressource supprimée avec succès")
+    return redirect("projet_detail", projet_id=projet_id)
 
 
 def prof_notification(request):

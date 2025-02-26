@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.hashers import check_password
 import uuid
+from django.utils.timezone import now
 
 # Manager personnalisé pour Professeur
 class ProfesseurManager(models.Manager):
@@ -110,9 +111,14 @@ class Project(models.Model):
 class Groupe(models.Model):
     nom_groupe = models.CharField(max_length=255)
     nbr_membre = models.PositiveIntegerField()
-    projet = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="groupes")
-    
-    def _str_(self):
+    projet = models.ForeignKey(
+        Project, 
+        on_delete=models.SET_NULL,  # Permet de garder le groupe même si le projet est supprimé
+        null=True,   # Autorise NULL dans la base de données
+        blank=True   # Autorise un formulaire vide en Django admin
+    )
+
+    def str(self):
         return self.nom_groupe
 
 class Instruction(models.Model):
@@ -133,6 +139,27 @@ class InstructionStatus(models.Model):
     def __str__(self):
         return f"{self.groupe.nom_groupe} - {self.instruction.titre} ({'Done' if self.est_termine else 'Pending'})"
 
+class Announce(models.Model):
+    projet = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="annonces")
+    contenu = models.TextField()
+    date_publication = models.DateTimeField(default=now)
+
+    def __str__(self):
+        return f"Annonce for {self.projet.nom_project} - {self.date_publication.strftime('%Y-%m-%d %H:%M')}"
+
+class P_ressources(models.Model):
+    titre = models.CharField(max_length=255)
+    file = models.FileField(upload_to='resources/', null=True, blank=True)
+    video_url = models.URLField(null=True, blank=True)
+    url = models.URLField(null=True, blank=True)
+    date_ajout = models.DateTimeField(auto_now_add=True)
+    projet = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='ressources')  
+
+    def __str__(self):
+        return f"Ressource: {self.titre} ({self.projet.nom_project})"
+  
+
+
 class Taches(models.Model):
     groupe = models.ForeignKey(Groupe, on_delete=models.CASCADE, related_name="taches")
     etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE, related_name="taches")
@@ -151,6 +178,8 @@ class Taches(models.Model):
     
     def _str_(self):
         return f"{self.description_tache[:30]} - {self.status}"
+
+
 
 class Calendrier(models.Model):
     couleurs = [

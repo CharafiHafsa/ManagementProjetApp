@@ -20322,10 +20322,10 @@ strong {
   background-size: cover;
 }
 .info_card{
-  margin-bottom: 15px;
+  margin-bottom: 12px;
 }
 .btn-modal-style {
-  border-radius: 15px;
+  border-radius: 12px;
   background-color: #cac8ff;
   color: #635bff;
   transition: all 0.5s ease;
@@ -20348,11 +20348,11 @@ strong {
   filter: invert(100%) sepia(20%) saturate(200%) hue-rotate(100deg); /* Lighter hover effect */
 }
 .raduise-for-all{
-  border-radius: 15px;
+  border-radius: 12px;
 }
 
 .btn-dashboard{
-  border-radius: 15px;
+  border-radius: 12px;
   background-color: #635bff;
   color: #fff;
   transition: all 0.5s ease;
@@ -20370,7 +20370,7 @@ strong {
 }
 
 .btn-ret{
-  border-radius: 15px;
+  border-radius: 12px;
   background-color: #cac8ff;
   color: #635bff;
   transition: all 0.5s ease;
@@ -20381,7 +20381,7 @@ strong {
   color: #ffff;
 }
 .btn-form-classe{
-  border-radius: 15px;
+  border-radius: 12px;
   background-color: #635bff;
   color: #ffff;
   transition: all 0.5s ease;
@@ -20391,7 +20391,18 @@ strong {
   background-color: #cac8ff;
   color: #635bff;
 }
-
+.btn-project {
+  border-radius: 10px;
+  background-color: #cac8ff;
+  color: #635bff;
+  border: 1px solid #635bff;
+  transition: all 0.5s ease;
+}
+.btn-project:hover{
+  color: #ffff;
+  background-color: #635bff;
+  
+}
 .btn-transparent {
   background-color: transparent !important;
   border: none;
@@ -20449,3 +20460,122 @@ strong {
   transform: scale(1.5);
   border-radius: 50%;
 }
+
+.custom-warning {
+  background-color: #cac8ff;
+  border-radius: 6px;
+  color: #cac8ff;
+  transition: all 0.5s ease;
+
+}
+
+input {
+  border-radius: 8px;
+}
+
+.btn-indisplay{
+  border: none;
+  background-color: transparent;
+}
+
+.icon-normal{
+  font-size: 28px;
+  font-weight: 500;
+  color: #635bff;
+  transition: all 0.5s ease;
+}
+.icon-normal:hover{
+  color: #cac8ff;
+
+}
+
+.icon-delete{
+  color: #dc3545;
+  transition: all 0.5s ease;
+}
+.icon-delete:hover{
+  color: #f8d7da;
+
+}
+
+.btn-res{
+  background-color: #635bff;
+  color: #ffff;
+}
+.btn-res:hover{
+  background-color: #cac8ff;
+  color: #635bff;
+
+}
+.btn-group button {
+  margin-right: 10px; /* Space between buttons */
+}
+
+/* Style for selected button */
+.selected-btn {
+  background-color: #cac8ff !important;
+  border-color: #635bff !important;
+  color: #635bff !important;
+}
+
+
+    /* Circular Stats */
+.stat-circle {
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(135deg, #007bff, #00c6ff);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+      margin: auto;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .stat-label {
+      font-weight: bold;
+      margin-top: 10px;
+      font-size: 14px;
+      text-align: center;
+  }
+
+  /* Animated Circular Progress */
+  .progress-circle {
+      width: 120px;
+      height: 120px;
+      position: relative;
+      margin: auto;
+  }
+
+  .progress-circle svg {
+      transform: rotate(-90deg);
+  }
+
+  .progress-circle circle {
+      fill: none;
+      stroke-width: 8;
+      stroke-linecap: round;
+  }
+
+  .progress-bg {
+      stroke: #eee;
+  }
+
+  .progress-bar {
+      stroke: #007bff;
+      stroke-dasharray: 251;
+      stroke-dashoffset: 251;
+      transition: stroke-dashoffset 1.5s ease-in-out;
+  }
+
+  .progress-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 20px;
+      font-weight: bold;
+  }
