@@ -49,15 +49,84 @@
                 <!-- Right Side: Icons for Modals -->
                 <div>
                     <!-- Add Project Button -->
-                    <button class="btn-indisplay" data-bs-toggle="modal" data-bs-target="#ModifyProjetModal">
-                        <span class="iconify icon-normal" data-icon="solar:add-square-linear" style="font-size: 28px;"></span>
+                    <button class="btn-indisplay" data-bs-toggle="modal" data-bs-target="#editProjetModal{{ projet.id }}">
+                        <span class="iconify icon-normal" data-icon="solar:pen-linear" style="font-size: 26px;"></span>
                     </button>
             
                     <!-- Delete Project Button -->
-                    <button class="btn-indisplay" data-bs-toggle="modal" data-bs-target="#SupprimerProjetModal">
+                    <button class="btn-indisplay" data-bs-toggle="modal" data-bs-target="#deleteProjetModal{{ projet.id }}">
                         <span class="iconify icon-delete" data-icon="solar:trash-bin-2-linear" style="font-size: 28px;"></span>
                     </button>
                 </div>
+                <div class="modal fade" id="editProjetModal{{ projet.id }}" tabindex="-1" aria-labelledby="editProjetModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
+                            <div class="modal-header text-white" style="background-color: #635bff;">
+                                <h5 class="modal-title" id="editProjetModalLabel">Editer Projet : {{ projet.nom_project }}</h5>
+                                <button type="button" class="btn-close custom-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="editProjetForm" method="POST" action="{% url 'edit_projet' projet_id=projet.id %}?next={{ request.path }}">
+                                    {% csrf_token %}
+                                    <div class="mb-3">
+                                        <label for="className{{ projet.id }}" class="form-label">Nome du projet</label>
+                                        <input type="text" class="form-control" id="projetName{{ projet.id }}" name="projetName" value="{{projet.nom_project}}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="projetdesc{{ projet.id }}" class="form-label">Descreption du projet</label>
+                                        <input type="text" class="form-control" id="projetdesc{{ projet.id }}" name="projetdesc" value="{{projet.description}}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="date_debut" class="form-label" style="color: #635bff;">
+                                        <span class="iconify me-2" data-icon="solar:calendar-date-outline" style="font-size: 24px;"></span>
+                                        Date de Début
+                                        </label>
+                                        <input type="date" class="form-control raduise-for-all" id="date_debut{{ projet.id }}" name="date_debut" value="{{ projet.date_debut|date:'Y-m-d' }}">
+                                    </div>
+                            
+                                    <div class="mb-3">
+                                        <label for="date_fin" class="form-label" style="color: #635bff;">
+                                        <span class="iconify me-2" data-icon="solar:calendar-date-line-duotone" style="font-size: 24px;"></span>
+                                        Date de Fin
+                                        </label>
+                                        <input type="date" class="form-control raduise-for-all" id="date_fin{{ projet.id }}" name="date_fin" value="{{ projet.date_fin|date:'Y-m-d' }}">
+                                    </div>
+                                    <div class="text-end">
+                                        <button type="submit" class="btn btn-modal-style">modifier Projet</button>
+                                    </div>
+                                </form>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                            <!-- Bootstrap Modal for Delete a New Class -->
+            <div class="modal fade" id="deleteProjetModal{{ projet.id }}" tabindex="-1" aria-labelledby="deleteProjetModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
+                        <div class="modal-header text-white" style="background-color: #635bff;">
+                            <h5 class="modal-title" id="editClassModalLabel">Supprimer classe : {{ classe.nom_classe }}</h5>
+                            <button type="button" class="btn-close custom-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Êtes-vous sûr de vouloir supprimer cette classe ? La suppression du projet entraînera également la suppression de toutes les données associées (étudiants, projets, etc.).</p>
+                            
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-modal-style" data-bs-dismiss="modal">Annuler</button>
+                            
+                            <!-- Form to submit delete request -->
+                            <form method="POST" action="{% url 'delete_projet' projet_id=projet.id %}?next={{ request.path }}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Oui, Supprimer</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
             </div>
             
             <div class="container mt-4">
@@ -89,9 +158,10 @@
                     <span class="iconify me-2" data-icon="mdi:chart-line"></span> Project Statistics
                 </h5>
 
-                <div class="row">
+                <!-- Flexbox Container for Statistics -->
+                <div class="d-flex justify-content-center align-items-center gap-5 flex-wrap">
                     <!-- Total Groups -->
-                    <div class="col-6 mb-4">
+                    <div class="stat-container">
                         <div class="stat-circle">
                             <span class="count" data-target="{{ total_groups }}">0</span>
                         </div>
@@ -99,39 +169,21 @@
                     </div>
 
                     <!-- Total Students -->
-                    <div class="col-6 mb-4">
+                    <div class="stat-container">
                         <div class="stat-circle">
                             <span class="count" data-target="{{ total_students }}">0</span>
                         </div>
                         <p class="stat-label">Total Students</p>
                     </div>
-                </div>
 
-                <div class="row mt-4">
-                    <!-- Total Instructions -->
-                    <div class="col-6 mb-4">
-                        <div class="stat-circle">
-                            <span class="count" data-target="{{ total_instructions }}">0</span>
-                        </div>
-                        <p class="stat-label">Total Instructions</p>
-                    </div>
-
-                    <!-- Completed Instructions -->
-                    <div class="col-6 mb-4">
-                        <div class="stat-circle">
-                            <span class="count" data-target="{{ completed_instructions }}">0</span> / {{ total_instructions }}
-                        </div>
-                        <p class="stat-label">Completed Instructions</p>
-                    </div>
-                </div>
-
-                <!-- Completion Percentage with Circular Progress -->
-                <div class="row mt-4">
-                    <div class="col-12">
+                    <!-- Completion Percentage (Centered) -->
+                    <div class="stat-container order-3">
                         <div class="progress-circle">
                             <svg viewBox="0 0 100 100">
                                 <circle class="progress-bg" cx="50" cy="50" r="40"></circle>
-                                <circle class="progress-bar" cx="50" cy="50" r="40" style="stroke-dashoffset: calc(251 - ({{ completion_percentage }} * 2.51))"></circle>
+                                <circle class="progress-bar" cx="50" cy="50" r="40" 
+                                    style="stroke-dashoffset: calc(251 - ({{ completion_percentage }} * 2.51))">
+                                </circle>
                             </svg>
                             <div class="progress-text">
                                 <span class="count" data-target="{{ completion_percentage }}">0</span>%
@@ -139,38 +191,69 @@
                         </div>
                         <p class="stat-label">Completion Percentage</p>
                     </div>
+
+                    <!-- Total Instructions -->
+                    <div class="stat-container">
+                        <div class="stat-circle">
+                            <span class="count" data-target="{{ total_instructions }}">0</span>
+                        </div>
+                        <p class="stat-label">Total Instructions</p>
+                    </div>
+
+                    <!-- Completed Instructions -->
+                    <div class="stat-container">
+                        <div class="stat-circle">
+                            <span class="count" data-target="{{ completed_instructions }}">0</span> / {{ total_instructions }}
+                        </div>
+                        <p class="stat-label">Completed Instructions</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
+
             
                 <!-- Charts Section -->
-                <div class="row mt-4">
-                    <!-- Instruction Progress Chart -->
-                    <div class="col-md-6 mb-4">
-                        <div class="card shadow-sm border-light rounded p-3">
-                            <div class="card-body">
-                                <h5 class="card-title text-primary">
-                                    <span class="iconify me-2" data-icon="mdi:chart-bar"></span> Instruction Progress
-                                </h5>
-                                <div id="instructionChart" style="width: 100%; height: 400px;"></div>
-                            </div>
-                        </div>
-                    </div>
-            
-                    <!-- Group Completion Pie Chart -->
-                    <div class="col-md-6 mb-4">
-                        <div class="card shadow-sm border-light rounded p-3">
-                            <div class="card-body">
-                                <h5 class="card-title text-primary">
-                                    <span class="iconify me-2" data-icon="mdi:chart-pie"></span> Group Participation
-                                </h5>
-                                <div id="groupChart" style="width: 100%; height: 400px;"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<div class="row mt-4">
+    <!-- Instruction Progress Chart -->
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm border-light rounded p-3 h-100">
+            <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                <h5 class="card-title text-primary text-center">
+                    <span class="iconify me-2" data-icon="mdi:chart-bar"></span> Instruction Progress
+                </h5>
+                <div id="instructionChart" class="chart-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Group Completion Pie Chart -->
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm border-light rounded p-3 h-100">
+            <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                <h5 class="card-title text-primary text-center">
+                    <span class="iconify me-2" data-icon="mdi:chart-pie"></span> Group Participation
+                </h5>
+                <div id="groupChart" class="chart-container"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CSS Styling -->
+<style>
+    .chart-container {
+        width: 100%;
+        height: 400px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
+
             
                 <!-- Instruction Details -->
                 <div class="row mt-4">
@@ -254,7 +337,7 @@
                     var options = {
                         title: 'Instruction Completion Status',
                         chartArea: {width: '80%'},
-                        colors: ['#4CAF50', '#FF5733'],
+                        colors: ['#635bff', '#aca8ff'],  // Updated colors
                         legend: { position: 'top', alignment: 'center' },
                         hAxis: {
                             title: 'Instructions',
@@ -280,13 +363,14 @@
                     var options = {
                         title: 'Overall Group Progress',
                         pieHole: 0.4,
-                        colors: ['#4CAF50', '#FF5733']
+                        colors: ['#635bff', '#aca8ff']  // Updated colors
                     };
             
                     var chart = new google.visualization.PieChart(document.getElementById('groupChart'));
                     chart.draw(data, options);
                 }
             </script>
+            
             
         
 

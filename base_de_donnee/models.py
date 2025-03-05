@@ -2,13 +2,15 @@ from django.db import models
 from django.contrib.auth.hashers import check_password
 import uuid
 from django.utils.timezone import now
+import datetime
+
 
 # Manager personnalisé pour Professeur
 class ProfesseurManager(models.Manager):
     def authenticate(self, email, password):
         try:
-            professeur = self.get(EMAIL=email)  
-            if check_password(password, professeur.PASSWORD):  
+            professeur = self.get(email=email)  
+            if check_password(password,professeur.password):  
                 return professeur
             else:
                 return 'incorrect_password'
@@ -19,58 +21,51 @@ class ProfesseurManager(models.Manager):
 class EtudiantManager(models.Manager):
     def authenticate(self, email, password):
         try:
-            etudiant = self.get(EMAIL_ETUDIANT=email)  
-            if check_password(password, etudiant.PASSWORD):  
+            etudiant = self.get(email_etudiant=email)  
+            if check_password(password,etudiant.password):  
                 return etudiant
             else:
                 return 'incorrect_password'
         except Etudiant.DoesNotExist:
             return None
 
-from django.contrib.auth.models import AbstractUser
-
 class Etudiant(models.Model):
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
-    email = models.EmailField(unique=True, null=True, blank=True)
-
-    password = models.CharField(max_length=255)  # Store hashed passwords
-    filiere = models.CharField(max_length=255)
-    departement = models.CharField(max_length=255)
-    projets = models.ManyToManyField('Project', related_name="etudiants")
-    classes = models.ManyToManyField('Classe', related_name="etudiants")
-    groupes = models.ManyToManyField('Groupe', related_name="membres")
-
-    def __str__(self):
-        return f"{self.last_name} {self.first_name}"
-
-    def set_password(self, raw_password):
-        """Hashes and sets the password"""
-        self.password = make_password(raw_password)
-
-    def check_password(self, raw_password):
-        """Checks if the provided password is correct"""
-        return check_password(raw_password, self.password)
-
+    filiere = models.CharField(max_length=255, null=False)
+    photo_profil = models.ImageField(upload_to='images/', default='images/profile.jpeg')
+    departement = models.CharField(max_length=255, null=False)
+    email_etudiant = models.EmailField(null=False)
+    password = models.CharField(max_length=255, null=False)
+    nom = models.CharField(max_length=255, null=False)
+    prenom = models.CharField(max_length=255, null=False)
+    last_login = models.DateTimeField(null=True, blank=True) 
+    is_verified = models.BooleanField(default=False)
+    objects = EtudiantManager()
+    projets = models.ManyToManyField('Project', related_name="etudiants", blank=True)
+    classes = models.ManyToManyField('Classe', related_name="etudiants",  blank=True)
+    groupes = models.ManyToManyField('Groupe', related_name="membres",  blank=True)
+    
+    def str(self):
+        return f"{self.nom} {self.prenom}"
+    def get_email_field_name(self):
+        return 'email_etudiant'
 
 class Professeur(models.Model):
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
-    email = models.EmailField(unique=True)
-    password = models.CharField(max_length=255)
-    departement = models.CharField(max_length=255)
-    specialite = models.CharField(max_length=255)
-
-    def __str__(self):
-        return f"{self.last_name} {self.first_name}"
-
-    def set_password(self, raw_password):
-        """Hashes and sets the password"""
-        self.password = make_password(raw_password)
-
-    def check_password(self, raw_password):
-        """Checks if the provided password is correct"""
-        return check_password(raw_password, self.password)
+    departement = models.CharField(max_length=255, null=False)
+    photo_profil = models.ImageField(upload_to='images/', default='images/profile.jpeg')
+    specialite = models.CharField(max_length=255, null=False)
+    email = models.EmailField(null=False)
+    password = models.CharField(max_length=255, null=False)
+    nom = models.CharField(max_length=255, null=False)
+    prenom = models.CharField(max_length=255, null=False)
+    last_login = models.DateTimeField(null=True, blank=True)
+    is_verified = models.BooleanField(default=False) 
+    objects = ProfesseurManager()
+    
+    
+    def str(self):
+        return f"{self.nom} {self.prenom}"
+    def get_email_field_name(self):
+        return 'email'
 
 class Classe(models.Model):
     code_classe = models.CharField(max_length=255, unique=True)
@@ -168,7 +163,7 @@ class Taches(models.Model):
         ('En cours', 'En cours'),
         ('Terminé', 'Terminé'),
     ]
-    status = models.CharField(max_length=25, choices=status_choices)
+    status = models.CharField(max_length=25, choices=status_choices, default='En cours')
     deadline = models.DateField(null=False, blank=False)
 
     class Meta:
@@ -176,10 +171,8 @@ class Taches(models.Model):
         verbose_name_plural = "Tâches"
 
     
-    def _str_(self):
+    def str(self):
         return f"{self.description_tache[:30]} - {self.status}"
-
-
 
 class Calendrier(models.Model):
     couleurs = [
@@ -193,3 +186,33 @@ class Calendrier(models.Model):
     date_debut = models.DateField(null=True)
     date_fin = models.DateField(null=True)
     status = models.CharField(max_length=10, choices=couleurs)
+
+class Event(models.Model):
+    title = models.CharField(max_length=255)
+    start_date = models.DateField()
+    end_date = models.DateField(null=True, blank=True)
+    category = models.CharField(max_length=50)  # Correspond à "calendar" dans tes données
+    etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE, related_name="events", null=True, blank=True)
+
+    def clean(self):
+        if self.end_date and self.start_date and self.end_date <= self.start_date:
+            raise ValidationError({'end_date': "La date de fin doit être postérieure à la date de début."})
+
+    def __str__(self):
+        return self.title
+
+class Message(models.Model):
+    groupe = models.ForeignKey(Groupe, on_delete=models.CASCADE, related_name="messages")
+    etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE, related_name="messages")
+    contenu = models.TextField()
+    date_envoi = models.DateTimeField(auto_now_add=True)
+
+class Document(models.Model):
+    title = models.CharField(max_length=200)
+    file = models.FileField(upload_to='documents/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    groupe = models.ForeignKey(Groupe,on_delete=models.CASCADE, related_name='documents')
+
+class Notification(models.Model):
+    etudiant = models.ForeignKey(Etudiant,  on_delete=models.CASCADE, related_name='notifications' )
+    groupe = models.ForeignKey( Groupe,  on_delete=models.CASCADE, related_name='notifications')

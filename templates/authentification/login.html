@@ -11,6 +11,7 @@
   <body>
     <!----------------------- Main Container -------------------------->
     <div class="container d-flex justify-content-center align-items-center min-vh-100">
+        
         <!----------------------- Login Container -------------------------->
            <div class="row border rounded-5 p-3 bg-white shadow box-area">
         <!--------------------------- Left Box ----------------------------->
@@ -29,7 +30,17 @@
                          <h2>Hello, Again</h2>
                          <p>We are happy to have you back.</p>
                     </div>
-
+                    {% if messages %}
+                    <div class="container mt-3">
+                        {% for message in messages %}
+                        <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% elif message.tags == 'warning' %}alert-warning{% endif %} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
                     <!-- Form to handle login -->
                     <form method="POST" action="{% url 'login' %}">
                         {% csrf_token %}

@@ -130,6 +130,11 @@
         <h1>Welcome</h1>
         <p class="message">Login successful! Welcome to the platform.</p>
         <a href="{% url 'todo_home' %}" class="btn">Welcome</a>
+        
+        {% elif message == 'Login successful! Welcome Professeur' %}
+        <h1>Welcome</h1>
+        <p class="message">Login successful! Welcome to the platform.</p>
+        <a href="{% url 'prof_accueil' %}" class="btn">Welcome</a>
 
         {% elif message ==  "Please enter a valid email. Professors should use '@enset-media.ac.ma' and students should use '-etu@etu.univh2c.ma'" %}
         <h1>Invalid Email Format</h1>

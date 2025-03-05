@@ -2,9 +2,41 @@ from django.shortcuts import render , redirect , get_object_or_404
 from django.contrib import messages
 from django.http import JsonResponse
 from base_de_donnee.models import Professeur
-from base_de_donnee.models import Classe , Etudiant , Project , Groupe, InstructionStatus, Instruction , Announce, P_ressources , Groupe  
+from base_de_donnee.models import *
 from django.core.files.storage import FileSystemStorage
+import requests
+import google.generativeai as genai
+import markdown
 
+genai.configure(api_key="AIzaSyBNRe5yW4uRQNmjg1GcEZEpiXuPysY7xrQ")
+
+def chat_view(request):
+    if request.method == 'POST':
+        user_message = request.POST.get('message', '')
+
+        # Gestion des questions sur la date
+        if "date" in user_message or "today" in user_message:
+            today_date = datetime.datetime.today().strftime("%A, %d %B %Y")
+            return JsonResponse({'response': f"Today's date is {today_date}."})
+
+        model = genai.GenerativeModel("gemini-2.0-flash")
+        chat = model.start_chat()
+
+        # Demander des réponses plus courtes
+        response = chat.send_message(
+            f"{user_message} (Réponds courts de manière claire et précise.)",
+            generation_config={
+                "max_output_tokens": 300,    # Limite la taille de la réponse
+                "temperature": 0.7,         # Contrôle la créativité (0 = précis, 1 = aléatoire)
+                "top_p": 0.9,               # Fait varier légèrement les réponses
+                "top_k": 40                 # Sélectionne les meilleurs tokens pour plus de diversité
+            }
+        )
+
+        formatted_response = markdown.markdown(response.text) 
+        return JsonResponse({'response': formatted_response})
+
+    return render(request, 'prof/chat.html')
 
 def update_instruction_status(request, project_id, groupe_id):
     project = get_object_or_404(Project, id=project_id)
@@ -196,6 +228,39 @@ def add_project(request, class_id):
 
     return render(request, 'prof/classe.html', {'classe': classe})
 
+def edit_projet(request, projet_id):
+    projet = get_object_or_404(Project, id=projet_id)
+
+    if request.method == "POST" :
+        nom_project = request.POST.get('projetName')
+        description =request.POST.get('projetdesc')
+        date_debut = request.POST.get('date_debut')
+        date_fin = request.POST.get('date_fin')
+
+        if nom_project or description or date_debut or date_fin :
+            projet.nom_project = nom_project
+            projet.description = description
+            projet.date_debut = date_debut
+            projet.date_fin = date_fin
+            projet.save()
+            messages.success(request, "Project updated successfully!")
+        else:
+            messages.error(request, "Please fill all fields.")
+
+    next_url = request.GET.get("next","projet_detail")
+    return redirect(next_url)
+
+def delete_projet(request, projet_id):
+    projet =get_object_or_404(Project, id = projet_id)
+
+    if request.method == "POST" :
+        projet.delete()
+        messages.success(request, "projet and all related data is deleted successfully!")
+
+
+        return redirect('classe_detail', class_id = projet.code_classe_id)
+
+    return redirect('classe_detail', class_id = projet.code_classe_id)
 
 def projet_detail(request, projet_id):
     prof = Professeur.objects.filter(email="hafsa.charafi@enset-media.ac.ma").first()

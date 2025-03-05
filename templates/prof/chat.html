@@ -1,0 +1,169 @@
+{% extends 'prof/index.html' %} 
+{% load static %}
+{% block content %} 
+<style>
+    .chat-container {
+        width: 100%;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+    .chat-box {
+        height: 430px;
+        overflow-y: auto;
+        border: none;
+        padding: 10px;
+        border-radius: 5px;
+        background: #fff;
+    }
+    .user-message, .bot-message {
+    padding: 8px;
+    margin: 5px 0;
+    border-radius: 10px;
+    color: white;
+    width: fit-content;
+    max-width: 70%;
+}
+
+/* Aligner le message utilisateur à droite */
+.user-message {
+    background-color: #653bff;
+    margin-left: auto;  /* Décale le message vers la droite */
+    text-align: left;
+    border-top-right-radius: 0;
+}
+
+/* Aligner le message du bot à gauche */
+.bot-message {
+    background-color: #cac8ff;
+    color: #653bff;
+    margin-right: auto; /* Décale le message vers la gauche */
+    text-align: left;
+    border-top-left-radius: 0;
+}
+
+    input, button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+    }
+    .btn-primary{
+        background-color: #653bff;
+    }
+    .btn-primary:hover{
+        background-color: #cac8ff;
+        border-color: #653bff;
+        color: #653bff;
+        border-radius: 8px;
+    }
+
+    .typing-indicator {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin: 5px 0;
+    padding: 8px;
+    background-color: #cac8ff;
+    color: #653bff;
+    border-radius: 10px;
+    width: fit-content;
+    max-width: 70%;
+    text-align: left;
+    border-top-left-radius: 0;
+}
+
+.typing-indicator span {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: #653bff;
+    border-radius: 50%;
+    animation: typing 1.5s infinite ease-in-out;
+}
+
+.typing-indicator span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typing {
+    0% { opacity: 0.3; transform: translateY(0px); }
+    50% { opacity: 1; transform: translateY(-3px); }
+    100% { opacity: 0.3; transform: translateY(0px); }
+}
+
+</style>
+<div class="chat-container">
+    <h2>Chatbot</h2>
+    <hr>
+    <div class="chat-box" id="chat-box">
+        <!-- Messages will be appended here -->
+    </div>
+    <div class="row g-2">
+        <div class="col">
+            <input type="text" id="user-input" placeholder="Type your message..." class="form-control">
+        </div>
+        <div class="col-auto">
+            <button onclick="sendMessage()" class="btn btn-primary">Send</button>
+        </div>
+    </div>
+    
+    
+</div>
+
+<script>
+function sendMessage() {
+    let userInput = document.getElementById("user-input").value;
+    let chatBox = document.getElementById("chat-box");
+
+    if (userInput.trim() === "") return;
+
+    // Ajouter le message de l'utilisateur
+    let userMessage = document.createElement("div");
+    userMessage.className = "user-message";
+    userMessage.textContent = userInput;
+    chatBox.appendChild(userMessage);
+
+    // Ajouter l'animation des trois points
+    let typingIndicator = document.createElement("div");
+    typingIndicator.className = "typing-indicator";
+    typingIndicator.innerHTML = "<span></span><span></span><span></span>";
+    chatBox.appendChild(typingIndicator);
+
+    // Scroller vers le bas pour voir le dernier message
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    // Envoyer le message au backend
+    fetch("{% url 'chat' %}", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "X-CSRFToken": "{{ csrf_token }}"
+    },
+    body: "message=" + encodeURIComponent(userInput)
+})
+.then(response => response.json())
+.then(data => {
+    chatBox.removeChild(typingIndicator);
+
+    let botMessage = document.createElement("div");
+    botMessage.className = "bot-message";
+    botMessage.innerHTML = data.response;  // 🔥 Permet d'afficher du HTML formaté !
+    chatBox.appendChild(botMessage);
+
+    chatBox.scrollTop = chatBox.scrollHeight;
+});
+
+    // Effacer l'input de l'utilisateur
+    document.getElementById("user-input").value = "";
+}
+
+</script>
+
+{% endblock content %}

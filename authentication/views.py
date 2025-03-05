@@ -1,8 +1,24 @@
-from django.shortcuts import render,redirect
-from django.contrib.auth import login
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode 
+from django.http import JsonResponse ,HttpResponse,FileResponse,Http404
+from django.contrib.auth.tokens import default_token_generator
+from django.shortcuts import render,redirect,get_object_or_404
+from django.contrib.sites.shortcuts import get_current_site 
+from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.hashers import make_password
+from django.core.files.storage import default_storage
+from django.views.decorators.csrf import csrf_protect
+from django.contrib.auth import login,logout
+from django.core.mail import send_mail
+from base_de_donnee.models import *
+from django.contrib import messages
 from django.utils import timezone
-from base_de_donnee.models import Etudiant,Professeur
+from django.conf import settings
+from datetime import date
+import json
+import uuid
+import os
+
+
 
 def login_view(request):
     if request.method == 'POST':
@@ -11,13 +27,17 @@ def login_view(request):
         remember_me = request.POST.get('remember_me')
 
         if email.endswith('@enset-media.ac.ma'):
-                professeur = Professeur.objects.authenticate(email=email, password=password)
-                if professeur is  None:
-                    return render(request, 'authentification/message.html', {'message': 'the professor is not exist'})
-                elif professeur == 'incorrect_password':
-                    return render(request, 'authentification/message.html', {'message': 'the password is incorrect'})
-                else:
+            professeur = Professeur.objects.authenticate(email=email, password=password)
+
+            if professeur is None:
+                messages.error(request, 'The professor does not exist.')
+            elif professeur == 'incorrect_password':
+                messages.error(request, 'The password is incorrect.')
+            else:
+                if professeur.is_verified:
                     login(request, professeur)
+                    request.session['user_type'] = 'professeur'
+                    request.session['user_id'] = professeur.id  
 
                     if remember_me:  
                         request.session.set_expiry(None)  
@@ -27,21 +47,23 @@ def login_view(request):
                     professeur.last_login = timezone.now()  
                     professeur.save()
 
-                    print("connecté en tant que professeur")
-                    return render(request, 'authentification/message.html', {'message': 'Login successful! Welcome to the platform.'})
-                    
+                    messages.success(request, 'Login successful! Welcome Professeur.')
+                    return redirect('dashboard')  # Redirect to a dashboard page
+                else:
+                    messages.warning(request, 'Your account is not activated.')
 
         elif email.endswith('-etu@etu.univh2c.ma'):
-                etudiant = Etudiant.objects.authenticate(email=email, password=password)
-                
-                if etudiant is None:
-                    return render(request, 'authentification/message.html', {'message': 'the student is not exist'})
-                
-                elif etudiant == 'incorrect_password':
-                    return render(request, 'authentification/message.html', {'message': 'the password is incorrect'})
-                
-                else:
+            etudiant = Etudiant.objects.authenticate(email=email, password=password)
+
+            if etudiant is None:
+                messages.error(request, 'The student does not exist.')
+            elif etudiant == 'incorrect_password':
+                messages.error(request, 'The password is incorrect.')
+            else:
+                if etudiant.is_verified:
                     login(request, etudiant)
+                    request.session['user_type'] = 'etudiant'
+                    request.session['user_id'] = etudiant.id  
 
                     if remember_me:  
                         request.session.set_expiry(None)  
@@ -50,16 +72,40 @@ def login_view(request):
                     
                     etudiant.last_login = timezone.now()  
                     etudiant.save()
-                    return render(request, 'authentification/message.html', {'message': 'Login successful! Welcome to the platform.'})
-                
+
+                    messages.success(request, 'Login successful! Welcome to the platform.')
+                    return redirect('dashboard')
+                else:
+                    messages.warning(request, 'Your account is not activated.')
         else:
-            return render(request, 'authentification/message.html', {'message': "Please enter a valid email. Professors should use '@enset-media.ac.ma' and students should use '-etu@etu.univh2c.ma'"})
+            messages.error(request, "Please enter a valid email. Professors should use '@enset-media.ac.ma' and students should use '-etu@etu.univh2c.ma'.")
+
+        return redirect('login')  # Redirect back to login page
+
     return render(request, 'authentification/login.html')
 
 
 def signup_view(request):
+    user = None
+    id_utilisateur = request.GET.get('uid')
+    token = request.GET.get('token')
+
+    if id_utilisateur and token:
+        try:
+            id = force_str(urlsafe_base64_decode(id_utilisateur))
+            user = Professeur.objects.filter(pk=id).first() or Etudiant.objects.filter(pk=id).first()
+        except (TypeError, ValueError, OverflowError):
+            user = None
+
+        if user is not None and default_token_generator.check_token(user, token):
+            user.is_verified = True
+            user.save()
+            return render(request, 'authentification/message.html', {'message': 'Vérification réussie'})
+        else:
+            return render(request, 'authentification/message.html', {'message': 'Échec de la vérification'})
+
+    
     if request.method == 'POST':
-        # Récupérer les données du formulaire
         nom = request.POST.get('nom')
         prenom = request.POST.get('prenom')
         filiere = request.POST.get('filiere')
@@ -68,42 +114,201 @@ def signup_view(request):
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
 
-        # Vérifier si les mots de passe correspondent
+        # Vérifier les mots de passe
         if password != confirm_password:
-            return render(request, 'authentification/message.html', {'message': 'The passwords do not match'})
-        
-        # Vérifier si l'email est déjà pris
-        if Professeur.objects.filter(EMAIL=email).exists() or Etudiant.objects.filter(EMAIL_ETUDIANT=email).exists():
+            return render(request, 'authentification/message.html', {'message': 'the password is not the same'})
+
+        # Vérifier si l'email existe déjà
+        if Professeur.objects.filter(email=email, is_verified=True).exists() or Etudiant.objects.filter(email_etudiant=email, is_verified=True).exists():
             return render(request, 'authentification/message.html', {'message': 'This email is already taken'})
 
-        # Sauvegarder l'utilisateur
+        current_site = get_current_site(request)
+
+        # Enregistrement des Professeurs
         if email.endswith('@enset-media.ac.ma'):
             professeur = Professeur(
-                DEPARTEMENT=departement,
-                SPECIALITE=departement,
-                EMAIL=email,
-                PASSWORD=make_password(password),
-                NOM=nom,
-                PRENOM=prenom,
-                last_login=None  # Le champ peut être laissé à None lors de l'inscription
+                departement=departement,
+                specialite=departement,
+                email=email,
+                password=make_password(password),
+                nom=nom,
+                prenom=prenom,
+                last_login=None,
+                is_verified=False
             )
             professeur.save()
-            # return render(request, 'authentification/message.html', {'message': 'Welcome Professor!'})
-            return redirect('prof_accueil')
 
+            uid = urlsafe_base64_encode(force_bytes(professeur.pk))
+            token = default_token_generator.make_token(professeur)
+            verification_link = f"http://{current_site.domain}/signup/?uid={uid}&token={token}"
+
+            html_message = f"""
+                <html>
+                    <body>
+                        <h1>Confirmez votre e-mail</h1>
+                        <p>Pour confirmer votre compte, cliquez sur le bouton ci-dessous :</p>
+                        <a href="{verification_link}">
+                            <button style="padding: 10px 15px; font-size: 16px; color: white; background-color: #007BFF; border-radius: 5px; border: none; cursor: pointer;">
+                                Confirmer mon compte
+                            </button>
+                        </a>
+                    </body>
+                </html>
+            """
+
+            send_mail(
+                "Confirmez votre compte",
+                "",
+                "najibimane093@gmail.com",
+                [email],
+                fail_silently=False,
+                html_message=html_message,
+            )
+
+        # Enregistrement des Étudiants
         elif email.endswith('-etu@etu.univh2c.ma'):
             etudiant = Etudiant(
-                FILIERE=filiere,
-                EMAIL_ETUDIANT=email,
-                PASSWORD=make_password(password),
-                NOM=nom,
-                PRENOM=prenom,
-                DEPARTEMENT=departement,
-                last_login=None  # Le champ peut être laissé à None lors de l'inscription
+                filiere=filiere,
+                email_etudiant=email,
+                password=make_password(password),
+                nom=nom,
+                prenom=prenom,
+                departement=departement,
+                last_login=None,
+                is_verified=False
             )
             etudiant.save()
-            return render(request, 'authentification/message.html', {'message': 'Welcome Student!'})
+
+            uid = urlsafe_base64_encode(force_bytes(etudiant.pk))
+            token = default_token_generator.make_token(etudiant)
+            verification_link = f"http://{current_site.domain}/signup/?uid={uid}&token={token}"
+
+            html_message = f"""
+                <html>
+                    <body>
+                        <h1>Confirmez votre e-mail</h1>
+                        <p>Pour confirmer votre compte, cliquez sur le bouton ci-dessous :</p>
+                        <a href="{verification_link}">
+                            <button style="padding: 10px 15px; font-size: 16px; color: white; background-color: #007BFF; border-radius: 5px; border: none; cursor: pointer;">
+                                Confirmer mon compte
+                            </button>
+                        </a>
+                    </body>
+                </html>
+            """
+
+            send_mail(
+                "Confirmez votre compte",
+                "",
+                "najibimane093@gmail.com",
+                [email],
+                fail_silently=False,
+                html_message=html_message,
+            )
+            return render(request, 'authentification/message.html', {'message': 'Your email has been sent successfully'})
         else:
-            return render(request, 'authentification/message.html', {'message': 'Invalid email format. Use "@enset-media.ac.ma" for professors or "-etu@etu.univh2c.ma" for students.'})
+            return render(request, 'authentification/message.html', {'message': 'Invalid email format. Use "@enset-media.ac.ma" for professors or "-etu@etu.univh2c.ma" for students'})
 
     return render(request, 'authentification/signup.html')
+
+def forget_password(request):
+    if request.method == 'POST':
+        email = request.POST.get('email_forgot')
+        
+        request.session['reset_email'] = email
+
+        reset_link = f"http://127.0.0.1:8000/update_password/?id={uuid.uuid4()}"
+
+        if email.endswith('-etu@etu.univh2c.ma'):
+            etudiant = Etudiant.objects.filter(EMAIL_ETUDIANT=email).first()
+            if etudiant is not None:
+
+                html_message = f"""
+                                    <html>
+                                        <body>
+                                            <h1>Réinitialisation du mot de passe</h1>
+                                            <p>We received a request to reset your password. If you made this request, please click the button below to reset your password:</p>
+                                            <a href="{reset_link}">
+                                                <button type="button" style="padding: 10px 15px; font-size: 16px; color: white; background-color: #007BFF; border-radius: 5px; border: none; cursor: pointer;">
+                                                    Réinitialiser le mot de passe
+                                                </button>
+                                            </a>
+                                        </body>
+                                    </html>
+                                """
+
+                send_mail(
+                    "Update password",
+                    "",  
+                    "votre_email@gmail.com",
+                    [email],
+                    fail_silently=False,
+                    html_message=html_message,
+                )
+                return render(request, 'authentification/message.html', {'message': 'Your email has been sent successfully'})
+            else:
+                return render(request, 'authentification/message.html', {'message': 'the student is not exist'})
+
+        elif email.endswith('@enset-media.ac.ma'):
+            professeur = Professeur.objects.filter(EMAIL=email).first()
+            if professeur is not None:
+                html_message = f"""
+                        <html>
+                            <body>
+                                <h1>Réinitialisation du mot de passe</h1>
+                                <p>We received a request to reset your password. If you made this request, please click the button below to reset your password:</p>
+                                <a href="{reset_link}">
+                                    <button type="button" style="padding: 10px 15px; font-size: 16px; color: white; background-color: #007BFF; border-radius: 5px; border: none; cursor: pointer;">
+                                        Réinitialiser le mot de passe
+                                    </button>
+                                </a>
+                            </body>
+                        </html>
+                    """
+                send_mail(
+                    "Update password",
+                    "",  
+                    "votre_email@gmail.com",
+                    [email],
+                    fail_silently=False,
+                    html_message=html_message,
+                )
+                return render(request, 'authentification/message.html', {'message': 'Your email has been sent successfully'})
+            else:
+                return render(request, 'authentification/message.html', {'message': 'the professor is not exist'})
+
+        else:
+            return render(request, 'authentification/message.html', {'message': 'Invalid email format'})
+
+    return render(request, 'authentification/forget_password.html')
+
+def update_password(request):
+    email = request.session.get('reset_email')
+
+    if request.method == 'POST':
+        newpassword = request.POST.get('new_password')
+        confirmed_new_password = request.POST.get('confirmed_new_password')
+
+        if newpassword != confirmed_new_password:
+            return render(request, 'authentification/message.html', {'message': 'the two password is not the same'})
+        
+        
+        if email.endswith('-etu@etu.univh2c.ma'):
+             etudiant = Etudiant.objects.filter(EMAIL_ETUDIANT=email).first()
+             etudiant.PASSWORD = make_password(newpassword)
+             etudiant.save()
+             return render(request, 'authentification/message.html', {'message': 'Your password has been successfully updated'})
+        elif email.endswith('@enset-media.ac.ma'):
+            professeur = Professeur.objects.filter(EMAIL=email).first()
+            professeur.PASSWORD = make_password(newpassword)
+            professeur.save()
+            return render(request, 'authentification/message.html', {'message': 'Your password has been successfully updated'})
+
+
+         
+    return render(request, 'authentification/update_password.html')
+
+def logout_user(request):
+    request.session.flush()
+    logout(request)
+    return redirect('login')

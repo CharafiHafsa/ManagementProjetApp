@@ -190,7 +190,7 @@
                                 <span class="ms-2 d-none d-lg-inline-block">
                                     <span>Salut,</span> 
                                     {% if professor %}
-                                    <span class="text-dark">{{professor.first_name}} {{professor.last_name}}</span> 
+                                    <span class="text-dark">{{professor.prenom}} {{professor.nom}}</span> 
                                     {% endif %}
                                     <i data-feather="chevron-down" class="svg-icon"></i>
                                 </span>
@@ -252,7 +252,7 @@
                             </a>
                         </li>
                         <li class="sidebar-item"> 
-                            <a class="sidebar-link sidebar-link" href="app-chat.html" aria-expanded="false" data-bs-toggle="tooltip" data-bs-placement="right" title="Chat">
+                            <a class="sidebar-link sidebar-link" href="{% url 'chat' %}" aria-expanded="false" data-bs-toggle="tooltip" data-bs-placement="right" title="Chat">
                                 <div class="icon-text">
                                     <span class="iconify" data-icon="solar:chat-dots-linear" style="font-size: 25px;"></span>
                                     <!-- <span class="hide-menu">Chat</span> -->
@@ -359,6 +359,22 @@
     <!-- ============================================================== -->
     <!-- All Jquery -->
     <!-- ============================================================== -->
+    <script>
+        // Wait for the page to load
+        document.addEventListener("DOMContentLoaded", function () {
+            // Select all alert messages
+            let alerts = document.querySelectorAll(".fade-message");
+      
+            alerts.forEach(function(alert) {
+                // Set timeout to remove alert after 3 seconds (3000ms)
+                setTimeout(function () {
+                    alert.style.transition = "opacity 0.5s";
+                    alert.style.opacity = "0";
+                    setTimeout(() => alert.remove(), 500); // Remove from DOM after fade-out
+                }, 3000);
+            });
+        });
+      </script>
     <script src="{% static 'css/prof/assets/libs/jquery/dist/jquery.min.js' %}"></script>
     
     <script src="{% static 'css/prof/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>

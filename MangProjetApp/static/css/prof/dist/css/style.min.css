@@ -20412,10 +20412,10 @@ strong {
 }
 
 
-.card-project:hover {
+/* .card-project:hover {
   transform: translateY(-5px);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
+} */
 
 
 .tooltip {
@@ -20523,7 +20523,7 @@ input {
 .stat-circle {
       width: 100px;
       height: 100px;
-      background: linear-gradient(135deg, #007bff, #00c6ff);
+      background: linear-gradient(135deg, #cac8ff, #635bff);
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -20565,7 +20565,7 @@ input {
   }
 
   .progress-bar {
-      stroke: #007bff;
+      stroke: #635bff;
       stroke-dasharray: 251;
       stroke-dashoffset: 251;
       transition: stroke-dashoffset 1.5s ease-in-out;
@@ -20579,3 +20579,48 @@ input {
       font-size: 20px;
       font-weight: bold;
   }
+  .stat-container {
+        text-align: center;
+        min-width: 120px;
+    }
+
+    .progress-circle {
+        width: 120px;
+        height: 120px;
+        position: relative;
+    }
+
+    .progress-circle svg {
+        transform: rotate(-90deg);
+    }
+
+    .progress-circle circle {
+        fill: none;
+        stroke-width: 8;
+        stroke-linecap: round;
+    }
+
+    .progress-bg {
+        stroke: #eee;
+    }
+
+    .progress-bar {
+        stroke: #635bff;
+        stroke-dasharray: 251;
+        stroke-dashoffset: 251;
+        transition: stroke-dashoffset 1.5s ease-in-out;
+    }
+
+    .progress-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+.stat-container {
+  text-align: center;
+  min-width: 120px;
+}

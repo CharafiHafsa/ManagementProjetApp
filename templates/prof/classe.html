@@ -150,14 +150,90 @@
                                         <div class="card card-project shadow-sm border-light raduise-for-all position-relative">
                                             <!-- Menu Icon for Edit/Delete -->
                                             <div class="position-absolute top-0 end-0 p-2">
-                                                <span class="menu-icon" data-bs-toggle="dropdown" aria-expanded="false">
-                                                    <span class="iconify" data-icon="solar:menu-dots-square-linear"></span>
-                                                </span>
-                                                <ul class="dropdown-menu raduise-for-all">
-                                                    <li><a class="dropdown-item" href="#">Edit</a></li>
-                                                    <li><a class="dropdown-item" href="#">Delete</a></li>
-                                                </ul>
+                                                <div class="dropdown">
+                                                    <span class="iconify menu-icon dropdown-toggle" data-icon="solar:menu-dots-square-linear" data-bs-toggle="dropdown" aria-expanded="false"></span>
+                                                    <ul class="dropdown-menu raduise-for-all">
+                                                        <li>
+                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#editProjetModal{{ project.id }}">
+                                                                Edit
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#deleteProjetModal{{ project.id }}">
+                                                                Delete
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                
                                             </div>
+                                            
+                                            <!-- Edit Project Modal -->
+                                            <div class="modal fade" id="editProjetModal{{ project.id }}" tabindex="-1" aria-labelledby="editProjetModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
+                                                        <div class="modal-header text-white" style="background-color: #635bff;">
+                                                            <h5 class="modal-title" id="editProjetModalLabel">Éditer Projet : {{ project.nom_project }}</h5>
+                                                            <button type="button" class="btn-close custom-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form id="editProjetForm" method="POST" action="{% url 'edit_projet' project.id %}">
+                                                                {% csrf_token %}
+                                                                <div class="mb-3">
+                                                                    <label for="projetName{{ project.id }}" class="form-label">Nom du projet</label>
+                                                                    <input type="text" class="form-control" id="projetName{{ project.id }}" name="projetName" value="{{ project.nom_project }}">
+                                                                </div>
+                                                                <div class="mb-3">
+                                                                    <label for="projetdesc{{ project.id }}" class="form-label">Description du projet</label>
+                                                                    <input type="text" class="form-control" id="projetdesc{{ project.id }}" name="projetdesc" value="{{ project.description }}">
+                                                                </div>
+                                                                <div class="mb-3">
+                                                                    <label for="date_debut{{ project.id }}" class="form-label" style="color: #635bff;">
+                                                                        <span class="iconify me-2" data-icon="solar:calendar-date-outline" style="font-size: 24px;"></span>
+                                                                        Date de Début
+                                                                    </label>
+                                                                    <input type="date" class="form-control raduise-for-all" id="date_debut{{ project.id }}" name="date_debut" value="{{ project.date_debut|date:'Y-m-d' }}">
+                                                                </div>
+                                                                <div class="mb-3">
+                                                                    <label for="date_fin{{ project.id }}" class="form-label" style="color: #635bff;">
+                                                                        <span class="iconify me-2" data-icon="solar:calendar-date-line-duotone" style="font-size: 24px;"></span>
+                                                                        Date de Fin
+                                                                    </label>
+                                                                    <input type="date" class="form-control raduise-for-all" id="date_fin{{ project.id }}" name="date_fin" value="{{ project.date_fin|date:'Y-m-d' }}">
+                                                                </div>
+                                                                <div class="text-end">
+                                                                    <button type="submit" class="btn btn-modal-style">Modifier Projet</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Delete Project Modal -->
+                                            <div class="modal fade" id="deleteProjetModal{{ project.id }}" tabindex="-1" aria-labelledby="deleteProjetModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
+                                                        <div class="modal-header text-white" style="background-color: #635bff;">
+                                                            <h5 class="modal-title" id="deleteProjetModalLabel">Supprimer Projet : {{ project.nom_project }}</h5>
+                                                            <button type="button" class="btn-close custom-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>Êtes-vous sûr de vouloir supprimer ce projet ? La suppression entraînera également la suppression de toutes les données associées (étudiants, tâches, etc.).</p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-modal-style" data-bs-dismiss="modal">Annuler</button>
+                                                            <form method="POST" action="{% url 'delete_projet' project.id %}">
+                                                                {% csrf_token %}
+                                                                <button type="submit" class="btn btn-danger">Oui, Supprimer</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                        
+
     
                                             <div class="card-body">
                                                 <h5 class="card-title text-primary">{{ project.nom_project }}</h5>

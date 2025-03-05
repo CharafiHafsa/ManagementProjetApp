@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from django.contrib import admin
 
 urlpatterns = [
     path('', views.prof_accueil, name='prof_accueil'),  # Home page
@@ -15,6 +16,8 @@ urlpatterns = [
     path('classe/<int:class_id>/', views.classe_detail, name="classe_detail"),
     path('classe/<int:class_id>/add_project', views.add_project, name='add_project'),
     path('classe/<int:projet_id>/detail_projet', views.projet_detail, name='projet_detail'),
+    path('projet/<int:projet_id>/edit', views.edit_projet, name='edit_projet'),
+    path('projet/<int:projet_id>/delete', views.delete_projet, name='delete_projet'),
     path('classe/<int:projet_id>/detail_projet/add-instruction/', views.add_instruction, name='add_instruction'),
 
 
@@ -24,6 +27,8 @@ urlpatterns = [
     path('announce/<int:announce_id>/modify/', views.modify_announce, name="modify_announce"),
     path('projet/<int:projet_id>/ressource/add/', views.add_ressource, name="add_ressource"),
     path('ressource/<int:ressource_id>/delete/', views.delete_ressource, name="delete_ressource"),
+
+    path('chat', views.chat_view, name='chat'),
     
     
 
