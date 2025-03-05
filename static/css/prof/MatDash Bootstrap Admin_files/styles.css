@@ -51804,3 +51804,9 @@ h6 {
     border-radius: 50%;
     opacity: 20%
 }
+
+.iconify {
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
