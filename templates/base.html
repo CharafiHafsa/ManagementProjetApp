@@ -133,12 +133,21 @@
                           <!-- --------------------------------------------------------------------------------------------------------- -->
                           <!-- Accueil -->
                           <!-- --------------------------------------------------------------------------------------------------------- -->
-                          <li class="mini-nav-item selected" id="mini-1">
-                            <a href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
-                              data-bs-placement="right" data-bs-title="Accueil">
-                              <iconify-icon icon="solar:home-angle-linear" class="fs-7"></iconify-icon>
+
+                          <li class="mini-nav-item" id="mini-1">
+                            <a href="{% url 'todo_home' %}" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
+                              data-bs-placement="right" data-bs-title="Classes">
+                              <iconify-icon icon="solar:checklist-minimalistic-line-duotone" class="fs-7"></iconify-icon>
                             </a>
                           </li>
+                          <li class="mini-nav-item" id="mini-2">
+                            <a href="{% url 'calender_home' %}" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
+                              data-bs-placement="right" data-bs-title="Classes">
+                              <iconify-icon icon="solar:calendar-mark-line-duotone" class="fs-7"></iconify-icon>
+                            </a>
+                          </li>
+
+                          
 
                           <!-- --------------------------------------------------------------------------------------------------------- -->
                           <!-- Groupes -->
@@ -176,22 +185,11 @@
                           <!-- Charts -->
                           <!-- --------------------------------------------------------------------------------------------------------- -->
                           <li class="mini-nav-item" id="mini-6">
-                            <a href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
-                              data-bs-placement="right" data-bs-title="Charts">
+                            <a href="{% url 'dashBoard_home' %}" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
+                              data-bs-placement="right" data-bs-title="Statistiques">
                               <iconify-icon icon="solar:chart-line-duotone" class="fs-7"></iconify-icon>
                             </a>
                           </li>
-
-                          
-                          <!-- --------------------------------------------------------------------------------------------------------- -->
-                          <!-- Pomodoro -->
-                          <!-- --------------------------------------------------------------------------------------------------------- -->
-                          <!-- <li class="mini-nav-item" id="mini-7">
-                            <a href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
-                              data-bs-placement="right" data-bs-title="Pomodoro">
-                              <iconify-icon icon="solar:alarm-linear" class="fs-7"></iconify-icon>
-                            </a>
-                          </li> -->
                           <!-- --------------------------------------------------------------------------------------------------------- -->
                           <!-- Créer un projet -->
                           <!-- --------------------------------------------------------------------------------------------------------- -->
@@ -253,227 +251,6 @@
 
             </div>
             <div class="sidebarmenu">
-              <!-- <div class="brand-logo d-flex align-items-center nav-logo">
-                <a href="https://bootstrapdemos.adminmart.com/matdash/dist/main/index.html"
-                  class="text-nowrap logo-img">
-                  <img src="{% static 'MatDash Bootstrap Admin_files/logo.svg' %}" alt="Logo">
-                </a>
-              </div> -->
-              <!-- ---------------------------------- -->
-              <!-- Accueil -->
-              <!-- ---------------------------------- -->
-              <nav class="sidebar-nav scroll-sidebar make_it_red" id="menu-right-mini-1" data-simplebar="init">
-                <div class="simplebar-wrapper" style="margin: 0px -20px -24px;">
-                  <div class="simplebar-height-auto-observer-wrapper">
-                    <div class="simplebar-height-auto-observer"></div>
-                  </div>
-                  <div class="simplebar-mask">
-                    <div class="simplebar-offset" style="right: 0px; bottom: 0px;">
-                      <div class="simplebar-content-wrapper" tabindex="0" role="region" aria-label="scrollable content"
-                        style="height: 100%; overflow: hidden scroll;">
-                        <div class="simplebar-content" style="padding: 0px 20px 24px;">
-                          <ul class="sidebar-menu" id="sidebarnav">
-                            <!-- ---------------------------------- -->
-                            <!-- Planification --> 
-                            <!-- ---------------------------------- -->
-                            <li class="nav-small-cap">
-                              <span class="hide-menu">Accueil</span>
-                            </li>
-                            <!-- ---------------------------------- -->
-                            <!-- TO-DO / Calender / Classes / Notifications / Activity -->
-                            <!-- ---------------------------------- -->
-                            <li class="sidebar-item">
-                              <a class="sidebar-link" href="{% url 'todo_home' %}"
-                                id="get-url" aria-expanded="false">
-                                <iconify-icon icon="solar:checklist-minimalistic-line-duotone"><template shadowrootmode="open">
-                                    <style data-style="data-style">
-                                      :host {
-                                        display: inline-block;
-                                        vertical-align: 0
-                                      }
-
-                                      span,
-                                      svg {
-                                        display: block
-                                      }
-                                    </style>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
-                                      viewBox="0 0 24 24">
-                                      <g fill="none" stroke="currentColor" stroke-width="1.5">
-                                        <path
-                                          d="M20.942 3.058c2.47 2.469.468 8.474-4.47 13.413c-4.94 4.939-10.945 6.94-13.414 4.471c-2.47-2.47-.468-8.474 4.471-13.413S18.473.589 20.942 3.058Zm-17.884 0c-2.47 2.47-.468 8.475 4.47 13.413c4.94 4.939 10.945 6.94 13.414 4.471c2.47-2.469.468-8.474-4.471-13.413S5.527.589 3.058 3.058Z">
-                                        </path>
-                                        <path d="M14.5 12a2.5 2.5 0 1 1-5 0a2.5 2.5 0 0 1 5 0Z" opacity=".5"></path>
-                                      </g>
-                                    </svg>
-                                  </template></iconify-icon>
-                                <span class="hide-menu">To-Do liste</span>
-                              </a>
-                            </li>
-
-                            <li class="sidebar-item">
-                              <a class="sidebar-link"
-                                href="{% url 'calender_home' %}">
-                                <iconify-icon
-                                  icon="solar:calendar-mark-line-duotone"><template shadowrootmode="open">
-                                    <style data-style="data-style">
-                                      :host {
-                                        display: inline-block;
-                                        vertical-align: 0
-                                      }
-
-                                      span,
-                                      svg {
-                                        display: block
-                                      }
-                                    </style><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
-                                      viewBox="0 0 24 24">
-                                      <g fill="none" stroke="currentColor" stroke-width="1.5">
-                                        <path
-                                          d="M2 12c0-3.771 0-5.657 1.172-6.828S6.229 4 10 4h4c3.771 0 5.657 0 6.828 1.172S22 8.229 22 12v2c0 3.771 0 5.657-1.172 6.828S17.771 22 14 22h-4c-3.771 0-5.657 0-6.828-1.172S2 17.771 2 14z">
-                                        </path>
-                                        <path stroke-linecap="round" d="M7 4V2.5M17 4V2.5M2 9h20" opacity=".5"></path>
-                                        <circle cx="16.5" cy="16.5" r="1.5"></circle>
-                                      </g>
-                                    </svg>
-                                  </template></iconify-icon>Calendrier</a>
-                            </li>
-
-                            <!-- <li class="sidebar-item">
-                              <a class="sidebar-link" href="#"
-                                id="get-url" aria-expanded="false">
-                                <iconify-icon icon="solar:notes-line-duotone"></iconify-icon>
-                                <span class="hide-menu">Mes Classes</span>
-                              </a>
-                            </li> -->
-
-                            <!-- <li class="sidebar-item">
-                              <a class="sidebar-link"
-                                href="{% url 'notifications' %}">
-                                <iconify-icon icon="solar:bell-line-duotone"></iconify-icon>Notifications</a>
-                            </li> -->
-
-                            <li class="sidebar-item">
-                              <a class="sidebar-link"
-                                href="{% url 'dashBoard_home' %}">
-                                <iconify-icon
-                                  icon="solar:chart-line-duotone"><template shadowrootmode="open">
-                                    <style data-style="data-style">
-                                      :host {
-                                        display: inline-block;
-                                        vertical-align: 0
-                                      }
-
-                                      span,
-                                      svg {
-                                        display: block
-                                      }
-                                    </style>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
-                                      viewBox="0 0 24 24">
-                                      <g fill="none" stroke="currentColor" stroke-width="1.5">
-                                        <path
-                                          d="M2 12c0-3.771 0-5.657 1.172-6.828S6.229 4 10 4h4c3.771 0 5.657 0 6.828 1.172S22 8.229 22 12v2c0 3.771 0 5.657-1.172 6.828S17.771 22 14 22h-4c-3.771 0-5.657 0-6.828-1.172S2 17.771 2 14z">
-                                        </path>
-                                        <path stroke-linecap="round" d="M7 4V2.5M17 4V2.5M2 9h20" opacity=".5"></path>
-                                        <circle cx="16.5" cy="16.5" r="1.5"></circle>
-                                      </g>
-                                    </svg>
-                                  </template></iconify-icon>Suivi d'activité</a>
-                            </li>
-
-                            <!-- <li>
-                              <span class="sidebar-divider"></span>
-                            </li> -->
-
-                            <!-- <li class="sidebar-item">
-                              <a class="sidebar-link has-arrow" href="javascript:void(0)" aria-expanded="false">
-                                <iconify-icon icon="solar:cart-3-line-duotone"><template shadowrootmode="open">
-                                    <style data-style="data-style">
-                                      :host {
-                                        display: inline-block;
-                                        vertical-align: 0
-                                      }
-
-                                      span,
-                                      svg {
-                                        display: block
-                                      }
-                                    </style><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
-                                      viewBox="0 0 24 24">
-                                      <g fill="none" stroke="currentColor" stroke-width="1.5">
-                                        <path
-                                          d="M3.864 16.455c-.858-3.432-1.287-5.147-.386-6.301S6.148 9 9.685 9h4.63c3.538 0 5.306 0 6.207 1.154s.472 2.87-.386 6.301c-.546 2.183-.818 3.274-1.632 3.91c-.814.635-1.939.635-4.189.635h-4.63c-2.25 0-3.375 0-4.189-.635c-.814-.636-1.087-1.727-1.632-3.91Z">
-                                        </path>
-                                        <path
-                                          d="m19.5 9.5l-.71-2.605c-.274-1.005-.411-1.507-.692-1.886A2.5 2.5 0 0 0 17 4.172C16.56 4 16.04 4 15 4M4.5 9.5l.71-2.605c.274-1.005.411-1.507.692-1.886A2.5 2.5 0 0 1 7 4.172C7.44 4 7.96 4 9 4"
-                                          opacity=".5"></path>
-                                        <path d="M9 4a1 1 0 0 1 1-1h4a1 1 0 1 1 0 2h-4a1 1 0 0 1-1-1Z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 13v4m8-4v4m-4-4v4"
-                                          opacity=".5"></path>
-                                      </g>
-                                    </svg>
-                                  </template></iconify-icon>
-                                <span class="hide-menu">Classes</span>
-                              </a>
-                              <ul aria-expanded="false" class="collapse first-level">
-                                <li class="sidebar-item">
-                                  <a class="sidebar-link"
-                                    href="https://bootstrapdemos.adminmart.com/matdash/dist/main/eco-shop.html">
-                                    <span class="icon-small"></span> Shop
-                                  </a>
-                                </li>
-                                <li class="sidebar-item">
-                                  <a class="sidebar-link"
-                                    href="https://bootstrapdemos.adminmart.com/matdash/dist/main/eco-shop-detail.html">
-                                    <span class="icon-small"></span>Details
-                                  </a>
-                                </li>
-                                <li class="sidebar-item">
-                                  <a class="sidebar-link"
-                                    href="https://bootstrapdemos.adminmart.com/matdash/dist/main/eco-product-list.html">
-                                    <span class="icon-small"></span>List
-                                  </a>
-                                </li>
-                                <li class="sidebar-item">
-                                  <a class="sidebar-link"
-                                    href="https://bootstrapdemos.adminmart.com/matdash/dist/main/eco-checkout.html">
-                                    <span class="icon-small"></span>Checkout
-                                  </a>
-                                </li>
-                                <li class="sidebar-item">
-                                  <a class="sidebar-link"
-                                    href="https://bootstrapdemos.adminmart.com/matdash/dist/main/eco-add-product.html">
-                                    <span class="icon-small"></span>Add
-                                    Product
-                                  </a>
-                                </li>
-                                <li class="sidebar-item">
-                                  <a class="sidebar-link"
-                                    href="https://bootstrapdemos.adminmart.com/matdash/dist/main/eco-edit-product.html">
-                                    <span class="icon-small"></span>Edit
-                                    Product
-                                  </a>
-                                </li>
-                              </ul>
-                            </li> -->
-
-                            
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="simplebar-placeholder" style="width: 240px; height: 864px;"></div>
-                </div>
-                <div class="simplebar-track simplebar-horizontal" style="visibility: hidden;">
-                  <div class="simplebar-scrollbar" style="width: 0px; display: none;"></div>
-                </div>
-                <div class="simplebar-track simplebar-vertical" style="visibility: visible;">
-                  <div class="simplebar-scrollbar"
-                    style="height: 331px; display: block; transform: translate3d(0px, 0px, 0px);"></div>
-                </div>
-              </nav>
 
               <!-- ---------------------------------- -->
               <!-- Groupes -->
@@ -526,6 +303,22 @@
                                 <span class="hide-menu">To-Do liste</span>
                               </a>
                             </li>
+
+                            <li class="sidebar-item">
+                              <a href="#"
+                                class="sidebar-link ws-link" id="ws-detailles" data-url="{% url 'detailles' %}">
+                                <iconify-icon class="ws-link" icon="solar:library-linear"></iconify-icon>
+                                <span class="hide-menu">Détailles de projet</span>
+                              </a>
+                            </li>
+
+                            <li class="sidebar-item">
+                              <a href="#"
+                                class="sidebar-link ws-link" id="ws-dashboard" data-url="{% url 'dashBoard_ws' %}">
+                                <iconify-icon class="ws-link" icon="solar:chart-line-duotone"></iconify-icon>
+                                <span class="hide-menu">Statistiques</span>
+                              </a>
+                            </li>
                             
                             <li class="sidebar-item">
                               <a href="#"
@@ -566,63 +359,6 @@
                 </div>
               </nav>
 
-              <!-- ---------------------------------- -->
-              <!-- Classes -->
-              <!-- ---------------------------------- -->
-              <!-- <nav class="sidebar-nav scroll-sidebar" id="menu-right-mini-4" data-simplebar="init">
-                <div class="simplebar-wrapper" style="margin: 0px -20px -24px;">
-                  <div class="simplebar-height-auto-observer-wrapper">
-                    <div class="simplebar-height-auto-observer"></div>
-                  </div>
-                  <div class="simplebar-mask">
-                    <div class="simplebar-offset" style="right: 0px; bottom: 0px;">
-                      <div class="simplebar-content-wrapper" tabindex="0" role="region" aria-label="scrollable content"
-                      style="height: 100%; overflow: hidden scroll;">
-                        <div class="simplebar-content" style="padding: 0px 20px 24px;">
-                          <div>
-                            <ul class="sidebar-menu" id="sidebarnav">
-                            
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="simplebar-placeholder" style="width: 0px; height: 0px;"></div>
-                </div>
-                <div class="simplebar-track simplebar-horizontal" style="visibility: hidden;">
-                  <div class="simplebar-scrollbar" style="width: 0px; display: none;"></div>
-                </div>
-                <div class="simplebar-track simplebar-vertical" style="visibility: hidden;">
-                  <div class="simplebar-scrollbar" style="height: 0px; display: none;"></div>
-                </div>
-              </nav> -->
-
-              <!-- ---------------------------------- -->
-              <!-- Notifications -->
-              <!-- ---------------------------------- -->
-             
-
-              <!-- ---------------------------------- -->
-              <!-- Charts -->
-              <!-- ---------------------------------- -->
-              
-
-              <!-- ---------------------------------- -->
-              <!-- Pomodoro -->
-              <!-- ---------------------------------- -->
-              
-
-              <!-- ---------------------------------- -->
-              <!-- Profile -->
-              <!-- ---------------------------------- -->
-             
-
-              <!-- ---------------------------------- -->
-              <!-- Logout -->
-              <!-- ---------------------------------- -->
-              
-              
             </div>
           </div>
         </div>
@@ -747,13 +483,16 @@
 
       function imposerMarginLeftZero(force) {
           const pageWrapper = document.querySelector('.page-wrapper');
+          var mini_1 = document.getElementById("mini-1").classList.contains('selected');
+          var mini_2 = document.getElementById("mini-2").classList.contains('selected');
           var mini_4 = document.getElementById("mini-4").classList.contains('selected');
           var mini_5 = document.getElementById("mini-5").classList.contains('selected');
           var mini_9 = document.getElementById("mini-9").classList.contains('selected');
+          var mini_6 = document.getElementById("mini-6").classList.contains('selected');
           // var mini_7 = document.getElementById("mini-7").classList.contains('selected');
           // var mini_8 = document.getElementById("mini-8").classList.contains('selected');
           if (pageWrapper) {
-              if (mini_4 || mini_5 || mini_9) {
+              if (mini_4 || mini_5 || mini_9 || mini_1 || mini_2 || mini_6) {
                   pageWrapper.classList.add('force-margin-left'); // Imposer margin-left: 0
               } else {
                   pageWrapper.classList.remove('force-margin-left'); // Laisser le style normal
@@ -850,6 +589,8 @@
         const todoLink = document.getElementById('ws-todo');
         const membresLink = document.getElementById('ws-membres');
         const docsLink = document.getElementById('ws-documents');
+        const dashboardLink = document.getElementById('ws-dashboard');
+        const detaillesLink = document.getElementById('ws-detailles');
 
         if (window.location.href.includes('etu/ws/') || window.location.href.includes('etu/espaceDeTravail/')) {
           const url_chat = chatLink.getAttribute('data-url');
@@ -860,15 +601,32 @@
           membresLink.setAttribute('href', url_membres);
           const url_docs = docsLink.getAttribute('data-url');
           docsLink.setAttribute('href', url_docs);
+          const url_dashboard = dashboardLink.getAttribute('data-url');
+          dashboardLink.setAttribute('href', url_dashboard);
+          const url_detailles = detaillesLink.getAttribute('data-url');
+          detaillesLink.setAttribute('href', url_detailles);
         } else {
           chatLink.setAttribute('href', '#');
           todoLink.setAttribute('href', '#');
           membresLink.setAttribute('href', '#');
           docsLink.setAttribute('href', '#');
+          dashboardLink.setAttribute('href', '#');
         }
         
       })
     </script>
+
+
+
+<!-- capturé la date de sortie pour les statistiques -->
+<script>
+  window.addEventListener("beforeunload", function () {
+      navigator.sendBeacon("/etu/update_time_counter/");
+  });
+
+  // navigator.sendBeacon() est une méthode efficace qui envoie des requêtes HTTP 
+  // même si l'utilisateur quitte immédiatement.
+</script>
 
 
 </body>

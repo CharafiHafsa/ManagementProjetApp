@@ -70,145 +70,278 @@ document.addEventListener("DOMContentLoaded", function () {
   // -----------------------------------------------------------------------
   // Projects
   // -----------------------------------------------------------------------
-  var chart_bounce_rate = {
-    series: [
-      {
-        name: "Project",
-        labels: ["2012", "2013", "2014", "2015", "2016", "2017"],
-        data: [3, 5, 5, 7, 6, 5, 3, 5, 3],
-      },
-    ],
-    chart: {
-      fontFamily: "inherit",
-      height: 46,
-      type: "bar",
-      offsetX: -10,
-      toolbar: {
-        show: false,
-      },
-      sparkline: {
-        enabled: true,
-      },
-    },
-    colors: ["var(--bs-white)"],
-    plotOptions: {
-      bar: {
-        horizontal: false,
-        columnWidth: "55%",
-        endingShape: "flat",
-        borderRadius: 4,
-      },
-    },
-    tooltip: {
-      theme: "dark",
-      followCursor: true,
-    },
-  };
-  var chart_line_basic = new ApexCharts(
-    document.querySelector("#projects"),
-    chart_bounce_rate
-  );
-  chart_line_basic.render();
+  // var chart_bounce_rate = {
+  //   series: [
+  //     {
+  //       name: 'Temps passé', // Nom de la série affiché dans la légende et au survol
+  //       data: [10, 5, 5, 7, 6, 5],
+  //     },
+  //   ],
+  //   chart: {
+  //     fontFamily: "inherit",
+  //     height: 80,
+  //     type: "bar",
+  //     offsetX: -10,
+  //     toolbar: {
+  //       show: false,
+  //     },
+  //     sparkline: {
+  //       enabled: true,
+  //     },
+  //   },
+  //   colors: ["var(--bs-white)"],
+  //   plotOptions: {
+  //     bar: {
+  //       horizontal: false,
+  //       columnWidth: "55%",
+  //       endingShape: "flat",
+  //       borderRadius: 4,
+  //     },
+  //   },
+  //   tooltip: {
+  //     theme: "dark",
+  //     followCursor: true,
+  //   },
+  //   xaxis: {
+  //     categories: ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"], // Noms sous les barres
+  //     labels: {
+  //       style: {
+  //         colors: "var(--bs-white)", // Pour s'assurer qu'on voit bien les labels si fond sombre
+  //       },
+  //     },
+  //   },
+  // };
+
+  // var chart_line_basic = new ApexCharts(
+  //   document.querySelector("#projects"),
+  //   chart_bounce_rate
+  // );
+  // chart_line_basic.render();
+
+  async function graphe2() {
+    try {
+      const response = await fetch("/etu/get_temps_utilisation_chart/");
+      const data = await response.json();
+  
+      if (data.error) {
+        console.error(data.error);
+        return;
+      }
+  
+      var chart_bounce_rate = {
+        series: [
+          {
+            name: "Temps passé",
+            data: data.data,  // Charger les données dynamiquement
+          },
+        ],
+        chart: {
+          fontFamily: "inherit",
+          height: 80,
+          type: "bar",
+          toolbar: { show: false },
+          sparkline: { enabled: true },
+        },
+        colors: ["var(--bs-white)"],
+        plotOptions: {
+          bar: {
+            horizontal: false,
+            columnWidth: "55%",
+            endingShape: "flat",
+            borderRadius: 4,
+          },
+        },
+        tooltip: {
+          theme: "dark",
+          followCursor: true,
+          y: {
+            formatter: function (value, { seriesIndex, dataPointIndex }) {
+              let heures = Math.floor(value / 60);
+              let minutes = value % 60;
+              return heures > 0 ? `${heures}h ${minutes}min` : `${minutes}min`;
+            },
+          },
+        },
+        xaxis: {
+          categories: data.categories,  // Charger les jours dynamiquement
+          labels: {
+            style: { colors: "var(--bs-white)" },
+          },
+        },
+      };
+  
+      var chart_line_basic = new ApexCharts(
+        document.querySelector("#projects"),
+        chart_bounce_rate
+      );
+      chart_line_basic.render();
+
+
+    } catch (error) {
+      console.error("Erreur lors du chargement des données :", error);
+    }
+  }
+  graphe2();
 
   // -----------------------------------------------------------------------
   // Revenue Forecast !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // -----------------------------------------------------------------------
 
-  var chart = {
-    series: [
-      {
-        name: "depasser",
-        data: [5, 5, 5, 4, 7, 3, 0],
-      },
+  // var chart = {
+  //   series: [
+  //     {
+  //       name: "depasser",
+  //       data: [5, 5, 5, 4, 7, 3, 0],
+  //     },
 
-      {
-        name: "done",
-        data: [15, 16, 16, 17, 19, 25, 25],
-      },
-      {
-        name: "not done, a venir",
-        data: [10, 9, 9, 9, 8, 8, 8],
-      },
-    ],
-    chart: {
-      toolbar: {
-        show: false,
-      },
-      type: "area",
-      fontFamily: "inherit",
-      foreColor: "#adb0bb",
-      height: 300,
-      width: "100%",
-      stacked: false,
-      offsetX: -10,
-    },
-    colors: ["var(--bs-danger)", "var(--bs-secondary)", "var(--bs-primary)"],
-    plotOptions: {},
-    dataLabels: {
-      enabled: false,
-    },
-    legend: {
-      show: false,
-    },
-    stroke: {
-      width: 2,
-      curve: "monotoneCubic",
-    },
-    grid: {
-      show: true,
-      padding: {
-        top: 0,
-        bottom: 0,
-      },
-      borderColor: "rgba(0,0,0,0.05)",
-      xaxis: {
-        lines: {
-          show: true,
-        },
-      },
-      yaxis: {
-        lines: {
-          show: true,
-        },
-      },
-    },
-    fill: {
-      type: "gradient",
-      gradient: {
-        shadeIntensity: 0,
-        inverseColors: false,
-        opacityFrom: 0.1,
-        opacityTo: 0.01,
-        stops: [0, 100],
-      },
-    },
-    xaxis: {
-      axisBorder: {
-        show: false,
-      },
-      axisTicks: {
-        show: false,
-      },
-      categories: ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"],
-    },
-    markers: {
-      strokeColor: [
-        "var(--bs-danger)",
-        "var(--bs-secondary)",
-        "var(--bs-primary)",
-      ],
-      strokeWidth: 2,
-    },
-    tooltip: {
-      theme: "dark",
-    },
-  };
+  //     {
+  //       name: "done",
+  //       data: [15, 16, 16, 17, 19, 25, 25],
+  //     },
+  //     {
+  //       name: "not done, a venir",
+  //       data: [10, 9, 9, 9, 8, 8, 8],
+  //     },
+  //   ],
+  //   chart: {
+  //     toolbar: {
+  //       show: false,
+  //     },
+  //     type: "area",
+  //     fontFamily: "inherit",
+  //     foreColor: "#adb0bb",
+  //     height: 300,
+  //     width: "100%",
+  //     stacked: false,
+  //     offsetX: -10,
+  //   },
+  //   colors: ["var(--bs-danger)", "var(--bs-secondary)", "var(--bs-primary)"],
+  //   plotOptions: {},
+  //   dataLabels: {
+  //     enabled: false,
+  //   },
+  //   legend: {
+  //     show: false,
+  //   },
+  //   stroke: {
+  //     width: 2,
+  //     curve: "monotoneCubic",
+  //   },
+  //   grid: {
+  //     show: true,
+  //     padding: {
+  //       top: 0,
+  //       bottom: 0,
+  //     },
+  //     borderColor: "rgba(0,0,0,0.05)",
+  //     xaxis: {
+  //       lines: {
+  //         show: true,
+  //       },
+  //     },
+  //     yaxis: {
+  //       lines: {
+  //         show: true,
+  //       },
+  //     },
+  //   },
+  //   fill: {
+  //     type: "gradient",
+  //     gradient: {
+  //       shadeIntensity: 0,
+  //       inverseColors: false,
+  //       opacityFrom: 0.1,
+  //       opacityTo: 0.01,
+  //       stops: [0, 100],
+  //     },
+  //   },
+  //   xaxis: {
+  //     axisBorder: {
+  //       show: false,
+  //     },
+  //     axisTicks: {
+  //       show: false,
+  //     },
+  //     categories: ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"],
+  //   },
+  //   markers: {
+  //     strokeColor: [
+  //       "var(--bs-danger)",
+  //       "var(--bs-secondary)",
+  //       "var(--bs-primary)",
+  //     ],
+  //     strokeWidth: 2,
+  //   },
+  //   tooltip: {
+  //     theme: "dark",
+  //   },
+  // };
 
-  var chart = new ApexCharts(
-    document.querySelector("#revenue-forecast"),
-    chart
-  );
-  chart.render();
+  // var chart = new ApexCharts(
+  //   document.querySelector("#revenue-forecast"),
+  //   chart
+  // );
+  // chart.render();
+
+  async function graphe1() {
+    try {
+      const response = await fetch("/etu/get_taches_stats_2/");
+      const data = await response.json();
+  
+      if (data.error) {
+        console.error(data.error);
+        return;
+      }
+  
+      var chart = {
+        series: data.series, // Injecter les données reçues
+        chart: {
+          toolbar: { show: false },
+          type: "area",
+          fontFamily: "inherit",
+          foreColor: "#adb0bb",
+          height: 300,
+          width: "100%",
+          stacked: false,
+          offsetX: -10,
+        },
+        colors: ["var(--bs-danger)", "var(--bs-secondary)", "var(--bs-primary)"],
+        dataLabels: { enabled: false },
+        stroke: { width: 2, curve: "monotoneCubic" },
+        fill: {
+          type: "gradient",
+          gradient: {
+            shadeIntensity: 0,
+            inverseColors: false,
+            opacityFrom: 0.1,
+            opacityTo: 0.01,
+            stops: [0, 100],
+          },
+        },
+        xaxis: {
+          categories: data.categories, // Injecter les dates formatées
+          axisBorder: { show: false },
+          axisTicks: { show: false },
+        },
+        markers: {
+          strokeColor: ["var(--bs-danger)", "var(--bs-secondary)", "var(--bs-primary)"],
+          strokeWidth: 2,
+        },
+        tooltip: { theme: "dark" },
+      };
+  
+      var chart = new ApexCharts(
+        document.querySelector("#revenue-forecast"),
+        chart
+      );
+      chart.render();
+
+
+    } catch (error) {
+      console.error("Erreur lors du chargement des données :", error);
+    }
+  }
+  graphe1();
 
   // =====================================
   // Your Preformance

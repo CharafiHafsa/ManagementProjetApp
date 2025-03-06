@@ -387,7 +387,7 @@ document.addEventListener("DOMContentLoaded", function () {
   async function chargerStats() {
     console.log("Chargement des statistiques...");
     try {
-      const response = await fetch("/etu/get_taches_stats/");
+      const response = await fetch("/etu/get_taches_stats_1/");
       const data = await response.json();
   
       if (data.error) {

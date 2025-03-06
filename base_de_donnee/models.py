@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.hashers import check_password
 import datetime
+from django.utils import timezone
+from datetime import timedelta
 
 
 # Manager personnalisé pour Professeur
@@ -161,4 +163,28 @@ class Document(models.Model):
 class Notification(models.Model):
     etudiant = models.ForeignKey(Etudiant,  on_delete=models.CASCADE, related_name='notifications' )
     groupe = models.ForeignKey( Groupe,  on_delete=models.CASCADE, related_name='notifications')
+
+class HistoriqueTachesEtu(models.Model):
+    etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE, related_name="historique_taches")
+    date = models.DateField(default=timezone.now, unique=True)  # Un enregistrement par jour
+    taches_en_cours = models.IntegerField(default=0)
+    taches_terminees = models.IntegerField(default=0)
+    taches_en_retard = models.IntegerField(default=0)
+
+    class Meta:
+        verbose_name = "Historique des Tâches"
+        verbose_name_plural = "Historiques des Tâches"
+        ordering = ['-date']  # Trie par date décroissante
+
+class TempsUtilisation(models.Model):
+    etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE, related_name="historique_temps")
+    date = models.DateField(default=timezone.now, unique=True)  # Un enregistrement par jour
+    date_start_counter = models.DateTimeField(null=True, blank=True)
+    temps_passe = models.DurationField(default=timedelta(seconds=0))  # Stocke le temps en hh:mm:ss
+
+    class Meta:
+        verbose_name = "Historique du Temps d'Utilisation"
+        verbose_name_plural = "Historiques du Temps d'Utilisation"
+        ordering = ['-date']  # Trie par date décroissante
+
 

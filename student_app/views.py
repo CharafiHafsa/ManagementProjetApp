@@ -12,18 +12,23 @@ from django.contrib.auth import login,logout
 from django.core.mail import send_mail
 from base_de_donnee.models import *
 from django.contrib import messages
+from datetime import date, datetime
 from django.utils import timezone
 from django.conf import settings
-from datetime import date
+from datetime import timedelta
+import calendar
+import locale
 import json
 import uuid
 import os
+import datetime
+
+
 
 
 
 
 def login_view(request):
-
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
@@ -312,19 +317,71 @@ def update_password(request):
 def logout_user(request):
     request.session.flush()
     logout(request)
+    update_time_counter(request)
     return redirect('login')
 
 
-def ws_reception(request, groupe_id):
-    request.session['groupe_id'] = groupe_id
-    return render(request, 'workSpace/ws_reception.html', {'groupe_id':groupe_id})
+def detailles(request):
+    return render(request, 'workSpace/detailles.html')
+
+def dashBoard_ws(request):
+    groupe_id = request.session.get('groupe_id', None)
+    groupe = get_object_or_404(Groupe, id=groupe_id)
+
+    if groupe.projet:
+        projet = groupe.projet
+
+        # Récupérer la date actuelle
+        date_actuelle = date.today()
+
+        # Calculer la durée totale du projet (différence entre la date de début et la date de fin)
+        duree_totale = projet.date_fin - projet.date_debut
+
+        # Calculer la durée écoulée (différence entre la date actuelle et la date de début)
+        if date_actuelle > projet.date_fin:
+            pourcentage = 100
+        else:
+            temps_ecoule = date_actuelle - projet.date_debut
+            pourcentage = (temps_ecoule.days / duree_totale.days) * 100
+
+        # les jours restants
+        jours_restants = (projet.date_fin - date_actuelle).days
+
+        # Afficher le pourcentage dans le contexte de la vue
+        return render(request, 'workSpace/dashBoard.html', {'projet': projet, 'pourcentage': int(pourcentage), 'jours_restants': jours_restants})
+    return render(request, 'workSpace/dashBoard.html')
 
 def dashBoard_home(request):
     id_etudiant = request.session.get('user_id')
     etudiant = Etudiant.objects.filter(id=id_etudiant).first()
-    return render(request, 'home/dashBoard.html')
 
-def get_taches_stats(request):
+    # Récupérer tous les enregistrements de TempsUtilisation pour cet étudiant
+    temps_utilisation = TempsUtilisation.objects.filter(etudiant=etudiant)
+
+    # Calculer la somme des durées et le nombre d'enregistrements
+    total_temps = timedelta(seconds=0)
+    for temps in temps_utilisation:
+        total_temps += temps.temps_passe
+
+    # Calculer la moyenne en divisant par le nombre d'enregistrements
+    if len(temps_utilisation) > 0:
+        moyenne_temps = total_temps / len(temps_utilisation)
+    else:
+        moyenne_temps = timedelta(seconds=0)
+
+    # Convertir la moyenne en heures et minutes (format 'hh:mm')
+    heures = moyenne_temps.seconds // 3600
+    minutes = (moyenne_temps.seconds % 3600) // 60
+    moyenne_temps_formattee = f"{heures}h {minutes}min"
+
+    update_time_counter(request)
+    # Passer la moyenne au template
+    return render(request, 'home/dashBoard.html', {
+        'moyenne_temps': moyenne_temps_formattee,
+        'etudiant': etudiant,
+    })
+
+def get_taches_stats_1(request):
     id_etudiant = request.session.get('user_id')
     etudiant = Etudiant.objects.filter(id=id_etudiant).first()
     
@@ -339,7 +396,7 @@ def get_taches_stats(request):
         total_taches = taches.count()
         taches_terminees = taches.filter(status="Terminé").count()
         taches_en_cours = taches.filter(status="En cours").count()
-        taches_depassees = taches.filter(deadline__lt=datetime.date.today(), status="En cours").count()
+        taches_depassees = taches.filter(deadline__lt=date.today(), status="En cours").count()
         mes_taches = taches.filter(etudiant=etudiant).count()
 
         data.append({
@@ -352,6 +409,325 @@ def get_taches_stats(request):
         })
 
     return JsonResponse({"stats": data})
+
+def get_taches_stats_2(request):
+    id_etudiant = request.session.get('user_id')
+    etudiant = Etudiant.objects.get(id=id_etudiant)
+
+    # Récupérer le'historique
+    historique = HistoriqueTachesEtu.objects.filter(etudiant=etudiant).order_by('date')
+
+    # Convertir en format utilisable pour le graphique
+    locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')  # Assurez-vous que 'fr_FR.UTF-8' est disponible sur votre système
+    categories = [h.date.strftime('%a') for h in historique]  # Renvoie 'Lun', 'Mar', 'Mer', ...
+    taches_en_retard = [h.taches_en_retard for h in historique]
+    taches_terminees = [h.taches_terminees for h in historique]
+    taches_en_cours = [h.taches_en_cours for h in historique]
+
+    data = {
+        "categories": categories,
+        "series": [
+            {"name": "En retard", "data": taches_en_retard},
+            {"name": "Términées", "data": taches_terminees},
+            {"name": "En cours", "data": taches_en_cours},
+        ]
+    }
+
+    return JsonResponse(data)
+
+def get_temps_utilisation_chart(request):
+    # Récupérer les 7 derniers jours de temps d'utilisation
+    historique = TempsUtilisation.objects.order_by('-date')[:7]
+
+    # Extraire les labels (jours) et les valeurs (temps passé en heures et minutes)
+    categories = []
+    data = []
+
+    for entry in reversed(historique):  # Reverse pour avoir l'ordre correct (du plus ancien au plus récent)
+        jour_nom = calendar.day_name[entry.date.weekday()]  # Nom du jour en anglais
+        jour_fr = {
+            "Monday": "Lundi", "Tuesday": "Mardi", "Wednesday": "Mercredi",
+            "Thursday": "Jeudi", "Friday": "Vendredi", "Saturday": "Samedi", "Sunday": "Dimanche"
+        }.get(jour_nom, jour_nom)  # Traduction en français
+
+        # Convertir `temps_passe` en heures et minutes
+        total_minutes = entry.temps_passe.total_seconds() // 60
+        heures = int(total_minutes // 60)
+        minutes = int(total_minutes % 60)
+        temps_formate = f"{heures}h {minutes}min" if heures > 0 else f"{minutes}min"
+
+        categories.append(jour_fr)  # Ajouter le nom du jour
+        data.append(total_minutes)  # Ajouter la durée en minutes (pour l'échelle)
+
+    # Retourner les données sous format JSON
+    return JsonResponse({"categories": categories, "data": data})
+
+def update_time_counter(request):
+    id_etudiant = request.session.get('user_id')
+    etudiant = Etudiant.objects.filter(id=id_etudiant).first()
+    
+    # Récupérer l'heure d'entrée depuis la session, utiliser now() si non défini
+    heure_entree_str = request.session.get('heure_entree', timezone.now().isoformat())
+
+    try:
+        # Convertir en datetime aware
+        heure_entree = datetime.datetime.fromisoformat(heure_entree_str)  # Récupération correcte avec fuseau horaire
+    except ValueError:
+        return  # En cas d'erreur, ne rien faire
+
+    # Calcul de la durée passée
+    temps_passe = timezone.now() - heure_entree
+    print('heure_entree',  heure_entree)
+    print('temps passé',  temps_passe)
+    print('timezone.now()',  timezone.now())
+
+    # Récupérer ou créer l'historique du jour
+    historique, created = TempsUtilisation.objects.get_or_create(
+        etudiant=etudiant,
+        date=timezone.now().date(),
+        defaults={
+            'temps_passe': timedelta(seconds=0),
+            'date_start_counter': heure_entree
+        }
+    )
+
+    # Mettre à jour le temps passé
+    # if historique.date_start_counter == heure_entree:
+    #     historique.temps_passe = temps_passe
+    # else: historique.temps_passe += temps_passe
+    
+    historique.temps_passe += temps_passe
+    historique.save()
+
+    # update date_entrée pour le calcule suivant de la duré
+    heure_entree = timezone.now().isoformat()
+    request.session['heure_entree'] = heure_entree
+
+def enregistrer_historique_taches_du_jour(request):
+    id_etudiant = request.session.get('user_id')
+    etudiant = Etudiant.objects.filter(id=id_etudiant).first()
+    aujourd_hui = timezone.now().date()
+
+    # Vérifier si l'historique d'aujourd'hui existe déjà
+    historique, created = HistoriqueTachesEtu.objects.get_or_create(etudiant=etudiant, date=aujourd_hui)
+
+    # Compter les tâches pour l'étudiant
+    taches = Taches.objects.filter(etudiant=etudiant)
+    historique.taches_en_cours = taches.filter(status="En cours").count()
+    historique.taches_terminees = taches.filter(status="Terminé").count()
+    historique.taches_en_retard = taches.filter(status="En cours", deadline__lt=aujourd_hui).count()
+
+    # Sauvegarder les changements
+    historique.save()
+
+    # Supprimer les anciens enregistrements après 7 jours
+    # date_limite = aujourd_hui - timedelta(days=7)
+    # HistoriqueTachesEtu.objects.filter(etudiant=etudiant, date__lt=date_limite).delete()
+
+def todo_home(request):
+    id_etudiant = request.session.get('user_id')
+    etudiant = Etudiant.objects.filter(id=id_etudiant).first()
+    # Prmière page affiché: checker les deadlines et envoyer des rappels
+    jours_avant_deadline = 1
+    nombre_de_lettres = 10
+    today = date.today()
+    taches_proches = Taches.objects.filter(
+        etudiant_id=id_etudiant,
+        status="En cours",
+        deadline__gte=today,  # Exclut les tâches déjà dépassées.
+        deadline__lte=today + timedelta(days=jours_avant_deadline)  # Sélectionne uniquement les tâches dont la deadline est dans les prochains jours.
+    )
+    taches_depassees = Taches.objects.filter(
+        etudiant_id=id_etudiant,
+        status="En cours",
+        deadline__lt=today
+    )
+
+    # Convertir les tâches en une liste de dictionnaires sérialisables
+    taches_proches_data = [
+        {
+            'id': tache.id,
+            'description_tache': tache.description_tache[:nombre_de_lettres]+'...',
+            'groupe': tache.groupe.nom_groupe,
+        }
+        for tache in taches_proches
+    ]
+    taches_depassees_data = [
+        {
+            'id': tache.id,
+            'description_tache': tache.description_tache[:nombre_de_lettres]+'...',
+            'groupe': tache.groupe.nom_groupe,
+        }
+        for tache in taches_depassees
+    ]
+
+    # Sauvegarder dans la session
+    request.session['taches_proches'] = taches_proches_data
+    request.session['taches_depassees'] = taches_depassees_data
+    # mettre un signe s'il y a une nouvelle notification
+    nouvelle_notifications = False
+    if taches_proches_data != [] or taches_depassees_data != [] : 
+        nouvelle_notifications = True
+
+    # ---- ^^^ NOTIFICATIONS------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    if request.method == 'POST' :
+        if 'delete' in request.POST:
+            id_tache = request.POST.get('id_tache')
+            tache = get_object_or_404(Taches, id=id_tache)
+            tache.delete()
+        if 'modifier' in request.POST: 
+            id_tache = request.POST.get("id-tache")
+            tache = get_object_or_404(Taches, id=id_tache)
+            # Mise à jour 
+            tache.description_tache = request.POST.get('description')
+            tache.deadline = request.POST.get('Date')
+            tache.save() 
+        elif 'status_check' in request.POST: 
+            id_tache = request.POST.get("id_tache")
+            tache = get_object_or_404(Taches, id=id_tache) 
+            tache.status = request.POST.get("status_check")
+            tache.save()
+        enregistrer_historique_taches_du_jour(request)
+
+    # ----DASHBOARD-------------------------------------------------------------------------------------------
+
+    aujourd_hui = timezone.now().date()
+    # Récupérer le dernier enregistrement
+    dernier_historique = HistoriqueTachesEtu.objects.filter(etudiant=etudiant).order_by('-date').first()
+
+    if dernier_historique: # recuperer data du dernier jour enregistrer
+        derniere_date = dernier_historique.date
+        taches_en_cours = dernier_historique.taches_en_cours
+        taches_terminees = dernier_historique.taches_terminees
+        taches_en_retard = dernier_historique.taches_en_retard
+    else: # cas où BDD est vide
+        derniere_date = None
+        taches_en_cours = 0
+        taches_terminees = 0
+        taches_en_retard = 0
+
+    # Ajouter les jours manquants
+    if not derniere_date or derniere_date < aujourd_hui:
+        nouvelle_date = derniere_date + timedelta(days=1) if derniere_date else aujourd_hui
+        while nouvelle_date <= aujourd_hui:
+            HistoriqueTachesEtu.objects.create(
+                etudiant=etudiant,
+                date=nouvelle_date,
+                taches_en_cours=taches_en_cours,
+                taches_terminees=taches_terminees,
+                taches_en_retard=taches_en_retard
+            )
+            nouvelle_date += timedelta(days=1)
+
+        # Supprimer les entrées de plus de 7 jours
+        date_limite = aujourd_hui - timedelta(days=7)
+        HistoriqueTachesEtu.objects.filter(etudiant=etudiant, date__lt=date_limite).delete()
+
+    # ---TEMPS PASSÉ SUR PLATEFORME-------------------------------------------------------------------------------------------
+
+    # Récupérer l'heure actuelleet la Stocker dans la session
+    heure_entree = timezone.now().isoformat()
+    request.session['heure_entree'] = heure_entree
+    try:
+        # Convertir en datetime aware
+        heure_entree = datetime.datetime.fromisoformat(heure_entree) # Récupération correcte avec fuseau horaire
+    except ValueError:
+        return
+
+
+    aujourd_hui = timezone.now().date()
+    dernier_jour = aujourd_hui - timedelta(days=7)
+
+    # Récupérer les entrées existantes des 7 derniers jours
+    historique = TempsUtilisation.objects.filter(etudiant=etudiant, date__gte=dernier_jour)
+
+    # Convertir en dictionnaire {date: temps_passe}
+    dates_enregistrees = {entry.date: entry.temps_passe for entry in historique}
+
+    # Compléter les jours manquants avec 0
+    nouvelles_entrees = []
+    for i in range(7):
+        jour = aujourd_hui - timedelta(days=i)
+        if jour not in dates_enregistrees:
+            nouvelles_entrees.append(TempsUtilisation(etudiant=etudiant, date=jour, temps_passe=timedelta(seconds=0)))
+    
+    # Récupérer l'enregistrement du jour
+    print('nnnnnnnnnnnnnnnnnnnnnnnn')
+    last_day = TempsUtilisation.objects.filter(
+        etudiant=etudiant, 
+        date=timezone.now().date()
+    ).first()
+    # last_day.date_start_counter = heure_entree
+    # last_day.save() 
+    print(last_day)
+
+    # Ajouter les nouvelles entrées en une seule requête
+    TempsUtilisation.objects.bulk_create(nouvelles_entrees)
+
+    # Supprimer les enregistrements au-delà des 7 derniers jours
+    TempsUtilisation.objects.filter(etudiant=etudiant, date__lt=dernier_jour).delete()
+
+    
+    enregistrer_historique_taches_du_jour(request)
+    taches = Taches.objects.filter(etudiant=etudiant)
+    return render(request, 'home/todo.html', {'taches': taches, 'nouvelle_notifications':nouvelle_notifications, 'today':today.isoformat()})
+
+def todo_ws(request):
+    today = datetime.date.today()
+    # Récupérer l'ID du groupe depuis la session
+    print("todo: ", request.session.get('groupe_id', None))
+    groupe_id = request.session.get('groupe_id', None)
+
+    groupe = get_object_or_404(Groupe, id=groupe_id)
+    if request.method == 'POST' :
+        # SUPPRIMER
+        if 'delete' in request.POST:
+            id_tache = request.POST.get('id_tache')
+            tache = get_object_or_404(Taches, id=id_tache)
+            tache.delete()
+
+        # AJOUTER OU MODIFIER
+        elif 'modifier-ajouter' in request.POST: 
+            toModifie = request.POST.get('toModifie')
+            etudiant = None
+            if 'etu' in request.POST: 
+                id_etudiant = request.POST.get("etu")
+                etudiant = get_object_or_404(Etudiant, id=id_etudiant ) 
+            description = request.POST.get('description')
+            date = request.POST.get('Date')
+
+            # AJOUTER
+            if toModifie == "":
+                tache = Taches.objects.create(etudiant=etudiant, deadline=date, description_tache=description, status='En cours', groupe=groupe)
+            # MODIFIER
+            else:
+                id_tache = request.POST.get("id-tache") 
+                tache = get_object_or_404(Taches, id=id_tache)
+                if etudiant != None: 
+                    tache.etudiant=etudiant
+                tache.description_tache = description
+                tache.deadline = date
+                tache.save() 
+
+        # MODIFIER LE STATUT DE LA TACHE
+        elif 'status_check' in request.POST: 
+            id_tache = request.POST.get("id_tache") 
+            tache = get_object_or_404(Taches, id=id_tache) 
+            tache.status = request.POST.get("status_check")
+            tache.save()
+
+        # SAUVGARDER L'HISTORIQUE
+        enregistrer_historique_taches_du_jour(request)
+
+    
+    taches = Taches.objects.filter(groupe=groupe)
+    etudiants=Etudiant.objects.filter(groupes=groupe)
+    return render(request, 'workSpace/todo.html', {'taches':taches,'etudiants':etudiants, 'groupe_id':groupe_id, 'today':today.isoformat()})
+
+def ws_reception(request, groupe_id):
+    request.session['groupe_id'] = groupe_id
+    return render(request, 'workSpace/ws_reception.html', {'groupe_id':groupe_id})
 
 def chat(request):
     # Récupérer l'ID du groupe depuis la session
@@ -434,125 +810,6 @@ def documents(request):
         return JsonResponse({"success": True, "file_url": document.file.url})
 
     return render(request, 'workSpace/documents.html', {'doc': Document.objects.filter(groupe=groupe_instance)})
-
-def todo_ws(request):
-    today = datetime.date.today()
-    # Récupérer l'ID du groupe depuis la session
-    print("todo: ", request.session.get('groupe_id', None))
-    groupe_id = request.session.get('groupe_id', None)
-
-    groupe = get_object_or_404(Groupe, id=groupe_id)
-    if request.method == 'POST' :
-        # SUPPRIMER
-        if 'delete' in request.POST:
-            id_tache = request.POST.get('id_tache')
-            tache = get_object_or_404(Taches, id=id_tache)
-            tache.delete()
-
-        # AJOUTER OU MODIFIER
-        elif 'modifier-ajouter' in request.POST: 
-            toModifie = request.POST.get('toModifie')
-            etudiant = None
-            if 'etu' in request.POST: 
-                id_etudiant = request.POST.get("etu")
-                etudiant = get_object_or_404(Etudiant, id=id_etudiant ) 
-            description = request.POST.get('description')
-            date = request.POST.get('Date')
-
-            # AJOUTER
-            if toModifie == "":
-                tache = Taches.objects.create(etudiant=etudiant, deadline=date, description_tache=description, status='En cours', groupe=groupe)
-            # MODIFIER
-            else:
-                id_tache = request.POST.get("id-tache") 
-                tache = get_object_or_404(Taches, id=id_tache)
-                if etudiant != None: 
-                    tache.etudiant=etudiant
-                tache.description_tache = description
-                tache.deadline = date
-                tache.save() 
-
-        # MODIFIER LE STATUT DE LA TACHE
-        elif 'status_check' in request.POST: 
-            id_tache = request.POST.get("id_tache") 
-            tache = get_object_or_404(Taches, id=id_tache) 
-            tache.status = request.POST.get("status_check")
-            tache.save()
-
-    
-    taches = Taches.objects.filter(groupe=groupe)
-    etudiants=Etudiant.objects.filter(groupes=groupe)
-    return render(request, 'workSpace/todo.html', {'taches':taches,'etudiants':etudiants, 'groupe_id':groupe_id, 'today':today.isoformat()})
-
-def todo_home(request):
-    id_etudiant = request.session.get('user_id')
-    etudiant = Etudiant.objects.filter(id=id_etudiant).first()
-    # Prmière page affiché: checker les deadlines et envoyer des rappels
-    jours_avant_deadline = 1
-    nombre_de_lettres = 10
-    today = date.today()
-    taches_proches = Taches.objects.filter(
-        etudiant_id=id_etudiant,
-        status="En cours",
-        deadline__gte=today,  # Exclut les tâches déjà dépassées.
-        deadline__lte=today + datetime.timedelta(days=jours_avant_deadline)  # Sélectionne uniquement les tâches dont la deadline est dans les prochains jours.
-    )
-    taches_depassees = Taches.objects.filter(
-        etudiant_id=id_etudiant,
-        status="En cours",
-        deadline__lt=today
-    )
-
-    # Convertir les tâches en une liste de dictionnaires sérialisables
-    taches_proches_data = [
-        {
-            'id': tache.id,
-            'description_tache': tache.description_tache[:nombre_de_lettres]+'...',
-            'groupe': tache.groupe.nom_groupe,
-        }
-        for tache in taches_proches
-    ]
-    taches_depassees_data = [
-        {
-            'id': tache.id,
-            'description_tache': tache.description_tache[:nombre_de_lettres]+'...',
-            'groupe': tache.groupe.nom_groupe,
-        }
-        for tache in taches_depassees
-    ]
-
-    # Sauvegarder dans la session
-    request.session['taches_proches'] = taches_proches_data
-    request.session['taches_depassees'] = taches_depassees_data
-    # mettre un signe s'il y a une nouvelle notification
-    nouvelle_notifications = False
-    if taches_proches_data != [] or taches_depassees_data != [] : 
-        nouvelle_notifications = True
-
-    # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-    if request.method == 'POST' :
-        if 'delete' in request.POST:
-            id_tache = request.POST.get('id_tache')
-            tache = get_object_or_404(Taches, id=id_tache)
-            tache.delete()
-        if 'modifier' in request.POST: 
-            id_tache = request.POST.get("id-tache")
-            tache = get_object_or_404(Taches, id=id_tache)
-            # Mise à jour 
-            tache.description_tache = request.POST.get('description')
-            tache.deadline = request.POST.get('Date')
-            tache.save() 
-        elif 'status_check' in request.POST: 
-            id_tache = request.POST.get("id_tache")
-            tache = get_object_or_404(Taches, id=id_tache) 
-            tache.status = request.POST.get("status_check")
-            tache.save()
-
-
-    taches = Taches.objects.filter(etudiant=etudiant)
-
-    return render(request, 'home/todo.html', {'taches': taches, 'nouvelle_notifications':nouvelle_notifications, 'today':today.isoformat()})
 
 def classes(request): 
     id_etudiant = request.session.get('user_id')
@@ -729,3 +986,27 @@ def get_events(request):
         })
 
     return JsonResponse(event_list, safe=False)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

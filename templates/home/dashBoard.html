@@ -6,10 +6,62 @@
 
 <div class="container-fluid">
     <div class="row">
-       
-        <div class="col-lg-7">
+       <!-- first Part -->
+        <div class="col-lg-5">
             <!-- -------------------------------------------- -->
-            <!-- Revenue Forecast -->
+            <!-- Welcome Card -->
+            <!-- -------------------------------------------- -->
+            <div class="card text-bg-primary">
+                <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-7">
+                    <div class="d-flex flex-column h-100">
+                        <div class="hstack gap-3">
+                        <span class="d-flex align-items-center justify-content-center round-48 bg-white rounded flex-shrink-0">
+                            <iconify-icon icon="solar:course-up-outline" class="fs-7 text-muted"></iconify-icon>
+                        </span>
+                        <h5 class="text-white fs-6 mb-0 text-nowrap">Bienvenue
+                            <br>{{etudiant.prenom}}
+                        </h5>
+                        </div>
+                        <div class="mt-4 mt-sm-auto">
+                            <div class="row" style="padding-left: calc(var(--bs-gutter-x) * .5);">
+                                Découvrez vos avancées et atteignez vos objectifs.
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="col-sm-5 text-center text-md-end">
+                    <img src="{% static 'MatDash Bootstrap Admin_files/welcome-bg.png' %}" alt="welcome" class="img-fluid mb-n7 mt-2" width="180">
+                    </div>
+                </div>
+
+
+                </div>
+            </div>
+            <!-- -------------------------------------------- -->
+            <!-- Temps passé sur la plateforme -->
+            <!-- -------------------------------------------- -->
+            <div class="card bg-danger-subtle overflow-hidden shadow-none">
+                <div class="card-body p-4">
+                    <div>
+                        <h5 class="card-title fw-bolder">Temps passé sur la plateforme</h5>
+                    </div>
+                    <div class="hstack gap-6">
+                        <h5 class="mb-0 fs-7">{{ moyenne_temps }}</h5>
+                    </div>
+                    <span class="text-dark-light opacity-75">Moyenne quotidienne</span>
+                    <div class="mx-n1">
+                        <div id="projects"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- socond Part -->
+        <div class="col-lg-7">     
+            <!-- -------------------------------------------- -->
+            <!-- Progression, etat des taches -->
             <!-- -------------------------------------------- -->
             <div class="card">
                 <div class="card-body pb-4">
@@ -49,15 +101,15 @@
             </div>
         </div>
 
-        <div class="col-lg-7">
+        <!-- <div class="col-lg-7">
             <div class="row">
                 <div class="col-md-6">
-                    <!-- -------------------------------------------- -->
-                    <!-- Customers -->
-                    <!-- -------------------------------------------- -->
+                    --------------------------------------------
+                    Customers
+                    --------------------------------------------
                     <div class="card">
                         <div class="card-body">
-                            <!-- head -->
+                            head
                             <div class="d-flex align-items-start justify-content-between">
                                 <div>
                                     <h5 class="card-title fw-semibold">Customers</h5>
@@ -65,7 +117,7 @@
                                 </div>
                                 <span class="fs-11 text-success fw-semibold lh-lg">+26.5%</span>
                             </div>
-                            <!-- body -->
+                            body
                             <div class="py-4 my-1">
                                 <div id="customers-area" style="min-height: 100px;"></div>
                             </div> 
@@ -74,15 +126,15 @@
                 </div>
                 
                 <div class="col-md-6">
-                    <!-- -------------------------------------------- -->
-                    <!-- Sales Overview -->
-                    <!-- -------------------------------------------- -->
+                    --------------------------------------------
+                    Sales Overview
+                    --------------------------------------------
                     <div class="card">
                         <div class="card-body">
-                            <!-- head -->
+                            head
                             <h5 class="card-title fw-semibold">Sales Overview</h5>
                             <p class="card-subtitle mb-1">Last 7 days</p>
-                            <!-- body -->
+                            body
                             <div class="position-relative labels-chart">
                                 <span class="fs-11 label-1">0%</span>
                                 <span class="fs-11 label-2">25%</span>
@@ -94,21 +146,22 @@
                     </div>
                 </div>
             </div>
+        </div> -->
+        
+        <!-- -------------------------------------------- -->
+        <!-- Repartition des taches par projet -->
+        <!-- -------------------------------------------- -->
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                <h4 class="card-title">Répartition des tâches par projet</h4>
+                    <div id="chart-bar-stacked" style="min-height: 365px;"></div>
+                </div>
+            </div>
         </div>
 
     </div>
 </div>
-
-<div class="card">
-    <div class="card-body">
-      <h4 class="card-title">Répartition des tâches par projet</h4>
-        <div id="chart-bar-stacked" style="min-height: 365px;"></div>
-    </div>
-</div>
-
-
-
-
 
 
 <script src="{% static 'MatDash Bootstrap Admin_files/highlight.min.js.téléchargement' %}"></script>

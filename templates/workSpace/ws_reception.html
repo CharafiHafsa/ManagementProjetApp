@@ -1,7 +1,40 @@
 {% extends 'base.html' %}
 
+{% block style %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+{% endblock style %}
 
 {% block content %}
 {% load static %}
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
+
+<div class="row">
+    <div class="d-flex align-items-center justify-content-end col-md-7 ps-5" data-aos="slide-right">
+        <h5 class="fs-16 mb-0 fw-bold" style="font-family: 'Montserrat', sans-serif; font-weight: 900;">
+            Bienvenue dans votre espace collaboratif
+        </h5>
+    </div>
+    <div class="col-md-5 pe-5 d-flex align-items-center justify-content-end" data-aos="slide-left">
+        <img src="{% static 'MatDash Bootstrap Admin_files/ws2.png' %}">
+    </div>
+</div>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script>
+    AOS.init({
+        duration: 1500, // Durée de l'animation en ms
+        once: true // Animation une seule fois
+    });
+</script>
+
+<!-- 
+<img src="{% static 'MatDash Bootstrap Admin_files/ws1.png' %}">
+<img src="{% static 'MatDash Bootstrap Admin_files/ws3.png' %}">
+<img src="{% static 'MatDash Bootstrap Admin_files/ws4.png' %}">
+<img src="{% static 'MatDash Bootstrap Admin_files/ws5.png' %}"> -->
 
 {% endblock content %}

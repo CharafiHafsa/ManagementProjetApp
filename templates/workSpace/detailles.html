@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+{% load static %}
+
+<div class="row">
+
+    <!-- INSTRUCTIONS -->
+
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title mb-3">Instructions de projets</h4>
+
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="list1">
+                            <label class="form-check-label" for="list1" style="color: #222;">
+                                Todo list 1
+                            </label>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="list2">
+                            <label class="form-check-label" for="list2" style="color: #222;">
+                                Todo list 2
+                            </label>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="list3">
+                            <label class="form-check-label" for="list3" style="color: #222;">
+                                Todo list 3
+                            </label>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="list4">
+                            <label class="form-check-label" for="list4" style="color: #222;">
+                                Todo list 4
+                            </label>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="list5">
+                            <label class="form-check-label" for="list5" style="color: #222;">
+                                Todo list 5
+                            </label>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- DESCRIPTION -->
+
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title mb-3">Déscription</h4>
+
+                <p>
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos at earum voluptate iste excepturi, delectus blanditiis tenetur nisi, quas ea dolores qui. Non nisi aliquam rerum excepturi id, numquam necessitatibus quisquam, quo fugit dolor libero a consequatur soluta hic atque ducimus modi quaerat porro repudiandae? Saepe quas perspiciatis dignissimos maiores pariatur dolor, facere nemo maxime cumque, fugit voluptatibus odio atque distinctio nihil ipsam accusantium odit eos rem alias qui numquam provident ad reprehenderit doloremque. Doloribus beatae odio adipisci sit ipsum quia quasi accusamus, blanditiis quibusdam repellat laboriosam alias nulla incidunt provident minima pariatur recusandae omnis unde autem. Quod, ratione harum.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- RESOURCES -->
+
+    <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title mb-3">Resources</h5>
+
+            <div class="row">
+              <div class="col-5">
+                <div class="list-group" id="list-tab" role="tablist">
+                  <a class="list-group-item list-group-item-action" id="list-home-list" data-bs-toggle="list" href="#list-home" role="tab" aria-controls="home" aria-selected="false" tabindex="-1">Home</a>
+                  <a class="list-group-item list-group-item-action" id="list-profile-list" data-bs-toggle="list" href="#list-profile" role="tab" aria-controls="profile" aria-selected="false" tabindex="-1">Profile</a>
+                  <a class="list-group-item list-group-item-action" id="list-messages-list" data-bs-toggle="list" href="#list-messages" role="tab" aria-controls="messages" aria-selected="false">Messages</a>
+                  <a class="list-group-item list-group-item-action" id="list-settings-list" data-bs-toggle="list" href="#list-settings" role="tab" aria-controls="settings" aria-selected="false" tabindex="-1">Settings</a>
+                  <a class="list-group-item list-group-item-action" id="list-box-list" data-bs-toggle="list" href="#list-box" role="tab" aria-controls="box" aria-selected="false" tabindex="-1">Box</a>
+                  <a class="list-group-item list-group-item-action" id="list-inbox-list" data-bs-toggle="list" href="#list-inbox" role="tab" aria-controls="inbox" aria-selected="false" tabindex="-1">Inbox</a>
+                  <a class="list-group-item list-group-item-action" id="list-spam-list" data-bs-toggle="list" href="#list-spam" role="tab" aria-controls="spam" aria-selected="false" tabindex="-1">Spam</a>
+                </div>
+              </div>
+              <div class="col-7">
+                <div class="tab-content" id="nav-tabContent">
+                  <div class="tab-pane fade" id="list-home" role="tabpanel" aria-labelledby="list-home-list">
+                    <img src="{% static 'MatDash Bootstrap Admin_files/ws2.png' %}">
+                  </div>
+                  <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">
+                    <p>
+                      It is a long established fact that a reader will
+                      be distracted by the readable content of a page
+                      when looking at its layout. The point of using
+                      Lorem Ipsum
+                    </p>
+                    <p>
+                      Lorem Ipsum is simply dummy text of the printing
+                      and typesetting industry. Lorem Ipsum has been the
+                      industry's standard dummy text ever since the
+                      1500s, when an unknown printer took a galley of
+                      type
+                    </p>
+                  </div>
+                  <div class="tab-pane fade" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list">
+                    <p>
+                      Lorem Ipsum is simply dummy text of the printing
+                      and typesetting industry. Lorem Ipsum has been the
+                      industry's standard dummy text ever since the
+                      1500s, when an unknown printer took a galley of
+                      type
+                    </p>
+                    <p>
+                      It is a long established fact that a reader will
+                      be distracted by the readable content of a page
+                      when looking at its layout. The point of using
+                      Lorem Ipsum
+                    </p>
+                  </div>
+                  <div class="tab-pane fade" id="list-settings" role="tabpanel" aria-labelledby="list-settings-list">
+                    <p>
+                      It is a long established fact that a reader will
+                      be distracted by the readable content of a page
+                      when looking at its layout. The point of using
+                      Lorem Ipsum
+                    </p>
+                    <p>
+                      Lorem Ipsum is simply dummy text of the printing
+                      and typesetting industry. Lorem Ipsum has been the
+                      industry's standard dummy text ever since the
+                      1500s, when an unknown printer took a galley of
+                      type
+                    </p>
+                  </div>
+                  <div class="tab-pane fade" id="list-box" role="tabpanel" aria-labelledby="list-box-list">
+                    <p>
+                      Lorem Ipsum is simply dummy text of the printing
+                      and typesetting industry. Lorem Ipsum has been the
+                      industry's standard dummy text ever since the
+                      1500s, when an unknown printer took a galley of
+                      type
+                    </p>
+
+                    <p>
+                      It is a long established fact that a reader will
+                      be distracted by the readable content of a page
+                      when looking at its layout. The point of using
+                      Lorem Ipsum
+                    </p>
+                  </div>
+                  <div class="tab-pane fade" id="list-inbox" role="tabpanel" aria-labelledby="list-inbox-list">
+                    <p>
+                      It is a long established fact that a reader will
+                      be distracted by the readable content of a page
+                      when looking at its layout. The point of using
+                      Lorem Ipsum
+                    </p>
+                    <p>
+                      Lorem Ipsum is simply dummy text of the printing
+                      and typesetting industry. Lorem Ipsum has been the
+                      industry's standard dummy text ever since the
+                      1500s, when an unknown printer took a galley of
+                      type
+                    </p>
+                  </div>
+                  <div class="tab-pane fade" id="list-spam" role="tabpanel" aria-labelledby="list-spam-list">
+                    <p>
+                      It is a long established fact that a reader will
+                      be distracted by the readable content of a page
+                      when looking at its layout. The point of using
+                      Lorem Ipsum
+                    </p>
+                    <p>
+                      Lorem Ipsum is simply dummy text of the printing
+                      and typesetting industry. Lorem Ipsum has been the
+                      industry's standard dummy text ever since the
+                      1500s, when an unknown printer took a galley of
+                      type
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+
+</div>
+
+{% endblock content %}

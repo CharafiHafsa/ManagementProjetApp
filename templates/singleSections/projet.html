@@ -17,13 +17,16 @@
     <div class="col-md-4 d-flex align-items-stretch">
         <div class="card w-100">
         <div class="card-header text-bg-primary">
-            <h4 class="mb-0 text-white card-title">{{projet.nom_project }}</h4>
+            <h4 class="mb-0 text-white card-title">{{ projet.nom_project }}</h4>
         </div>
         <div class="card-body">
             <p class="card-text">{{projet.description }}</p>
             <button type="button" class="btn mb-1 bg-primary-subtle text-primary px-4 fs-4 btn_creer_grp " data-bs-toggle="modal" data-bs-target="#primary-header-modal">
               Créer votre groupe
             </button>
+            <a class="btn mb-1 bg-primary-subtle text-primary px-4 fs-4 btn_creer_grp " href="{% url 'detailles' %}">
+              Détailles
+            </a>
         </div>
         <input type="hidden" value="{{projet.id}}"  id="projet-id">
         </div>

@@ -265,29 +265,6 @@
     });
 
     
-    // addButton.addEventListener("click", function () {
-    //     form.reset();
-    //     editIndex.value = "";
-    //     document.getElementById("taskModalLabel").textContent = "Ajouter une tâche";
-    //     taskModal.show();
-    // });
-
-    // form.addEventListener("submit", function (event) {
-    //     event.preventDefault();
-        
-    //     // var name = document.getElementById("taskName").value;
-    //     var date = document.getElementById("taskDate").value;
-    //     // var status = document.getElementById("taskStatus").value;
-    //     var description = document.getElementById("taskDescription").value;
-        
-    //     if (editIndex.value === "") {
-    //         addTask(name, date, description);
-    //     } else {
-    //         updateTask(editIndex.value, name, date, description);
-    //     }
-
-    //     taskModal.hide();
-    // });
 
     function addTask(name, date, description) {
         var tbody = document.querySelector("table tbody");
@@ -350,28 +327,6 @@
      deleteButtons = document.querySelectorAll('.delete-task');
      editButtons = document.querySelectorAll('.edit-task');
      checkboxes = document.querySelectorAll('.form-check-input');
-
-    //  editButtons.forEach(button => {
-    //   button.addEventListener('click', function() {
-    //     // Trouver la ligne parente (le <tr>)
-    //     var row = this.closest('tr');
-    //     // document.getElementById("taskName").value = row.cells[1].textContent.trim();
-    //     let dateText = row.cells[2].textContent.trim(); // Récupère et nettoie le texte
-    //     let parts = dateText.split("/"); // Sépare jj/mm/aaaa
-
-    //     if (parts.length === 3) {
-    //       let formattedDate = parts[2] + "-" + parts[1] + "-" + parts[0]; // Convertit en aaaa-mm-jj
-    //         document.getElementById("taskDate").value = formattedDate;
-    //     }
-
-    //     // document.getElementById("taskStatus").value = row.cells[3].textContent.trim();
-    //     document.getElementById("taskDescription").value = row.cells[4].textContent.trim();
-
-    //     editIndex.value = row.rowIndex;
-    //     document.getElementById("taskModalLabel").textContent = "Modifier la tâche";
-    //     taskModal.show();
-    //   });
-    // });
     
     }
 
