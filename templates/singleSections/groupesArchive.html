@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+{% load static %}
+
+    <div class="row">
+
+        {% for groupe_data in groupes_data %}
+            <div class="col-md-4 d-flex align-items-stretch" style="z-index: 10;">
+                <div class="card w-100">
+                    <div class="card-body">
+                        <!-- Bouton Menu 3 points -->
+                        <div class="dropdown position-absolute top-0 end-0 m-2">
+                            <button class="three-points-menu" type="button" id="dropdownMenuButton{{ groupe_data.groupe.id }}" data-bs-toggle="dropdown" aria-expanded="false" style="background: transparent;">
+                                <iconify-icon icon="solar:menu-dots-bold" class="fs-6"></iconify-icon>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ groupe_data.groupe.id }}">
+                                <li><a style="cursor: pointer;" class="dropdown-item text-danger"  data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" id="btn-delete">Quitter</a></li>
+                                <li><form method="post" action="{% url 'groupes_archive' %}">{% csrf_token %}<input type="hidden" name="group_id" value="{{ groupe_data.groupe.id }}"><input type="submit" name="desarchiver" class="dropdown-item text-primary btn_archiver_grp" value="Désarchiver"></form></li>
+                            </ul>
+                        </div>
+
+                        <!-- Contenu du groupe -->
+                        <div class="form-group">
+                            <!-- Ring -->
+                            <div class="col d-flex align-items-center justify-content-center">
+                                <!-- <div data-label="60%" class="css-bar mb-0 css-bar-primary css-bar-60"></div> -->
+                                <div class="progress-ring" data-progress="{{groupe_data.progression}}%"  id="ring-{{ forloop.counter }}"> </div>
+                            </div>
+                            
+                            <h4 class="">{{groupe_data.groupe.nom_groupe}}</h4>
+                            
+                            <p class="card-subtitle mb-3">
+                                {% if groupe_data.groupe.projet.nom_project %}
+                                <b>Projet : </b>{{groupe_data.groupe.projet.nom_project}}
+                                <br>
+                                <b>Classes : </b>{{ groupe_data.groupe.projet.code_classe.nom_classe }}
+                                {% endif %}
+                            </p>
+                            <form method="post">
+                                {% csrf_token %}
+                        
+                                <a type="submit" href="{% url 'ws_reception' groupe_id=groupe_data.groupe.id  %}?archive=true" value="Ouvrir" name="ouvrir" class="btn d-block w-100 fw-medium bg-primary-subtle text-primary without-msg ouvrir_groupe">Ouvrir</a>
+                                <!-- <input type="hidden" value="{{ groupe.id }}" name="groupe_id"> -->
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        
+    </div>
+
+     <!-- ring of progress -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Sélectionne tous les éléments progress-ring
+            let rings = document.querySelectorAll(".progress-ring");
+
+            // Parcours chaque élément individuellement
+            rings.forEach(function (ring) {
+                // Récupère le pourcentage depuis l'attribut 'data-progress'
+                let progress = ring.getAttribute("data-progress").replace("%", "");
+
+                // Applique le style spécifique à chaque ring
+                ring.style.background = `conic-gradient(#635BFF ${progress}%, #e9ecef ${progress}%)`;
+            });
+        });
+    </script>
+
+
+    <!-- MODAL MODIFIER -->
+              
+    <div id="primary-header-modal-modifier" class="modal fade" tabindex="-1"
+    aria-labelledby="primary-header-modalLabel" style="display: none;" aria-hidden="true" style="z-index: 200;">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg" style="z-index: 200;">
+        <div class="modal-content">
+        <div class="modal-header modal-colored-header bg-primary text-white">
+            <h4 class="modal-title text-white" id="primary-header-modalLabel">
+            Modifier groupe
+            </h4>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+            aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+
+            <form id="taskForm" method="post" >
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="taskName" class="form-label">Nom de groupe</label>
+                <input type="text" class="form-control" id="taskName" name="nom_groupe" required>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+            Fermer
+            </button>
+            <input type="submit"  name="creer_groupe" value="Modifier" class="btn bg-primary-subtle text-primary ">
+            <input type="hidden" name="projet_id" id="projet-id-modal">
+        </div>
+        </form>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+    </div>
+
+    <script>
+    document.querySelectorAll(".btn_modifier_grp").forEach(item => {
+        item.addEventListener("click", function () {
+        project_id = document.getElementById('projet-id').value ;
+        document.getElementById('taskName').value = '';
+        const dropdownButton = document.getElementById("dropdownMenuButton");
+        dropdownButton.textContent = "Sélectionner des étudiants";
+        }
+    )});
+    </script>
+
+   
+    <!-- Modal Ajouter Groupe -->
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+            {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+   
+    <!-- Modal -->
+
+    <div id="primary-header-modal" class="modal fade" tabindex="-1" aria-labelledby="primary-header-modalLabel" style="display: none;" aria-hidden="true" style="z-index: 200;">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg" style="z-index: 200;">
+        <div class="modal-content">
+            <div class="modal-header modal-colored-header bg-primary text-white">
+            <h4 class="modal-title text-white" id="primary-header-modalLabel">
+                Créer un nouveau groupe
+            </h4>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            <form id="taskForm" method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="taskName" class="form-label">Nom de groupe</label>
+                    <input type="text" class="form-control" id="taskName" name="nom_groupe" required>
+                </div>
+
+                <h4>Ajouter des membres par email</h4>
+                <div class="mb-3">
+                    <input type="email" id="emailInput" class="form-control" placeholder="Entrez un email et appuyez sur Entrée">
+                </div>
+                <button style="visibility: hidden;" id="addEmailBtn" class="btn btn-primary mb-2">Créer</button>
+                <div id="emailList"></div>
+
+                <!-- Champ caché pour stocker les emails -->
+               <input type="text" name="emails" id="emailsHidden">  
+
+                <!-- <input type="hidden" id="editIndex"> -->
+            
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+                Fermer
+            </button>
+            <input type="submit" value=" Créer" class="btn bg-primary-subtle text-primary ">
+        </form>
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+        </div>
+    </div>
+
+   
+
+
+    <!-- MODAL Quitter -->
+
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                Êtes-vous sûr de vouloir quitter ce groupe ?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <form method="POST"> 
+                  {% csrf_token %}
+                  <input type="hidden" name="" id="">
+                  <input type="submit" class="btn btn-danger" id="confirmDeleteBtn"  name="delete" value="Quitter">
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+  
+    <script>
+        document.getElementById("btn-delete").addEventListener("click", function() {
+            id_etu = document.getElementById('id_etu_tab').value
+            document.getElementById('id_etu_mod').value = id_etu
+        });
+        document.getElementById("confirmDeleteBtn").addEventListener("click", function() {
+            var modal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+            modal.hide();
+        });
+    </script>
+
+    
+    
+
+{% endblock content %}

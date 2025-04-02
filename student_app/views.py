@@ -22,6 +22,9 @@ import json
 import uuid
 import os
 import datetime
+from django.db import transaction
+import google.generativeai as genai
+
 
 
 
@@ -326,7 +329,10 @@ def detailles(request):
 
 def dashBoard_ws(request):
     groupe_id = request.session.get('groupe_id', None)
-    groupe = get_object_or_404(Groupe, id=groupe_id)
+    if request.session.get('archive') == False: 
+        groupe = get_object_or_404(Groupe, id=groupe_id)
+    else:
+        groupe = get_object_or_404(GroupeArchive, id=groupe_id)
 
     if groupe.projet:
         projet = groupe.projet
@@ -535,12 +541,14 @@ def todo_home(request):
         etudiant_id=id_etudiant,
         status="En cours",
         deadline__gte=today,  # Exclut les tâches déjà dépassées.
-        deadline__lte=today + timedelta(days=jours_avant_deadline)  # Sélectionne uniquement les tâches dont la deadline est dans les prochains jours.
+        deadline__lte=today + timedelta(days=jours_avant_deadline),  # Sélectionne uniquement les tâches dont la deadline est dans les prochains jours.
+        groupe__isnull=False
     )
     taches_depassees = Taches.objects.filter(
         etudiant_id=id_etudiant,
         status="En cours",
-        deadline__lt=today
+        deadline__lt=today,
+        groupe__isnull=False
     )
 
     # Convertir les tâches en une liste de dictionnaires sérialisables
@@ -653,7 +661,6 @@ def todo_home(request):
             nouvelles_entrees.append(TempsUtilisation(etudiant=etudiant, date=jour, temps_passe=timedelta(seconds=0)))
     
     # Récupérer l'enregistrement du jour
-    print('nnnnnnnnnnnnnnnnnnnnnnnn')
     last_day = TempsUtilisation.objects.filter(
         etudiant=etudiant, 
         date=timezone.now().date()
@@ -674,13 +681,17 @@ def todo_home(request):
     return render(request, 'home/todo.html', {'taches': taches, 'nouvelle_notifications':nouvelle_notifications, 'today':today.isoformat()})
 
 def todo_ws(request):
+    id_etudiant = request.session.get('user_id')
     today = datetime.date.today()
     # Récupérer l'ID du groupe depuis la session
-    print("todo: ", request.session.get('groupe_id', None))
     groupe_id = request.session.get('groupe_id', None)
-
-    groupe = get_object_or_404(Groupe, id=groupe_id)
+    if request.session.get('archive') == False: 
+        groupe = get_object_or_404(Groupe, id=groupe_id)
+    else:
+        groupe = get_object_or_404(GroupeArchive, id=groupe_id)
+    
     if request.method == 'POST' :
+        print(2)
         # SUPPRIMER
         if 'delete' in request.POST:
             id_tache = request.POST.get('id_tache')
@@ -720,14 +731,33 @@ def todo_ws(request):
         # SAUVGARDER L'HISTORIQUE
         enregistrer_historique_taches_du_jour(request)
 
-    
-    taches = Taches.objects.filter(groupe=groupe)
-    etudiants=Etudiant.objects.filter(groupes=groupe)
-    return render(request, 'workSpace/todo.html', {'taches':taches,'etudiants':etudiants, 'groupe_id':groupe_id, 'today':today.isoformat()})
+    if request.session.get('archive') == False:   
+        taches = Taches.objects.filter(groupe=groupe)
+        etudiants=Etudiant.objects.filter(groupes=groupe).exclude(id=id_etudiant)
+    else:
+        taches = Taches.objects.filter(groupeArchive=groupe)
+        etudiants=Etudiant.objects.filter(groupesArchive=groupe).exclude(id=id_etudiant)
+
+    archive = request.session.get('archive')
+    return render(request, 'workSpace/todo.html', {'taches':taches,'etudiants':etudiants, 'groupe_id':groupe_id, 'today':today.isoformat(), 'archive':archive})
 
 def ws_reception(request, groupe_id):
+    est_archive = request.GET.get('archive', 'false').lower() == 'true'
+    request.session['archive'] = est_archive
     request.session['groupe_id'] = groupe_id
-    return render(request, 'workSpace/ws_reception.html', {'groupe_id':groupe_id})
+
+    if est_archive:
+        groupe = get_object_or_404(GroupeArchive, id=groupe_id)
+    else:
+        groupe = get_object_or_404(Groupe, id=groupe_id)
+
+    if groupe.projet:
+        request.session['grp_avec_projet'] = True
+    else:
+        request.session['grp_avec_projet'] = False
+
+    grp_avec_projet = request.session.get('grp_avec_projet', None)
+    return render(request, 'workSpace/ws_reception.html', {'groupe_id':groupe_id, 'grp_avec_projet':grp_avec_projet})
 
 def chat(request):
     # Récupérer l'ID du groupe depuis la session
@@ -745,27 +775,30 @@ def chat(request):
 def memberes(request):
     # Récupérer l'ID du groupe depuis la session
     groupe_id = request.session.get('groupe_id', None)
-    etudiants = Etudiant.objects.filter(groupes=groupe_id)
+    if request.session.get('archive') == False: 
+        etudiants = Etudiant.objects.filter(groupes=groupe_id)
+    else:
+        etudiants = Etudiant.objects.filter(groupesArchive=groupe_id)
+
     if request.method == "POST":
-        print('mmmm')
         if "delete" in request.POST:
-            print('nnnnn')
             etudiant_id = request.POST.get("id_etudiant")
             etudiant = get_object_or_404(Etudiant, id=etudiant_id)
-            print(etudiant_id, 'nnnnnnnnnnnnnnnn')
 
-            # Suppression de l'étudiant du groupe (ou suppression complète si nécessaire)
-            etudiant.groupes.remove(groupe_id)  # Si la relation est ManyToManyField
-            # etudiant.delete()  # Si tu veux supprimer complètement l'étudiant
+            if request.session.get('archive') == False: 
+                etudiant.groupes.remove(groupe_id) 
+            else:
+                etudiant.groupesArchive.remove(groupe_id) 
 
             return render(request, 'workSpace/membres.html', {'etudiants': etudiants})
         if "btn-add" in request.POST: 
         # Récupération de l'email du formulaire
             email = request.POST.get("email") 
             try:
-                etudiant = Etudiant.objects.get(email_etudiant=email)  # Vérifie si l'étudiant existe
-                groupe = Groupe.objects.get(id=groupe_id)  # Récupérer le groupe actuel
-                Notification.objects.create(etudiant=etudiant, groupe=groupe) #creer la notification
+                etudiant = Etudiant.objects.get(email_etudiant=email)  
+                if request.session.get('archive') == False: 
+                    groupe = Groupe.objects.get(id=groupe_id) 
+                    Notification.objects.create(etudiant=etudiant, groupe=groupe)
                 
                 return render(request, 'workSpace/membres.html', {
                     'etudiants': etudiants,
@@ -776,8 +809,8 @@ def memberes(request):
                     'etudiants': etudiants,
                     'error_message': "Cet email n'existe pas dans la base de données"
                 })
-
-    return render(request, 'workSpace/membres.html', {'etudiants': etudiants})
+    archive = request.session.get('archive')
+    return render(request, 'workSpace/membres.html', {'etudiants': etudiants, 'archive':archive})
 
 def ouvrir_doc(request):
     if request.method == "POST":
@@ -797,19 +830,187 @@ def ouvrir_doc(request):
 
 def documents(request):
     groupe_instance = Groupe.objects.get(id=request.session.get('groupe_id'))
+    etu = Etudiant.objects.get(id=request.session.get('user_id'))
+
     if request.method == "POST":
         file = request.FILES.get("file")
 
         if not file:
             return JsonResponse({"success": False, "error": "Aucun fichier sélectionné"}, status=400)
-        
-        document = Document(title=os.path.splitext(file.name)[0], file=file, groupe=groupe_instance)
 
+        document = Document(title=os.path.splitext(file.name)[0], file=file, groupe=groupe_instance, etudiant=etu)
         document.save()
 
-        return JsonResponse({"success": True, "file_url": document.file.url})
+        return JsonResponse({"success": True, "id": document.id,"title": document.title, "file_url": document.file.url})  
 
     return render(request, 'workSpace/documents.html', {'doc': Document.objects.filter(groupe=groupe_instance)})
+
+
+# def documents(request):
+
+#     if request.session.get('archive') == False: 
+#         groupe_instance = Groupe.objects.get(id=request.session.get('groupe_id'))
+#     else:
+#         groupe_instance = GroupeArchive.objects.get(id=request.session.get('groupe_id'))
+
+#     if request.method == "POST":
+#         file = request.FILES.get("file")
+#         if not file:
+#             return JsonResponse({"success": False, "error": "Aucun fichier sélectionné"}, status=400)
+        
+#         if request.session.get('archive') == False: 
+#             document = Document(title=os.path.splitext(file.name)[0], file=file, groupe=groupe_instance)
+#         else:
+#             document = Document(title=os.path.splitext(file.name)[0], file=file, groupeArchive=groupe_instance)
+
+#         document.save()
+#         return JsonResponse({"success": True, "file_url": document.file.url})
+
+
+#     if request.session.get('archive') == False: 
+#         return render(request, 'workSpace/documents.html', {'doc': Document.objects.filter(groupe=groupe_instance), 'archive':False})
+#     else:
+#         return render(request, 'workSpace/documents.html', {'doc': Document.objects.filter(groupeArchive=groupe_instance), 'archive':True})
+
+def suppDoc(request):
+    if request.method == 'POST' and 'delete' in request.POST:
+
+        document_id = request.POST.get('document_id')
+        
+        if document_id:
+            document = get_object_or_404(Document, id=document_id)
+            document.delete()
+            return redirect('documents')
+        return HttpResponse("Requête invalide", status=400)
+        
+def Quitter_Modifier(request):
+    if request.method == 'POST':
+        if 'delete_groupe' in request.POST:
+            groupe_id = request.POST.get('id_groupe')
+            if groupe_id:
+                groupe = get_object_or_404(Groupe,id=groupe_id)
+                groupe.delete()
+                return redirect(request.META.get('HTTP_REFERER', 'default_url'))
+        elif 'modifier_groupe' in request.POST:
+            groupe_id = request.POST.get('id_groupe')
+            groupe_name = request.POST.get('nom_groupe')
+            print('ID = ',groupe_id)
+            print('NOM = ',groupe_name)
+            if groupe_id:
+                groupe = get_object_or_404(Groupe, id=groupe_id)
+                groupe.nom_groupe = groupe_name
+                groupe.save()
+                return redirect(request.META.get('HTTP_REFERER', 'default_url'))
+    return HttpResponse("Requête invalide", status=400)
+
+def chatbot_view(request):
+    genai.configure(api_key="AIzaSyBNRe5yW4uRQNmjg1GcEZEpiXuPysY7xrQ")
+    try:
+        # Récupérer l'étudiant et le groupe depuis la session
+        etudiant_id = request.session.get('user_id')
+        groupe_id = request.session.get('groupe_id')
+
+        if not etudiant_id or not groupe_id:
+            return JsonResponse({'error': 'Identifiants utilisateur ou groupe manquants.'}, status=400)
+
+        etudiant = Etudiant.objects.filter(id=etudiant_id).first()
+        groupe = Groupe.objects.filter(id=groupe_id).first()
+
+        if not etudiant or not groupe:
+            return JsonResponse({'error': 'Étudiant ou groupe non trouvé.'}, status=400)
+
+        # Récupérer tous les sujets associés au groupe
+        sujets = Sujet.objects.filter(groupe=groupe)
+
+        # Vérifier si un sujet existe déjà pour l'étudiant
+        sujet = None
+        sujet_id = request.POST.get('subject_id')
+        if sujet_id:
+            sujet = Sujet.objects.filter(id=sujet_id).first()
+
+        # Gérer la requête POST pour un nouveau message
+        if request.method == 'POST':
+            user_message = request.POST.get('message', '').strip()
+
+            if not user_message:
+                return JsonResponse({'error': 'Le message ne peut pas être vide.'}, status=400)
+
+            # Créer un nouveau sujet si aucun n'existe
+            if not sujet:
+                sujet = Sujet.objects.create(
+                    titre=f"Conversation sur : {user_message[:30]}...",
+                    groupe=groupe
+                )
+                request.session['sujet_id'] = sujet.id
+
+            # Envoyer le message au chatbot
+            model = genai.GenerativeModel("gemini-2.0-flash")
+            chat = model.start_chat()
+
+            max_retries = 5  # Nombre maximal de tentatives
+            delay = 1.0  # Délai initial avant réessai (en secondes)
+            multiplier = 2.0  # Facteur multiplicateur du délai
+
+            response = None
+
+            for attempt in range(max_retries):
+                try:
+                    response = chat.send_message(
+                        f"{user_message} (Réponds de manière claire et précise.)",
+                        generation_config={
+                            "max_output_tokens": 300,
+                            "temperature": 0.7,
+                            "top_p": 0.9,
+                            "top_k": 40
+                        }
+                    )
+                    break  # Sortir de la boucle si la requête réussit
+
+                except (ServiceUnavailable, DeadlineExceeded) as e:
+                    if attempt < max_retries - 1:
+                        time.sleep(delay)  # Attendre avant de réessayer
+                        delay *= multiplier  # Augmenter le délai d'attente
+                    else:
+                        return JsonResponse({'error': 'Erreur de connexion au service de chatbot.'}, status=503)
+
+            if not response or not response.text:
+                return JsonResponse({'error': 'Réponse vide du chatbot.'}, status=500)
+
+            formatted_response = markdown.markdown(response.text)
+
+            # Sauvegarder le message de l'étudiant
+            ChatMessage.objects.create(etudiant=etudiant, sujet=sujet, contenu=user_message)
+
+            # Sauvegarder la réponse du chatbot
+            ChatMessage.objects.create(etudiant=None, sujet=sujet, contenu=response.text)
+
+            return JsonResponse({'response': formatted_response})
+
+        # Afficher la page avec les sujets disponibles
+        return render(request, 'WorkSpace/chatbot.html', {'sujets': sujets})
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+def get_conversation(request, sujet_id):
+    try:
+        sujet = Sujet.objects.filter(id=sujet_id).first()
+
+        if not sujet:
+            return JsonResponse({'error': 'Sujet non trouvé.'}, status=404)
+
+        messages = ChatMessage.objects.filter(sujet=sujet).order_by('id')
+
+        conversation_data = [
+            {'contenu': message.contenu, 'etudiant': message.etudiant.nom if message.etudiant else 'Chatbot'}
+            for message in messages
+        ]
+
+        return JsonResponse({'messages': conversation_data})
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
 
 def classes(request): 
     id_etudiant = request.session.get('user_id')
@@ -828,6 +1029,25 @@ def notifications(request):
     notifications = Notification.objects.filter(etudiant=etudiant)
     taches_proches = request.session.get('taches_proches', [])
     taches_depassees = request.session.get('taches_depassees', [])
+
+    if request.method == 'POST' :
+        # suprimer une notification
+        if 'delete' in request.POST:
+            id_notification = request.POST.get('id_notification')
+            notification  = get_object_or_404(Notification, id=id_notification )
+            notification .delete()
+        # accepter une invitation
+        if 'accepter' in request.POST:
+            id_notification = request.POST.get('id_notification')
+            notification  = get_object_or_404(Notification, id=id_notification )
+            groupe=notification.groupe
+            groupe.membres.add(etudiant)  
+            groupe.nbr_membre += 1  
+            groupe.save()  
+            notification .delete()
+
+
+
     return render(request, 'singleSections/notifications.html',  {'taches_proches':taches_proches, 'taches_depassees':taches_depassees , 'notifications':notifications})
 
 def groupes(request):
@@ -835,6 +1055,72 @@ def groupes(request):
     etudiant = Etudiant.objects.filter(id=id_etudiant).first()
     groupes = etudiant.groupes.all()
 
+    
+    if request.method == "POST" :
+        # archiver le groupe -------------------------------------------------
+        if 'archiver' in request.POST:
+            group_id = request.POST.get("group_id")
+            groupe = get_object_or_404(Groupe, id=group_id)
+
+            with transaction.atomic():  # Garantit que tout est exécuté sans erreur
+                # 1. Créer une instance dans GroupeArchive
+                groupe_archive = GroupeArchive.objects.create(
+                    nom_groupe=groupe.nom_groupe,
+                    nbr_membre=groupe.nbr_membre,
+                    projet=groupe.projet
+                )
+
+                # 2. Mettre à jour toutes les relations :
+
+                # Taches → groupeArchive
+                for tache in groupe.taches.all():
+                    tache.groupe = None
+                    tache.groupeArchive = groupe_archive
+                    tache.save()
+
+                # Documents → groupeArchive
+                for document in groupe.documents.all():
+                    document.groupe = None
+                    document.groupeArchive = groupe_archive
+                    document.save()
+
+                # Notifications → groupeArchive
+                for notification in groupe.notifications.all():
+                    notification.groupe = None
+                    notification.groupeArchive = groupe_archive
+                    notification.save()
+
+                # Mettre à jour les étudiants (ManyToMany)
+                for etudiant in groupe.membres.all():
+                    etudiant.groupes.remove(groupe)  # Retirer du groupe normal
+                    etudiant.groupesArchive.add(groupe_archive)  # Ajouter à l'archive
+
+                # 3. Supprimer le groupe original
+                groupe.delete()
+
+        else: # créer un groupe -------------------------------------------------
+            
+            nom_groupe = request.POST.get("nom_groupe")
+            # Récupérer les emails sous forme de liste
+            emails = request.POST.get("emails", "").split(",")
+            # Créer le groupe
+            groupe = Groupe.objects.create(nom_groupe=nom_groupe, nbr_membre=len(emails) + 1)
+            groupe.membres.add(etudiant)
+            erreurs = []
+            
+            # Vérifier chaque email et créer les notifications
+            for email in emails:
+                etudiant_invite = Etudiant.objects.filter(email_etudiant=email).first()
+                if etudiant_invite:
+                    Notification.objects.create(etudiant=etudiant_invite, groupe=groupe)
+                else:
+                    erreurs.append(f"L'email {email} n'existe pas dans la base de données.")
+            if erreurs:
+                messages.error(request, "\n".join(erreurs))
+            else:
+                messages.success(request, "Groupe créé avec succès !")
+    
+    
     groupes_data = []
     for groupe in groupes:
         total_taches = groupe.taches.count()
@@ -845,32 +1131,67 @@ def groupes(request):
             "groupe": groupe,
             "progression": int(progression) 
         })
-
-    if request.method == "POST":
-        nom_groupe = request.POST.get("nom_groupe")
-        # Récupérer les emails sous forme de liste
-        emails = request.POST.get("emails", "").split(",")
-        # Créer le groupe
-        groupe = Groupe.objects.create(nom_groupe=nom_groupe, nbr_membre=len(emails) + 1)
-        groupe.membres.add(etudiant)
-        erreurs = []
-        
-        # Vérifier chaque email et créer les notifications
-        for email in emails:
-            etudiant_invite = Etudiant.objects.filter(email_etudiant=email).first()
-            if etudiant_invite:
-                Notification.objects.create(etudiant=etudiant_invite, groupe=groupe)
-            else:
-                erreurs.append(f"L'email {email} n'existe pas dans la base de données.")
-        if erreurs:
-            messages.error(request, "\n".join(erreurs))
-        else:
-            messages.success(request, "Groupe créé avec succès !")
-    
-    
-    
     
     return render(request, 'singleSections/groupes.html', {"groupes_data": groupes_data})
+    
+def groupes_archive(request):
+    id_etudiant = request.session.get('user_id')
+    etudiant = Etudiant.objects.filter(id=id_etudiant).first()
+    groupes = etudiant.groupesArchive.all()
+
+    if 'desarchiver' in request.POST:
+        groupe_archive_id = request.POST.get("group_id")
+        groupe_archive = get_object_or_404(GroupeArchive, id=groupe_archive_id)
+
+        with transaction.atomic():  # Garantit l'exécution sans erreur
+            # 1. Créer une nouvelle instance de Groupe
+            groupe = Groupe.objects.create(
+                nom_groupe=groupe_archive.nom_groupe,
+                nbr_membre=groupe_archive.nbr_membre,
+                projet=groupe_archive.projet
+            )
+
+            # 2. Mettre à jour toutes les relations :
+
+            # Taches → Groupe
+            for tache in groupe_archive.taches_archive.all():
+                tache.groupeArchive = None
+                tache.groupe = groupe
+                tache.save()
+
+            # Documents → Groupe
+            for document in groupe_archive.documents_archive.all():
+                document.groupeArchive = None
+                document.groupe = groupe
+                document.save()
+
+            # Notifications → Groupe
+            for notification in groupe_archive.notifications_archive.all():
+                notification.groupeArchive = None
+                notification.groupe = groupe
+                notification.save()
+
+            # Mettre à jour les étudiants (ManyToMany)
+            for etudiant in groupe_archive.membres.all():
+                etudiant.groupesArchive.remove(groupe_archive)  # Retirer du groupe archivé
+                etudiant.groupes.add(groupe)  # Ajouter au nouveau groupe
+
+            # 3. Supprimer le groupe archivé
+            groupe_archive.delete()
+
+
+    groupes_data = []
+    for groupe in groupes:
+        total_taches = groupe.taches_archive.count()
+        taches_terminees = groupe.taches_archive.filter(status="Terminé").count()
+        progression = (taches_terminees / total_taches * 100) if total_taches > 0 else 0
+
+        groupes_data.append({
+            "groupe": groupe,
+            "progression": int(progression) 
+        })
+    
+    return render(request, 'singleSections/groupesArchive.html', {"groupes_data": groupes_data})
     
 def calender_home(request):
     if request.method == 'POST':
@@ -922,9 +1243,22 @@ def projets(request, classe_id):
             ]
             Notification.objects.bulk_create(notifications)
 
+            # creer les status des instruction:*
+
+            # Récupérer toutes les instructions liées à ce projet
+            instructions = projet.instructions.all()
+            # Créer un statut pour chaque instruction du projet
+            for instruction in instructions:
+                InstructionStatus.objects.create(
+                    instruction=instruction,
+                    groupe=groupe,  # Associe le statut avec le groupe
+                    est_termine=False,  # Par défaut, il n'est pas terminé
+                    fichier_livrable=None  # Pas de fichier pour l'instant
+                )
+
     etudiant = Etudiant.objects.filter(id=id_etudiant).first()
          
-    etudiants = classe.etudiants.all()
+    etudiants = classe.etudiants.all().exclude(id=id_etudiant)
 
     projets_associés = Project.objects.filter(groupe__membres=etudiant).distinct()
 

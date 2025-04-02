@@ -12,6 +12,7 @@ from .models import Document
 from .models import Notification
 from .models import HistoriqueTachesEtu
 from .models import TempsUtilisation
+from .models import GroupeArchive
 
 admin.site.register(Classe)
 admin.site.register(Etudiant)
@@ -26,3 +27,4 @@ admin.site.register(Document)
 admin.site.register(Notification)
 admin.site.register(HistoriqueTachesEtu)
 admin.site.register(TempsUtilisation)
+admin.site.register(GroupeArchive)

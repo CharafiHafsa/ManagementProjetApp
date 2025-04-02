@@ -43,6 +43,7 @@ class Etudiant(models.Model):
     projets = models.ManyToManyField('Project', related_name="etudiants", blank=True)
     classes = models.ManyToManyField('Classe', related_name="etudiants",  blank=True)
     groupes = models.ManyToManyField('Groupe', related_name="membres",  blank=True)
+    groupesArchive = models.ManyToManyField('GroupeArchive', related_name="membres",  blank=True)
     
     def str(self):
         return f"{self.nom} {self.prenom}"
@@ -102,8 +103,22 @@ class Groupe(models.Model):
     def str(self):
         return self.nom_groupe
 
+class GroupeArchive(models.Model):
+    nom_groupe = models.CharField(max_length=255)
+    nbr_membre = models.PositiveIntegerField()
+    projet = models.ForeignKey(
+        Project, 
+        on_delete=models.SET_NULL,  # Permet de garder le groupe même si le projet est supprimé
+        null=True,   # Autorise NULL dans la base de données
+        blank=True   # Autorise un formulaire vide en Django admin
+    )
+
+    def str(self):
+        return self.nom_groupe
+
 class Taches(models.Model):
-    groupe = models.ForeignKey(Groupe, on_delete=models.CASCADE, related_name="taches")
+    groupe = models.ForeignKey(Groupe, on_delete=models.CASCADE, related_name="taches", null=True, blank=True)
+    groupeArchive = models.ForeignKey(GroupeArchive, on_delete=models.CASCADE, related_name="taches_archive", null=True, blank=True)
     etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE, related_name="taches")
     description_tache = models.TextField()
     status_choices = [
@@ -158,11 +173,13 @@ class Document(models.Model):
     title = models.CharField(max_length=200)
     file = models.FileField(upload_to='documents/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
-    groupe = models.ForeignKey(Groupe,on_delete=models.CASCADE, related_name='documents')
+    groupe = models.ForeignKey(Groupe,on_delete=models.CASCADE, related_name='documents', null=True, blank=True)
+    groupeArchive = models.ForeignKey(GroupeArchive, on_delete=models.CASCADE, related_name='documents_archive', null=True, blank=True)
 
 class Notification(models.Model):
     etudiant = models.ForeignKey(Etudiant,  on_delete=models.CASCADE, related_name='notifications' )
-    groupe = models.ForeignKey( Groupe,  on_delete=models.CASCADE, related_name='notifications')
+    groupe = models.ForeignKey( Groupe,  on_delete=models.CASCADE, related_name='notifications', null=True, blank=True)
+    groupeArchive = models.ForeignKey(GroupeArchive, on_delete=models.CASCADE, related_name='notifications_archive', null=True, blank=True)
 
 class HistoriqueTachesEtu(models.Model):
     etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE, related_name="historique_taches")
@@ -187,4 +204,19 @@ class TempsUtilisation(models.Model):
         verbose_name_plural = "Historiques du Temps d'Utilisation"
         ordering = ['-date']  # Trie par date décroissante
 
+class Sujet(models.Model):
+    titre = models.CharField(max_length=255)
+    groupe = models.ForeignKey(Groupe, on_delete=models.CASCADE)
+
+    def _str_(self):
+        return self.titre
+
+class ChatMessage(models.Model):
+    etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE,null=True, blank=True)
+    sujet = models.ForeignKey(Sujet, on_delete=models.CASCADE)
+    contenu = models.TextField()
+    date_envoi = models.DateTimeField(auto_now_add=True)
+
+    def _str_(self):
+        return self.contenu[:20]
 

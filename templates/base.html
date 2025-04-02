@@ -136,13 +136,13 @@
 
                           <li class="mini-nav-item" id="mini-1">
                             <a href="{% url 'todo_home' %}" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
-                              data-bs-placement="right" data-bs-title="Classes">
+                              data-bs-placement="right" data-bs-title="To-Do">
                               <iconify-icon icon="solar:checklist-minimalistic-line-duotone" class="fs-7"></iconify-icon>
                             </a>
                           </li>
                           <li class="mini-nav-item" id="mini-2">
                             <a href="{% url 'calender_home' %}" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
-                              data-bs-placement="right" data-bs-title="Classes">
+                              data-bs-placement="right" data-bs-title="Calendrier">
                               <iconify-icon icon="solar:calendar-mark-line-duotone" class="fs-7"></iconify-icon>
                             </a>
                           </li>
@@ -303,7 +303,7 @@
                                 <span class="hide-menu">To-Do liste</span>
                               </a>
                             </li>
-
+                            {% if grp_avec_projet %}
                             <li class="sidebar-item">
                               <a href="#"
                                 class="sidebar-link ws-link" id="ws-detailles" data-url="{% url 'detailles' %}">
@@ -311,6 +311,7 @@
                                 <span class="hide-menu">Détailles de projet</span>
                               </a>
                             </li>
+                            {% endif %}
 
                             <li class="sidebar-item">
                               <a href="#"
@@ -338,7 +339,7 @@
                             
                             <li class="sidebar-item">
                               <a href="#"
-                                class="sidebar-link ws-link" id="ws-chatBot" data-url="">
+                                class="sidebar-link ws-link" id="ws-chatBot" data-url="{% url 'chatbot' %}">
                                 <iconify-icon class="ws-link" icon="solar:chat-square-call-line-duotone"></iconify-icon>
                                 <span class="hide-menu">Chat Bot</span>
                               </a>
@@ -479,7 +480,7 @@
   </script>
 
   <!-- open close menu -->
-   <script>
+  <script>
 
       function imposerMarginLeftZero(force) {
           const pageWrapper = document.querySelector('.page-wrapper');
@@ -492,7 +493,7 @@
           // var mini_7 = document.getElementById("mini-7").classList.contains('selected');
           // var mini_8 = document.getElementById("mini-8").classList.contains('selected');
           if (pageWrapper) {
-              if (mini_4 || mini_5 || mini_9 || mini_1 || mini_2 || mini_6) {
+              if (mini_4 || mini_5 || mini_9 || mini_1 || mini_2 || mini_6 || window.location.href.includes('/etu/groupes/archive')) {
                   pageWrapper.classList.add('force-margin-left'); // Imposer margin-left: 0
               } else {
                   pageWrapper.classList.remove('force-margin-left'); // Laisser le style normal
@@ -509,7 +510,7 @@
   
         document.querySelectorAll(".student-item").forEach(item => {
             item.addEventListener("click", function () {
-              const studentId = this.getAttribute("data-id");
+                const studentId = this.getAttribute("data-id");
                 const studentNom = this.getAttribute("data-nom");
                 const studentPrenom = this.getAttribute("data-prenom");
                 const studentEmail = this.getAttribute("data-email");
@@ -586,6 +587,7 @@
 
         // Récupère les liens de WorkSpace
         const chatLink = document.getElementById('ws-chat');
+        const chatbotLink = document.getElementById('ws-chatBot');
         const todoLink = document.getElementById('ws-todo');
         const membresLink = document.getElementById('ws-membres');
         const docsLink = document.getElementById('ws-documents');
@@ -593,8 +595,11 @@
         const detaillesLink = document.getElementById('ws-detailles');
 
         if (window.location.href.includes('etu/ws/') || window.location.href.includes('etu/espaceDeTravail/')) {
+          console.log('hello', chatLink, chatbotLink)
           const url_chat = chatLink.getAttribute('data-url');
           chatLink.setAttribute('href', url_chat);
+          const url_chatbot = chatbotLink.getAttribute('data-url');
+          chatbotLink.setAttribute('href', url_chatbot);
           const url_todo = todoLink.getAttribute('data-url');
           todoLink.setAttribute('href', url_todo);
           const url_membres = membresLink.getAttribute('data-url');
@@ -606,7 +611,9 @@
           const url_detailles = detaillesLink.getAttribute('data-url');
           detaillesLink.setAttribute('href', url_detailles);
         } else {
+          console.log('no hello')
           chatLink.setAttribute('href', '#');
+          chatbotLink.setAttribute('href', '#');
           todoLink.setAttribute('href', '#');
           membresLink.setAttribute('href', '#');
           docsLink.setAttribute('href', '#');

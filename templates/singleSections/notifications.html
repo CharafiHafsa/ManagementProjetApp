@@ -9,29 +9,13 @@
         <h4 class="card-title">Notifications</h4>
         </div>
         <ul class="feeds ps-0">
-        <!-- <div class="alert  alert-dismissible text-info text-info alert-light-info bg-info-subtle fade show remove-close-icon" style="margin-left: 20px; margin-right: 20px;">
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            <div class="border-start border-2 border-info d-md-flex align-items-center disp-x">
-                <div class="d-flex align-items-center gap-6 ms-2">
-                    <a href="javascript:void(0)" class=" round-40 bg-info-subtle text-info rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
-                    <iconify-icon icon="solar:bell-broken" class="fs-7"></iconify-icon>
-                    </a>
-                    <div class="text-truncate">
-                        <span class="text-dark fw-medium">Notification.</span>
-                    </div>
-                </div>
-                <div class="
-                    justify-content-end
-                    text-truncate
-                    ms-5 ms-md-auto
-                    ps-4 ps-md-0
-                    ">
-                </div>
-            </div>
-        </div> -->
         {% for notification in notifications %}
             <div class="alert  alert-dismissible text-success text-success alert-light-success bg-success-subtle fade show remove-close-icon" style="margin-left: 20px; margin-right: 20px;">
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="id_notification" value="{{ notification.id }}">
+                    <button type="submit" class="btn-close" data-bs-dismiss="alert" aria-label="Close" name="delete"></button>
+                </form>
                 <div class="border-start border-2 border-success d-md-flex align-items-center disp-x">
                     <div class="d-flex align-items-center gap-6 ms-2">
                         <a href="javascript:void(0)" class=" round-40 bg-success-subtle text-success rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
@@ -41,7 +25,13 @@
                         <span class="text-dark fw-medium">Invitation pour rejoindre le groupe <b>{{notification.groupe.nom_groupe}}</b>.</span>
                         </div>
                         <div class="justify-content-end text-truncate ms-5 ms-md-auto ps-4 ps-md-0 ">
-                            <input type="button" class="btn btn-success" value="Accepter">
+                        <form action="" method="POST">
+                            {% csrf_token %}   
+                            <input type="hidden" name="id_notification" value="{{ notification.id }}">
+                            <input type="hidden" name="accepter" value="1">
+                            <input type="submit" class="btn btn-success" value="Accepter">
+                            <!-- <input type="submit" class="btn btn-success" value="Accepter" name="accepter"> -->
+                        </form>
                         </div>
                     </div>
                 </div>
@@ -49,7 +39,11 @@
         {% endfor %}
         {% for tache in taches_proches %}
             <div class="alert  alert-dismissible text-warning text-warning alert-light-warning bg-warning-subtle fade show remove-close-icon" style="margin-left: 20px; margin-right: 20px;">
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="id_notification" value="{{ notification.id }}">
+                    <button type="submit" class="btn-close" data-bs-dismiss="alert" aria-label="Close" name="delete"></button>
+                </form>
                 <div class="border-start border-2 border-warning d-md-flex align-items-center disp-x">
                 <div class="d-flex align-items-center gap-6 ms-2">
                     <a href="javascript:void(0)" class=" round-40 bg-warning-subtle text-warning rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
@@ -71,7 +65,11 @@
         {% endfor %}
         {% for tache in taches_depassees %}
             <div class="alert  alert-dismissible text-danger text-danger alert-light-danger bg-danger-subtle fade show remove-close-icon" style="margin-left: 20px; margin-right: 20px;">
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="id_notification" value="{{ notification.id }}">
+                    <button type="submit" class="btn-close" data-bs-dismiss="alert" aria-label="Close" name="delete"></button>
+                </form>
                 <div class="border-start border-2 border-danger d-md-flex align-items-center disp-x">
                 <div class="d-flex align-items-center gap-6 ms-2">
                     <a href="javascript:void(0)" class=" round-40 bg-danger-subtle text-danger rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
@@ -92,7 +90,11 @@
             </div>
         {% endfor %}
         <div class="alert  alert-dismissible text-primary text-primary alert-light-primary bg-primary-subtle fade show remove-close-icon" style="margin-left: 20px; margin-right: 20px;">
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <form action="" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="id_notification" value="{{ notification.id }}">
+                <button type="submit" class="btn-close" data-bs-dismiss="alert" aria-label="Close" name="delete"></button>
+            </form>
             <div class="border-start border-2 border-primary d-md-flex align-items-center disp-x">
                 <div class="d-flex align-items-center gap-6 ms-2">
                     <a href="javascript:void(0)" class=" round-40 bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
@@ -108,4 +110,3 @@
     </div>
 </div>
 {% endblock content %}
-

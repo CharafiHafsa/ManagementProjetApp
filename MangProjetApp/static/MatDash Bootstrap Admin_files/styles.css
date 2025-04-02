@@ -51916,7 +51916,7 @@ h6 {
     color: #000;
   }
   
-  .progress-ring::before{
+  .progress-ring::before {
     content: attr(data-progress); /* Affiche le pourcentage */
     position: absolute;
     width: 90%;
@@ -51930,5 +51930,3 @@ h6 {
     font-weight: bold;
     color: #000;
   }
-
-

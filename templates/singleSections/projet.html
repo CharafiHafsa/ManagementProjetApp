@@ -55,12 +55,12 @@
 
             <!-- Bouton Menu 3 points -->
             <div class="dropdown position-absolute top-0 end-0 m-2">
-              <button class="three-points-menu" type="button" id="dropdownMenu3Button{{ groupe.id }}" data-bs-toggle="dropdown" aria-expanded="false" style="background: transparent;">
+              <button class="three-points-menu" type="button" id="dropdownMenuButton{{ groupe.id }}" data-bs-toggle="dropdown" aria-expanded="false" style="background: transparent;">
                   <iconify-icon icon="solar:menu-dots-bold" class="fs-6"></iconify-icon>
               </button>
-              <ul class="dropdown-menu" aria-labelledby="dropdownMenu3Button{{ groupe.id }}">
-                  <li><a class="dropdown-item text-danger"  data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" id="btn-delete">Quitter</a></li>
-                  <li><a class="dropdown-item text-primary btn_modifier_grp"  data-bs-toggle="modal" data-bs-target="#primary-header-modal-modifier">Modifier</a></li>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ groupe.id }}">
+                <li><button class="dropdown-item text-danger"  data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" id="btn-delete" data-id="{{ projet.groupe_set.first.id  }}">Quitter</button></li>
+                <li><button class="dropdown-item text-primary btn_modifier_grp"  data-bs-toggle="modal" data-bs-target="#primary-header-modal-modifier"   data-id="{{  projet.groupe_set.first.id }}" >Modifier</button></li>
               </ul>
             </div>
 
@@ -165,89 +165,90 @@
     )});
   </script>
 
-<!-- MODAL MODIFIER -->
+  <!-- MODAL MODIFIER -->
               
   <div id="primary-header-modal-modifier" class="modal fade" tabindex="-1"
     aria-labelledby="primary-header-modalLabel" style="display: none;" aria-hidden="true" style="z-index: 200;">
     <div class="modal-dialog modal-dialog-scrollable modal-lg" style="z-index: 200;">
-      <div class="modal-content">
+        <div class="modal-content">
         <div class="modal-header modal-colored-header bg-primary text-white">
-          <h4 class="modal-title text-white" id="primary-header-modalLabel">
+            <h4 class="modal-title text-white" id="primary-header-modalLabel">
             Modifier groupe
-          </h4>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+            </h4>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
             aria-label="Close"></button>
         </div>
-        <div class="modal-body">
-
-          <form id="taskForm" method="post" >
+        <form id="taskForm" method="post"action="{% url 'Quitter_Modifier' %}" >
             {% csrf_token %}
-            <div class="mb-3">
-              <label for="taskName" class="form-label">Nom de groupe</label>
-              <input type="text" class="form-control" id="taskName" name="nom_groupe" required>
-            </div>
+                <div class="modal-body"> 
+                        
+                        <div class="mb-3">
+                            <input type="hidden" name="id_groupe" id="id_groupe">
+                            <label for="taskName" class="form-label">Nom de groupe</label>
+                            <input type="text" class="form-control" id="taskName" name="nom_groupe" required>
+                        </div>
 
+                </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+                Fermer
+                </button>
+                <input type="submit"  name="modifier_groupe" value="Modifier" class="btn bg-primary-subtle text-primary">
+            </div>
+        </form>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-light" data-bs-dismiss="modal">
-            Fermer
-          </button>
-          <input type="submit"  name="creer_groupe" value="Modifier" class="btn bg-primary-subtle text-primary ">
-          <input type="hidden" name="projet_id" id="projet-id-modal">
-        </div>
-      </form>
-      </div>
       <!-- /.modal-content -->
     </div>
     <!-- /.modal-dialog -->
   </div>
 
   <script>
-    document.querySelectorAll(".btn_modifier_grp").forEach(item => {
-      item.addEventListener("click", function () {
-        project_id = document.getElementById('projet-id').value ;
-        document.getElementById('taskName').value = '';
-        const dropdownButton = document.getElementById("dropdownMenuButton");
-        dropdownButton.textContent = "Sélectionner des étudiants";
-      }
+     document.querySelectorAll(".btn_modifier_grp").forEach(item => {
+        item.addEventListener("click", function () {
+            var groupe_id = this.getAttribute('data-id');
+            
+            document.getElementById('id_groupe').value = groupe_id;
+        }
     )});
   </script>
 
 
+  <!-- MODAL Quitter -->
 
-    <!-- MODAL Quitter -->
-
-    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog">
-          <div class="modal-content">
-              <div class="modal-header">
-                  <h5 class="modal-title">Confirmation</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
-              </div>
-              <div class="modal-body">
-                  Êtes-vous sûr de vouloir quitter ce groupe ?
-              </div>
-              <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                  <form method="POST"> 
-                    {% csrf_token %}
-                    <input type="hidden" name="" id="">
-                    <input type="submit" class="btn btn-danger" id="confirmDeleteBtn"  name="delete" value="Quitter">
-                  </form>
-              </div>
-          </div>
-      </div>
+  <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                Êtes-vous sûr de vouloir quitter ce groupe ?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <form method="POST" action="{% url 'Quitter_Modifier' %}"> 
+                  {% csrf_token %}
+                  <input type="hidden" name="id_groupe" id="id_groupe">
+                  <input type="submit" class="btn btn-danger" id="confirmDeleteBtn"  name="delete_groupe" value="Quitter">
+                </form>
+            </div>
+        </div>
     </div>
-    
-    <script>
-        document.getElementById("btn-delete").addEventListener("click", function() {
-            id_etu = document.getElementById('id_etu_tab').value
-            document.getElementById('id_etu_mod').value = id_etu
-        });
-        document.getElementById("confirmDeleteBtn").addEventListener("click", function() {
-            var modal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
-            modal.hide();
-        });
-    </script>
+  </div>
+  
+  <script>
+      document.querySelectorAll('#btn-delete').forEach(function(button) {
+      button.addEventListener('click', function() {
+          var groupe_id = this.getAttribute('data-id');
+          
+          document.getElementById('id_groupe').value = groupe_id;
+      });
+  });
+      document.getElementById("confirmDeleteBtn").addEventListener("click", function() {
+          var modal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+          modal.hide();
+      });
+  </script>
     
 {% endblock content %}

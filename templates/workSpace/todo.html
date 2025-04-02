@@ -38,7 +38,7 @@
                   <div class="card-body calender-sidebar app-calendar">
                       <div id="calendar" class="fc fc-media-screen fc-direction-ltr fc-theme-standard">
                           <div class="fc-header-toolbar fc-toolbar fc-toolbar-ltr">
-                            <button type="button" aria-pressed="false" class="fc-addEventButton-button fc-button fc-button-primary">Ajouter une tache</button>
+                            <button {% if archive %} disabled {% endif %} type="button" aria-pressed="false" class="fc-addEventButton-button fc-button fc-button-primary">Ajouter une tache</button>
                           </div>
                       </div>
                   </div>
@@ -52,7 +52,7 @@
           </th>
           <th scope="col">L'étudiant chargé</th>
           <th scope="col">Date limite</th>
-          <th scope="col">Status</th>
+          <th class="status-column" scope="col">Status</th>
           <th scope="col">Déscription</th>
           <th scope="col">Actions</th>
         </tr>
@@ -65,7 +65,7 @@
                   {% csrf_token %}
                   <input type="hidden" name="id_tache" value="{{ tache.id }}">
                   <div class="form-check mb-0">
-                      <input name="status" class="form-check-input task-checkbox" type="checkbox" value="" id="task-{{ tache.id }}">
+                      <input name="status" class="form-check-input task-checkbox" type="checkbox" value="" id="task-{{ tache.id }}" {% if archive %} disabled {% endif %}>
                   </div>
                 </form>
               </td>
@@ -80,7 +80,7 @@
               <td>
                   <p class="mb-0">{{ tache.deadline|date:"Y-m-d" }}</p>
               </td>
-              <td>
+              <td class="status-column">
                 <div style="display: flex; justify-content: start;">
                   <div class="d-flex status_date align-items-center">
                     {% if tache.deadline|date:"Y-m-d" == today %}
@@ -108,13 +108,13 @@
 
                 <div style="display: flex; align-items: center">
                   <input type="hidden" id="id_tache" value="{{ tache.id }}">
-                  <button  style="border: none; background-color: transparent;" class="fs-6 text-muted delete-task"  data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" id="btn-delete">
+                  <button {% if archive %} disabled {% endif %} style="border: none; background-color: transparent;" class="fs-6 text-muted delete-task"  data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" id="btn-delete">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                       <path fill="currentColor" d="M9.878 4.25a2.251 2.251 0 0 1 4.244 0a.75.75 0 1 0 1.415-.5a3.751 3.751 0 0 0-7.073 0a.75.75 0 1 0 1.414.5M2.75 6a.75.75 0 0 1 .75-.75h17a.75.75 0 0 1 0 1.5h-17A.75.75 0 0 1 2.75 6m2.367 1.752a.75.75 0 0 1 .798.698l.46 6.9c.09 1.347.154 2.285.294 2.99c.137.685.327 1.047.6 1.303c.274.256.648.422 1.34.512c.714.093 1.654.095 3.004.095h.774c1.35 0 2.29-.002 3.004-.095c.692-.09 1.066-.256 1.34-.512c.273-.256.463-.618.6-1.303c.14-.705.204-1.643.294-2.99l.46-6.9a.75.75 0 1 1 1.497.1l-.464 6.952c-.085 1.282-.154 2.318-.316 3.132c-.169.845-.455 1.551-1.047 2.104s-1.315.793-2.17.904c-.822.108-1.86.108-3.145.108h-.88c-1.285 0-2.323 0-3.145-.108c-.855-.111-1.579-.35-2.17-.904c-.592-.553-.878-1.26-1.047-2.104c-.162-.814-.23-1.85-.316-3.132L4.418 8.55a.75.75 0 0 1 .699-.798"/>
                     </svg>
                   </button>
                   <input type="hidden" id="id-hidd" name="id_tache" value="{{ tache.id }}">
-                  <a class="fs-6 text-muted edit-task" href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Editer">
+                  <a {% if archive %} style="pointer-events: none; opacity: 0.5;" {% endif %} class="fs-6 text-muted edit-task" href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Editer">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M7 12a2 2 0 1 1-4 0a2 2 0 0 1 4 0m7 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0m7 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0"/></svg>
                   </a>
                 </div>
@@ -446,20 +446,27 @@
 
     document.getElementById("filter-btn-terminer").addEventListener("click", function() {
         var rows = document.querySelectorAll("tbody tr");
+        var status_columns = document.querySelectorAll(".status-column");
         
         rows.forEach(row => {
+          // afficher les tache terminées dans 'terminé'
             var status = row.querySelector(".status p").textContent.trim();
-
             if (status !== "Terminé") {
                 row.style.display = "none";  // Cache la ligne
             } else {
                 row.style.display = "";  // Affiche la ligne
-            }
+            }            
+        });
+
+        // cacher le status
+        status_columns.forEach(status_column => {
+            status_column.style.display = "none";
         });
     });
     
     document.getElementById("filter-btn-enCours").addEventListener("click", function() {
         var rows = document.querySelectorAll("tbody tr");
+        var status_columns = document.querySelectorAll(".status-column");
         
         rows.forEach(row => {
             var status = row.querySelector(".status p").textContent.trim();
@@ -470,14 +477,26 @@
                 row.style.display = "";  // Affiche la ligne
             }
         });
+
+        // cacher le status
+        status_columns.forEach(status_column => {
+            status_column.style.display = "table-cell";
+        });
     });
     
     document.getElementById("filter-btn-tous").addEventListener("click", function() {
         var rows = document.querySelectorAll("tbody tr");
+        var status_columns = document.querySelectorAll(".status-column");
         
         rows.forEach(row => {
             row.style.display = "";  // Affiche tous les lignes
         });
+
+        // afficher le status
+        status_columns.forEach(status_column => {
+            status_column.style.display = "none";
+        });
+        
     });
 
     
