@@ -8,105 +8,45 @@ import requests
 import google.generativeai as genai
 import markdown
 
+
 genai.configure(api_key="AIzaSyBNRe5yW4uRQNmjg1GcEZEpiXuPysY7xrQ")
 
-def chat_view(request):
-    if request.method == 'POST':
-        user_message = request.POST.get('message', '')
 
-        # Gestion des questions sur la date
-        if "date" in user_message or "today" in user_message:
-            today_date = datetime.datetime.today().strftime("%A, %d %B %Y")
-            return JsonResponse({'response': f"Today's date is {today_date}."})
+  # Get the email from session
 
-        model = genai.GenerativeModel("gemini-2.0-flash")
-        chat = model.start_chat()
-
-        # Demander des réponses plus courtes
-        response = chat.send_message(
-            f"{user_message} (Réponds courts de manière claire et précise.)",
-            generation_config={
-                "max_output_tokens": 300,    # Limite la taille de la réponse
-                "temperature": 0.7,         # Contrôle la créativité (0 = précis, 1 = aléatoire)
-                "top_p": 0.9,               # Fait varier légèrement les réponses
-                "top_k": 40                 # Sélectionne les meilleurs tokens pour plus de diversité
-            }
-        )
-
-        formatted_response = markdown.markdown(response.text) 
-        return JsonResponse({'response': formatted_response})
-
-    return render(request, 'prof/chat.html')
-
-def update_instruction_status(request, project_id, groupe_id):
-    project = get_object_or_404(Project, id=project_id)
-    group = get_object_or_404(Groupe, id=groupe_id, projet=project)
-    instructions = Instruction.objects.filter(projet=project)
-
-    instruction_statuses = [
-        {'instruction': instruction, 'status': InstructionStatus.objects.filter(groupe=group, instruction=instruction).first()}
-        for instruction in instructions
-    ]
-
-    if request.method == 'POST':
-        instruction_id = request.POST.get("instruction_id")
-        status = request.POST.get("status") == "on"
-        instruction = get_object_or_404(Instruction, id=instruction_id)
-
-        instruction_status, created = InstructionStatus.objects.get_or_create(
-            instruction=instruction,
-            groupe=group,
-            defaults={'est_termine': status}
-        )
-
-        if not created:
-            instruction_status.est_termine = status
-
-        if 'upload_file' in request.FILES:
-            file = request.FILES['upload_file']
-            fs = FileSystemStorage()
-            filename = fs.save(file.name, file)
-            instruction_status.fichier_livrable = filename
-
-        instruction_status.save()
-
-        return redirect('update_instruction_status', project_id=project.id, groupe_id=group.id)
-
-    return render(request, 'prof/student_instructions.html', {
-        'project': project,
-        'group': group,
-        'instruction_statuses': instruction_statuses,
-        'instructions': instructions
-    })
-
-
-
-
+    # Proceed with your logic
+   
 def prof_accueil(request):
     # Hardcoded email for testing
-    test_email = 'hafsa.charafi@enset-media.ac.ma'
+    email = request.session.get('email')
+    if email:
+        professor = get_object_or_404(Professeur, email=email)
+
+            # Fetch the classes for the professor
+        classes = Classe.objects.filter(professeur=professor)
+        
+        # Calculate global statistics
+        total_classes = classes.count()
+        total_students = Etudiant.objects.filter(classes__in=classes).count()  # Use 'classes' here
+        total_projects = Project.objects.filter(code_classe__in=classes).count()  # Use 'code_classe' here
+        
+        # Pass the necessary data to the template
+        context = {
+            'professor': professor,
+            'classes': classes,
+            'total_classes': total_classes,
+            'total_students': total_students,
+            'total_projects': total_projects
+        }
+        
+        return render(request, 'prof/home.html', context)
+        # Fetch the classes and other stats...
+    else:
+        # Handle the case where the email is not available in the session
+        return redirect('login')  # Redirect to login if email is missing
     
-    # Get the professor's information based on the hardcoded email
-    professor = get_object_or_404(Professeur, email=test_email)
     
-    # Fetch the classes for the professor
-    classes = Classe.objects.filter(professeur=professor)
-    
-    # Calculate global statistics
-    total_classes = classes.count()
-    total_students = Etudiant.objects.filter(classes__in=classes).count()  # Use 'classes' here
-    total_projects = Project.objects.filter(code_classe__in=classes).count()  # Use 'code_classe' here
-    
-    # Pass the necessary data to the template
-    context = {
-        'professor': professor,
-        'classes': classes,
-        'total_classes': total_classes,
-        'total_students': total_students,
-        'total_projects': total_projects
-    }
-    
-    return render(request, 'prof/home.html', context)
+
 def get_class_stats(request, class_id):
     try:
         classe = Classe.objects.get(id=class_id)
@@ -122,38 +62,50 @@ def get_class_stats(request, class_id):
         return JsonResponse({'error': 'Class not found'}, status=404)
 
 def prof_classes(request):
-    prof = Professeur.objects.filter(email="hafsa.charafi@enset-media.ac.ma").first()  # Get the professor with the email
+    prof_id = request.session.get('user_id')
+    if not prof_id:
+        return redirect('login')  # Redirect to login if user_id is missing
+
+    # Get the professor with the ID from the session
+    prof = Professeur.objects.filter(id=prof_id).first()
+
+    # Get the search query if provided
     query = request.GET.get('q', '')
 
     if prof:
-        classes = Classe.objects.filter(professeur=prof)  
+        # Filter the classes assigned to the professor
+        classes = Classe.objects.filter(professeur=prof)
+
+        # If there's a search query, filter the classes by name
+        if query:
+            classes = classes.filter(nom_classe__icontains=query)  # Filter by class name
+
+        # Calculate the student count for each class
         for classe in classes:
             classe.etudiants_count = classe.etudiants.count()
+            classe.projects_count = classe.projets.count()
     else:
         print("No professor found.")  # Debugging line
         classes = []  # If no professor is found, return an empty list
-    if query:
-        classes = Classe.objects.filter(nom_classe__icontains=query)  # Filter by class name
-    else:
-        classes = Classe.objects.all()  # If no search, return all classes
-    return render(request, 'prof/classes.html', {'professor': prof, 'classes': classes , 'query' : query})
+
+    return render(request, 'prof/classes.html', {'professor': prof, 'classes': classes, 'query': query})
 
 def create_class(request):
     if request.method == 'POST' :
         className = request.POST.get('className')
-        test_email = 'hafsa.charafi@enset-media.ac.ma'
-        prof = Professeur.objects.filter(email=test_email).first()
+        prof_id = request.session.get('user_id')
+        prof = Professeur.objects.filter(id=prof_id).first()
 
         if not className :
-            messages.error(request, "Nom requeired")
+            messages.error(request, "Nom requeired", extra_tags="classes")
 
         elif not prof:
-            messages.error(request, "Professeur introuvalble")
+            messages.error(request, "Professeur introuvalble", extra_tags="classes")
         else:
             new_Classe = Classe(nom_classe=className, professeur = prof)
 
             new_Classe.save()
-            messages.success(request, f"Classe {className} added with code {new_Classe.code_classe }!")
+            messages.success(request, f"Classe {className} added with code {new_Classe.code_classe }!", extra_tags="classes")
 
             return redirect('prof_classes')
     return render(request, 'prof/classes.html')
@@ -170,9 +122,9 @@ def edit_classe(request, class_id):
             classe.nom_classe = class_name
             classe.description = class_desc
             classe.save()
-            messages.success(request, "Class updated successfully!")
+            messages.success(request, "Class updated successfully!", extra_tags="classes")
         else:
-            messages.error(request, "Please fill all fields.")
+            messages.error(request, "Please fill all fields.", extra_tags="classes")
 
     next_url = request.GET.get("next", "prof_classes")
     return redirect(next_url)  # Redirect to the main page
@@ -182,16 +134,15 @@ def delete_classe(request, class_id):
 
     if request.method == 'POST':
         classe.delete()
-        messages.success(request, "class and all related data is deleted successfully!")
+        messages.success(request, "class and all related data is deleted successfully!", extra_tags="classes")
         return redirect("prof_classes")
 
     return redirect("prof_classes")
 
 def classe_detail(request, class_id):
     classe = get_object_or_404(Classe, id=class_id)
-    test_email = 'hafsa.charafi@enset-media.ac.ma'
-    prof = Professeur.objects.filter(email=test_email).first()
-    professor = Professeur.objects.filter(email=test_email).first()
+    prof_id = request.session.get('user_id')
+    professor = Professeur.objects.filter(id=prof_id).first()
     projects = Project.objects.filter(code_classe=classe)
 
     return render(request, 'prof/classe.html', {'professor': professor ,'classe':classe, 'projects':projects})
@@ -218,11 +169,11 @@ def add_project(request, class_id):
                 )
                 new_project.save()
                 print(f"Saved project: {new_project.nom_project}")
-                messages.success(request, "Projet ajouté avec succès !")
+                messages.success(request, "Projet ajouté avec succès !", extra_tags="projet")
                 
             except Exception as e:
                 print(f"Error: {e}")
-                messages.error(request, f"Erreur lors de l'ajout du projet: {e}")
+                messages.error(request, f"Erreur lors de l'ajout du projet: {e}", extra_tags="projet")
 
             return redirect('classe_detail', class_id=classe.id)
 
@@ -243,9 +194,9 @@ def edit_projet(request, projet_id):
             projet.date_debut = date_debut
             projet.date_fin = date_fin
             projet.save()
-            messages.success(request, "Project updated successfully!")
+            messages.success(request, "Project updated successfully!",extra_tags="projet")
         else:
-            messages.error(request, "Please fill all fields.")
+            messages.error(request, "Please fill all fields.",extra_tags="projet")
 
     next_url = request.GET.get("next","projet_detail")
     return redirect(next_url)
@@ -255,7 +206,7 @@ def delete_projet(request, projet_id):
 
     if request.method == "POST" :
         projet.delete()
-        messages.success(request, "projet and all related data is deleted successfully!")
+        messages.success(request, "projet and all related data is deleted successfully!",extra_tags="projet")
 
 
         return redirect('classe_detail', class_id = projet.code_classe_id)
@@ -263,7 +214,8 @@ def delete_projet(request, projet_id):
     return redirect('classe_detail', class_id = projet.code_classe_id)
 
 def projet_detail(request, projet_id):
-    prof = Professeur.objects.filter(email="hafsa.charafi@enset-media.ac.ma").first()
+    prof_id = request.session.get('user_id')
+    prof = Professeur.objects.filter(id=prof_id).first()
     projet = get_object_or_404(Project, id=projet_id)
     
     instructions = projet.instructions.all()
@@ -335,16 +287,16 @@ def add_announce(request, projet_id):
         contenu = request.POST.get("contenu")
         if contenu:
             Announce.objects.create(projet = projet, contenu=contenu)
-            messages.success(request, "Announce ajoutee avec succes")
+            messages.success(request, "Announce ajoutee avec succes",extra_tags="projet")
         else:
-            messages.error(request, "Le contenu ne peut pas etre vide")
+            messages.error(request, "Le contenu ne peut pas etre vide",extra_tags="projet")
     return redirect("projet_detail", projet_id= projet.id)
 
 def delete_announce(request, announce_id):
     announce = get_object_or_404(Announce, id=announce_id)
     projet_id = announce.projet.id
     announce.delete()
-    messages.success(request, "Announce supprimee ave succes ")
+    messages.success(request, "Announce supprimee ave succes ",extra_tags="projet")
     return redirect("projet_detail", projet_id=projet_id)
 
 def modify_announce(request, announce_id):
@@ -355,9 +307,9 @@ def modify_announce(request, announce_id):
         if nouveau_contentu :
             announce.contenu = nouveau_contentu
             announce.save()
-            messages.success(request, "Announce modifee avec succes")
+            messages.success(request, "Announce modifee avec succes",extra_tags="projet")
         else:
-            messages.error(request, "Le contenu ne peut pas etre vide")
+            messages.error(request, "Le contenu ne peut pas etre vide",extra_tags="projet")
     return redirect("projet_detail", projet_id=announce.projet.id)
 
 
@@ -372,11 +324,11 @@ def add_ressource(request, projet_id):
         url = request.POST.get("url", "").strip()
 
         if not titre:
-            messages.error(request, "Le titre est requis.")
+            messages.error(request, "Le titre est requis.",extra_tags="projet")
             return redirect("projet_detail", projet_id=projet.id)
 
         if not file and not video_url and not url:
-            messages.error(request, "Vous devez ajouter une ressource !")
+            messages.error(request, "Vous devez ajouter une ressource !",extra_tags="projet")
             return redirect("projet_detail", projet_id=projet.id)
 
         # Create and save resource in one step
@@ -388,7 +340,7 @@ def add_ressource(request, projet_id):
             url=url if url else None
         )
 
-        messages.success(request, "Ressource ajoutée avec succès.")
+        messages.success(request, "Ressource ajoutée avec succès.",extra_tags="projet")
         
     return redirect("projet_detail", projet_id=projet.id)
 
@@ -398,8 +350,79 @@ def delete_ressource(request, ressource_id):
     ressource = get_object_or_404(P_ressources, id=ressource_id)
     projet_id = ressource.projet.id
     ressource.delete()
-    messages.success(request, "Ressource supprimée avec succès")
+    messages.success(request, "Ressource supprimée avec succès",extra_tags="projet")
     return redirect("projet_detail", projet_id=projet_id)
+
+
+
+def chat_view(request):
+    if request.method == 'POST':
+        user_message = request.POST.get('message', '')
+
+        # Gestion des questions sur la date
+        if "date" in user_message or "today" in user_message:
+            today_date = datetime.datetime.today().strftime("%A, %d %B %Y")
+            return JsonResponse({'response': f"Today's date is {today_date}."})
+
+        model = genai.GenerativeModel("gemini-2.0-flash")
+        chat = model.start_chat()
+
+        # Demander des réponses plus courtes
+        response = chat.send_message(
+            f"{user_message} (Réponds courts de manière claire et précise.)",
+            generation_config={
+                "max_output_tokens": 300,    # Limite la taille de la réponse
+                "temperature": 0.7,         # Contrôle la créativité (0 = précis, 1 = aléatoire)
+                "top_p": 0.9,               # Fait varier légèrement les réponses
+                "top_k": 40                 # Sélectionne les meilleurs tokens pour plus de diversité
+            }
+        )
+
+        formatted_response = markdown.markdown(response.text) 
+        return JsonResponse({'response': formatted_response})
+
+    return render(request, 'prof/chat.html')
+
+def update_instruction_status(request, project_id, groupe_id):
+    project = get_object_or_404(Project, id=project_id)
+    group = get_object_or_404(Groupe, id=groupe_id, projet=project)
+    instructions = Instruction.objects.filter(projet=project)
+
+    instruction_statuses = [
+        {'instruction': instruction, 'status': InstructionStatus.objects.filter(groupe=group, instruction=instruction).first()}
+        for instruction in instructions
+    ]
+
+    if request.method == 'POST':
+        instruction_id = request.POST.get("instruction_id")
+        status = request.POST.get("status") == "on"
+        instruction = get_object_or_404(Instruction, id=instruction_id)
+
+        instruction_status, created = InstructionStatus.objects.get_or_create(
+            instruction=instruction,
+            groupe=group,
+            defaults={'est_termine': status}
+        )
+
+        if not created:
+            instruction_status.est_termine = status
+
+        if 'upload_file' in request.FILES:
+            file = request.FILES['upload_file']
+            fs = FileSystemStorage()
+            filename = fs.save(file.name, file)
+            instruction_status.fichier_livrable = filename
+
+        instruction_status.save()
+
+        return redirect('update_instruction_status', project_id=project.id, groupe_id=group.id)
+
+    return render(request, 'prof/student_instructions.html', {
+        'project': project,
+        'group': group,
+        'instruction_statuses': instruction_statuses,
+        'instructions': instructions
+    })
 
 
 def prof_notification(request):

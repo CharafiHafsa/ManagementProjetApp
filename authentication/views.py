@@ -38,6 +38,7 @@ def login_view(request):
                     login(request, professeur)
                     request.session['user_type'] = 'professeur'
                     request.session['user_id'] = professeur.id  
+                    request.session['email'] = professeur.email
 
                     if remember_me:  
                         request.session.set_expiry(None)  
@@ -48,7 +49,7 @@ def login_view(request):
                     professeur.save()
 
                     messages.success(request, 'Login successful! Welcome Professeur.')
-                    return redirect('dashboard')  # Redirect to a dashboard page
+                    return redirect('prof_accueil')
                 else:
                     messages.warning(request, 'Your account is not activated.')
 
@@ -78,7 +79,7 @@ def login_view(request):
                 else:
                     messages.warning(request, 'Your account is not activated.')
         else:
-            messages.error(request, "Please enter a valid email. Professors should use '@enset-media.ac.ma' and students should use '-etu@etu.univh2c.ma'.")
+            messages.error(request, "Please enter a valid email.")
 
         return redirect('login')  # Redirect back to login page
 
@@ -104,22 +105,19 @@ def signup_view(request):
         else:
             return render(request, 'authentification/message.html', {'message': 'Échec de la vérification'})
 
-    
     if request.method == 'POST':
         nom = request.POST.get('nom')
         prenom = request.POST.get('prenom')
-        filiere = request.POST.get('filiere')
-        departement = request.POST.get('departement')
         email = request.POST.get('email')
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
 
         # Vérifier les mots de passe
         if password != confirm_password:
-            return render(request, 'authentification/message.html', {'message': 'the password is not the same'})
+            return render(request, 'authentification/message.html', {'message': 'The passwords do not match'})
 
-        # Vérifier si l'email existe déjà
-        if Professeur.objects.filter(email=email, is_verified=True).exists() or Etudiant.objects.filter(email_etudiant=email, is_verified=True).exists():
+        # Vérifier si l'email existe déjà dans Professeur ou Etudiant
+        if Professeur.objects.filter(email=email).exists() or Etudiant.objects.filter(email_etudiant=email).exists():
             return render(request, 'authentification/message.html', {'message': 'This email is already taken'})
 
         current_site = get_current_site(request)
@@ -127,8 +125,6 @@ def signup_view(request):
         # Enregistrement des Professeurs
         if email.endswith('@enset-media.ac.ma'):
             professeur = Professeur(
-                departement=departement,
-                specialite=departement,
                 email=email,
                 password=make_password(password),
                 nom=nom,
@@ -164,16 +160,15 @@ def signup_view(request):
                 fail_silently=False,
                 html_message=html_message,
             )
+            return render(request, 'authentification/message.html', {'message': 'Your email has been sent successfully'})
 
         # Enregistrement des Étudiants
         elif email.endswith('-etu@etu.univh2c.ma'):
             etudiant = Etudiant(
-                filiere=filiere,
                 email_etudiant=email,
                 password=make_password(password),
                 nom=nom,
                 prenom=prenom,
-                departement=departement,
                 last_login=None,
                 is_verified=False
             )
@@ -206,8 +201,9 @@ def signup_view(request):
                 html_message=html_message,
             )
             return render(request, 'authentification/message.html', {'message': 'Your email has been sent successfully'})
+        
         else:
-            return render(request, 'authentification/message.html', {'message': 'Invalid email format. Use "@enset-media.ac.ma" for professors or "-etu@etu.univh2c.ma" for students'})
+            return render(request, 'authentification/message.html', {'message': 'Invalid email format.'})
 
     return render(request, 'authentification/signup.html')
 

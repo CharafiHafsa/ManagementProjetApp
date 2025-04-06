@@ -30,10 +30,10 @@ class EtudiantManager(models.Manager):
             return None
 
 class Etudiant(models.Model):
-    filiere = models.CharField(max_length=255, null=False)
+    filiere = models.CharField(max_length=255, null=True)
     photo_profil = models.ImageField(upload_to='images/', default='images/profile.jpeg')
-    departement = models.CharField(max_length=255, null=False)
-    email_etudiant = models.EmailField(null=False)
+    departement = models.CharField(max_length=255, null=True)
+    email_etudiant = models.EmailField(null=False,unique=True)
     password = models.CharField(max_length=255, null=False)
     nom = models.CharField(max_length=255, null=False)
     prenom = models.CharField(max_length=255, null=False)
@@ -50,10 +50,10 @@ class Etudiant(models.Model):
         return 'email_etudiant'
 
 class Professeur(models.Model):
-    departement = models.CharField(max_length=255, null=False)
+    departement = models.CharField(max_length=255, null=True)
     photo_profil = models.ImageField(upload_to='images/', default='images/profile.jpeg')
-    specialite = models.CharField(max_length=255, null=False)
-    email = models.EmailField(null=False)
+    specialite = models.CharField(max_length=255, null=True)
+    email = models.EmailField(null=False,unique=True)
     password = models.CharField(max_length=255, null=False)
     nom = models.CharField(max_length=255, null=False)
     prenom = models.CharField(max_length=255, null=False)

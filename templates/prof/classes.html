@@ -1,191 +1,38 @@
-{% extends 'prof/index.html' %} 
+{% extends 'prof/base.html' %} 
 {% load static %}
 {% block content %} 
 {% if messages %}
   {% for message in messages %}
+    {% if "classes" in message.tags %}
     <div class="alert alert-success fade-message">{{ message }}</div>
+    {% endif %}
   {% endfor %}
 {% endif %}
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold">Mes classes</h2>
-        <!-- Button to open modal -->
-        <button class="btn btn-modal-style" data-bs-toggle="modal" data-bs-target="#createClassModal">
-            + Créer nouveau classe
-        </button>
-    </div>
 
-    <!-- Search & Filters -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <select class="form-select">
-                <option value="">Trier par</option>
-                <option value="name">Nome</option>
-                <option value="date">Date de création</option>
-            </select>
-        </div>
-        <div class="col-md-3">
-            <select class="form-select">
-                <option value="">Filtrer par</option>
-                <option value="active"> Classes actives</option>
-                <option value="archived">Archivées</option>
-            </select>
-        </div>
-    </div>
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+    <h2 class="fw-bold mb-3 mb-md-0">{{professor.nom}}</h2>
+    <h2 class="fw-bold mb-3 mb-md-0">Mes classes</h2>
+    
+    <!-- Flex container for icon and search input -->
+    <div class="d-flex align-items-center">
+        <input type="text" id="searchInput" class="form-control" placeholder="Search Classes..." style="max-width: 250px; display: none;">
+        <span class="iconify icon-normal me-2" data-icon="mingcute:search-3-line" style="font-size: 28px; cursor: pointer;" id="searchIcon" onclick="toggleSearchInput()"></span>
+        <span class="iconify icon-normal me-2" data-icon="solar:add-square-linear" style="font-size: 28px; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#createClassModal"></span>
 
-    
-    
-    
+    </div>
+</div>
     <!-- Classes Grid -->
-    <div class="row">
-    {% if query %}
-    <h2>Search Results for "{{ query }}"</h2>
-    {% for classe in classes %}
-    <div class="col-lg-3 col-md-6 mb-4">
-        <div class="card position-relative">
-            <div class="position-absolute top-0 end-0 m-2">
-                        <div class="dropdown">
-                            <span class="iconify menu-icon" data-icon="solar:menu-dots-square-outline" data-inline="false" 
-                            data-bs-toggle="dropdown">
-                      </span>
-                      
-                      <style>
-                        .menu-icon {
-                            font-size: 24px;
-                            cursor: pointer;
-                            transition: color 0.3s ease-in-out;
-                        }
-                      
-                        .menu-icon:hover {
-                            color: #007bff; /* Change to Bootstrap primary color */
-                        }
-                      </style>
-                      
-                      
-                            
-                            
-                            
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#editClassModal{{ classe.id }}">
-                                        Editer
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#deletClassModal{{ classe.id }}">
-                                        Supprimer
-                                    </a>
-                                </li>
-                                
-                                <li><a class="dropdown-item" href="#">Gérer Etudiants</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <a href="{% url 'classe_detail' classe.id %}"> 
-                        <img src="{% static 'css/prof/MatDash Bootstrap Admin_files/blog-img1.jpg' %}" class="card-img-top" alt="matdash-img">
-                    </a>
-                    <div class="card-body text-center mt-3" style="padding: 10px;">
-                        <h5 class="card-title">
-                            <a href="{% url 'classe_detail' classe.id %}" class="text-decoration-none" >{{ classe.nom_classe }}</a>
-                        </h5>
-                    </div>
-            
-                    <div class="d-flex justify-content-around p-3 border-top text-muted">
-                        <div class="d-flex align-items-center">
-                            <i class="fas fa-user"></i>
-                            <span class="ms-2">{{ classe.etudiants_count }} étudiants</span>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <i class="fas fa-folder"></i>
-                            <span class="ms-2">3 projets</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Bootstrap Modal for Edit a New Class -->
-            <div class="modal fade" id="editClassModal{{ classe.id }}" tabindex="-1" aria-labelledby="editClassModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
-                        <div class="modal-header text-white" style="background-color: #635bff;">
-                            <h5 class="modal-title" id="editClassModalLabel">Editer classe : {{ classe.nom_classe }}</h5>
-                            <button type="button" class="btn-close custom-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="editClassForm" method="POST" action="{% url 'edit_classe' classe.id %}">
-                                {% csrf_token %}
-                                <div class="mb-3">
-                                    <label for="className{{ classe.id }}" class="form-label">Nome du classe</label>
-                                    <input type="text" class="form-control" id="className{{ classe.id }}" name="className" value="{{classe.nom_classe}}">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="classdesc{{ classe.id }}" class="form-label">Descreption du classe</label>
-                                    <input type="text" class="form-control" id="classdesc{{ classe.id }}" name="classdesc" value="{{classe.description}}">
-                                </div>
-                                <div class="text-end">
-                                    <button type="submit" class="btn btn-modal-style">modifier Classe</button>
-                                </div>
-                            </form>
-                            
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Bootstrap Modal for Delete a New Class -->
-            <div class="modal fade" id="deletClassModal{{ classe.id }}" tabindex="-1" aria-labelledby="deleteClassModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
-                        <div class="modal-header text-white" style="background-color: #635bff;">
-                            <h5 class="modal-title" id="editClassModalLabel">Supprimer classe : {{ classe.nom_classe }}</h5>
-                            <button type="button" class="btn-close custom-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <p>Êtes-vous sûr de vouloir supprimer cette classe ? La suppression de la classe entraînera également la suppression de toutes les données associées (étudiants, projets, etc.).</p>
-                            
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-modal-style" data-bs-dismiss="modal">Annuler</button>
-                            
-                            <!-- Form to submit delete request -->
-                            <form method="POST" action="{% url 'delete_classe' classe.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-danger">Oui, Supprimer</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
+    <div class="row" id="classList">
 
-
-    {% empty %}
-        <p class="text-center text-muted">Aucun résultat trouvé.</p>
-    {% endfor %}
-    {% else %}
     {% if classes %}
     {% for classe in classes %}
-    <div class="col-lg-3 col-md-6 mb-4">
+    <div class="col-lg-3 col-md-6 mb-4 class-item">
         <div class="card position-relative">
             <div class="position-absolute top-0 end-0 m-2">
                         <div class="dropdown">
                             <span class="iconify menu-icon" data-icon="solar:menu-dots-square-outline" data-inline="false" 
                             data-bs-toggle="dropdown">
-                      </span>
-                      
-                      <style>
-                        .menu-icon {
-                            font-size: 24px;
-                            cursor: pointer;
-                            transition: color 0.3s ease-in-out;
-                        }
-                      
-                        .menu-icon:hover {
-                            color: #007bff; /* Change to Bootstrap primary color */
-                        }
-                      </style>
-                      
-                      
-                            
-                            
-                            
+                      </span> 
                             <ul class="dropdown-menu">
                                 <li>
                                     <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#editClassModal{{ classe.id }}">
@@ -217,7 +64,7 @@
                         </div>
                         <div class="d-flex align-items-center">
                             <i class="fas fa-folder"></i>
-                            <span class="ms-2">3 projets</span>
+                            <span class="ms-2">{{classe.projects_count}} projets</span>
                         </div>
                     </div>
                 </div>
@@ -249,7 +96,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Bootstrap Modal for Delete a New Class -->
             <div class="modal fade" id="deletClassModal{{ classe.id }}" tabindex="-1" aria-labelledby="deleteClassModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
@@ -282,7 +129,6 @@
             <p class="text-center text-muted">Aucune classe disponible. Créez-en une maintenant !</p>
             {% endfor %}
             {% endif %}
-            {% endif %}
     </div>
 
 
@@ -313,8 +159,32 @@
 
 
 
+<script>
+    function toggleSearchInput() {
+var searchInput = document.getElementById("searchInput");
+// Toggle visibility of the search input
+if (searchInput.style.display === "none" || searchInput.style.display === "") {
+searchInput.style.display = "inline-block"; // Show input
+} else {
+searchInput.style.display = "none"; // Hide input
+}
+}
+const searchInput = document.getElementById('searchInput');
+const classList = document.getElementById('classList');
+const classItems = classList.getElementsByClassName('class-item');
 
-  <script>
+searchInput.addEventListener('input', function() {
+    const searchText = searchInput.value.toLowerCase();
+    
+    Array.from(classItems).forEach(function(item) {
+        const className = item.querySelector('.card-title a').textContent.toLowerCase();
+        if (className.includes(searchText)) {
+            item.style.display = '';  // Show the item
+        } else {
+            item.style.display = 'none';  // Hide the item
+        }
+    });
+});
     document.addEventListener("DOMContentLoaded", function () {
         let editButtons = document.querySelectorAll(".edit-class-btn");
         let editModal = document.getElementById("editClassModal");
