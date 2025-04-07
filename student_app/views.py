@@ -1,29 +1,24 @@
-
+from django.http import JsonResponse ,HttpResponse,FileResponse,Http404,HttpResponseBadRequest
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode 
-from django.http import JsonResponse ,HttpResponse,FileResponse,Http404
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.sites.shortcuts import get_current_site 
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.hashers import make_password
 from django.core.files.storage import default_storage
-from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth import login,logout
 from django.core.mail import send_mail
+import google.generativeai as genai
 from base_de_donnee.models import *
 from django.contrib import messages
-from datetime import date, datetime
 from django.utils import timezone
 from django.conf import settings
-from datetime import timedelta
-import calendar
-import locale
-import json
+from datetime import date
+import markdown
+from google.api_core.exceptions import ServiceUnavailable, DeadlineExceeded
 import uuid
 import os
-import datetime
-from django.db import transaction
-import google.generativeai as genai
+import time
 
 
 
@@ -318,8 +313,8 @@ def update_password(request):
     return render(request, 'authentification/update_password.html')
 
 def logout_user(request):
-    request.session.flush()
     logout(request)
+    request.session.flush()
     update_time_counter(request)
     return redirect('login')
 
@@ -327,13 +322,17 @@ def logout_user(request):
 def detailles(request):
     return render(request, 'workSpace/detailles.html')
 
-def dashBoard_ws(request):
-    groupe_id = request.session.get('groupe_id', None)
-    if request.session.get('archive') == False: 
-        groupe = get_object_or_404(Groupe, id=groupe_id)
-    else:
-        groupe = get_object_or_404(GroupeArchive, id=groupe_id)
 
+def dashBoard_ws(request):
+
+    groupe_id = request.session.get('groupe_id', None)
+    groupe = get_object_or_404(Groupe, id=groupe_id)
+    taches_groupe = Taches.objects.filter(groupe=groupe)
+    nb_taches_terminees = taches_groupe.filter(status="Terminé").count()
+    nb_taches_en_cours = taches_groupe.filter(deadline__gte=timezone.now().date(),status="En cours").count()
+    nb_taches_retard = taches_groupe.filter(deadline__lt=timezone.now().date(), status="En cours").count()
+    nb_tache_total = taches_groupe.count()
+    
     if groupe.projet:
         projet = groupe.projet
 
@@ -354,7 +353,17 @@ def dashBoard_ws(request):
         jours_restants = (projet.date_fin - date_actuelle).days
 
         # Afficher le pourcentage dans le contexte de la vue
-        return render(request, 'workSpace/dashBoard.html', {'projet': projet, 'pourcentage': int(pourcentage), 'jours_restants': jours_restants})
+        return render(request, 'workSpace/dashBoard.html', {
+            'projet': projet, 
+            'pourcentage': int(pourcentage), 
+            'jours_restants': jours_restants,
+            'groupe' : groupe,
+            'nb_tache_termine' : nb_taches_terminees,
+            'nb_tache_en_cours':nb_taches_en_cours , 
+            'nb_taches_retard' : nb_taches_retard,
+            'nb_tache_total':nb_tache_total,
+            'nb_tache_non_realisé' : nb_taches_en_cours + nb_taches_retard
+            })
     return render(request, 'workSpace/dashBoard.html')
 
 def dashBoard_home(request):
@@ -884,23 +893,27 @@ def suppDoc(request):
         return HttpResponse("Requête invalide", status=400)
         
 def Quitter_Modifier(request):
+    print("I am here")
     if request.method == 'POST':
         if 'delete_groupe' in request.POST:
-            groupe_id = request.POST.get('id_groupe')
+            groupe_id = request.POST.get('id_groupe_quitter')
+            print("GroupeId delete : ",groupe_id)
             if groupe_id:
                 groupe = get_object_or_404(Groupe,id=groupe_id)
                 groupe.delete()
                 return redirect(request.META.get('HTTP_REFERER', 'default_url'))
+            
         elif 'modifier_groupe' in request.POST:
             groupe_id = request.POST.get('id_groupe')
             groupe_name = request.POST.get('nom_groupe')
-            print('ID = ',groupe_id)
-            print('NOM = ',groupe_name)
+            print("GroupeId modifier : ",groupe_id)
+           
             if groupe_id:
-                groupe = get_object_or_404(Groupe, id=groupe_id)
+                groupe = get_object_or_404(Groupe,id=groupe_id)
                 groupe.nom_groupe = groupe_name
                 groupe.save()
                 return redirect(request.META.get('HTTP_REFERER', 'default_url'))
+            
     return HttpResponse("Requête invalide", status=400)
 
 def chatbot_view(request):

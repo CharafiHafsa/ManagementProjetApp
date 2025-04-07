@@ -59,7 +59,7 @@
                   <iconify-icon icon="solar:menu-dots-bold" class="fs-6"></iconify-icon>
               </button>
               <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ groupe.id }}">
-                <li><button class="dropdown-item text-danger"  data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" id="btn-delete" data-id="{{ projet.groupe_set.first.id  }}">Quitter</button></li>
+                <li><button class="dropdown-item text-danger btn-delete btn-delete"  data-bs-toggle="modal" data-bs-target="#confirmDeleteModal"  data-id="{{ projet.groupe_set.first.id  }}">Quitter</button></li>
                 <li><button class="dropdown-item text-primary btn_modifier_grp"  data-bs-toggle="modal" data-bs-target="#primary-header-modal-modifier"   data-id="{{  projet.groupe_set.first.id }}" >Modifier</button></li>
               </ul>
             </div>
@@ -213,42 +213,46 @@
   </script>
 
 
-  <!-- MODAL Quitter -->
+    <!-- MODAL Quitter -->
 
-  <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Confirmation</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
-            </div>
-            <div class="modal-body">
-                Êtes-vous sûr de vouloir quitter ce groupe ?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                <form method="POST" action="{% url 'Quitter_Modifier' %}"> 
-                  {% csrf_token %}
-                  <input type="hidden" name="id_groupe" id="id_groupe">
-                  <input type="submit" class="btn btn-danger" id="confirmDeleteBtn"  name="delete_groupe" value="Quitter">
-                </form>
-            </div>
-        </div>
-    </div>
-  </div>
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title">Confirmation</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+              </div>
+              <div class="modal-body">
+                  Êtes-vous sûr de vouloir quitter ce groupe ?
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                  <form method="post" action="{% url 'Quitter_Modifier' %}"> 
+                    {% csrf_token %}
+                    <input type="hidden" name="id_groupe_quitter" id="id_groupe_quitter">
+                    <input type="submit" class="btn btn-danger" id="confirmDeleteBtn"  name="delete_groupe" value="Quitter">
+                  </form>
+              </div>
+          </div>
+      </div>
+      </div>
+    
+      <script>
+        document.querySelectorAll(".btn-delete").forEach(item => {
+              item.addEventListener("click", function () {
+                  var groupe_id = this.getAttribute('data-id');
+                  document.getElementById("id_groupe_quitter").value = groupe_id;
+              });
+          });
   
-  <script>
-      document.querySelectorAll('#btn-delete').forEach(function(button) {
-      button.addEventListener('click', function() {
-          var groupe_id = this.getAttribute('data-id');
-          
-          document.getElementById('id_groupe').value = groupe_id;
-      });
-  });
-      document.getElementById("confirmDeleteBtn").addEventListener("click", function() {
-          var modal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
-          modal.hide();
-      });
-  </script>
+  
+          document.getElementById("confirmDeleteBtn").addEventListener("click", function() {
+              
+              var modal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+              modal.hide();
+  
+          });
+         
+      </script>
     
 {% endblock content %}

@@ -37,8 +37,8 @@
             <div class="col-md-4 d-flex align-items-stretch">
                 <div class="card w-100">
                     <div class="card-body">
-                        <!-- Bouton Menu 3 points -->
-                        <!-- <div class="dropdown position-absolute top-0 end-0 m-2">
+                        <!-- Bouton Menu 3 points
+                        <div class="dropdown position-absolute top-0 end-0 m-2">
                             <button class="three-points-menu" type="button" id="dropdownMenuButton{{ groupe_data.groupe.id }}" data-bs-toggle="dropdown" aria-expanded="false" style="background: transparent;">
                                 <iconify-icon icon="solar:menu-dots-bold" class="fs-6"></iconify-icon>
                             </button>
@@ -52,9 +52,9 @@
                             <button class="three-points-menu" type="button" id="dropdownMenuButton{{ groupe.id }}" data-bs-toggle="dropdown" aria-expanded="false" style="background: transparent;">
                                 <iconify-icon icon="solar:menu-dots-bold" class="fs-6"></iconify-icon>
                             </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ groupe.id }}">
-                                <li><button class="dropdown-item text-danger"  data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" id="btn-delete" data-id="{{ groupe.id }}">Quitter</button></li>
-                                <li><button class="dropdown-item text-primary btn_modifier_grp"  data-bs-toggle="modal" data-bs-target="#primary-header-modal-modifier"   data-id="{{ groupe.id }}" data-nom="{{ groupe.nom_groupe }}">Modifier</button></li>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ groupe_data.groupe.id }}">
+                                <li><button class="dropdown-item text-danger btn-delete"  data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-id="{{ groupe_data.groupe.id }}">Quitter</button></li>
+                                <li><button class="dropdown-item text-primary btn_modifier_grp"  data-bs-toggle="modal" data-bs-target="#primary-header-modal-modifier"   data-id="{{ groupe_data.groupe.id }}" data-nom="{{ groupe_data.groupe.nom_groupe }}">Modifier</button></li>
                                 <li><form method="post" action="{% url 'groupes' %}">{% csrf_token %}<input type="hidden" name="group_id" value="{{ groupe_data.groupe.id }}"><input type="submit" name="archiver" class="dropdown-item text-primary btn_archiver_grp" value="Archiver"></form></li>
                             </ul>
                         </div>
@@ -108,52 +108,52 @@
     </script>
 
 
-    <!-- MODAL MODIFIER -->
+   <!-- MODAL MODIFIER -->
               
-    <div id="primary-header-modal-modifier" class="modal fade" tabindex="-1"
-    aria-labelledby="primary-header-modalLabel" style="display: none;" aria-hidden="true" style="z-index: 200;">
-    <div class="modal-dialog modal-dialog-scrollable modal-lg" style="z-index: 200;">
-        <div class="modal-content">
-        <div class="modal-header modal-colored-header bg-primary text-white">
-            <h4 class="modal-title text-white" id="primary-header-modalLabel">
-            Modifier groupe
-            </h4>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-            aria-label="Close"></button>
-        </div>
-        <form id="taskForm" method="post"action="{% url 'Quitter_Modifier' %}" >
-            {% csrf_token %}
-                <div class="modal-body"> 
-                        
-                        <div class="mb-3">
-                            <input type="hidden" name="id_groupe" id="id_groupe">
-                            <label for="taskName" class="form-label">Nom de groupe</label>
-                            <input type="text" class="form-control" id="taskName" name="nom_groupe" required>
-                        </div>
+   <div id="primary-header-modal-modifier" class="modal fade" tabindex="-1"
+   aria-labelledby="primary-header-modalLabel" style="display: none;" aria-hidden="true" style="z-index: 200;">
+   <div class="modal-dialog modal-dialog-scrollable modal-lg" style="z-index: 200;">
+       <div class="modal-content">
+       <div class="modal-header modal-colored-header bg-primary text-white">
+           <h4 class="modal-title text-white" id="primary-header-modalLabel">
+           Modifier groupe
+           </h4>
+           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+           aria-label="Close"></button>
+       </div>
+       <form id="taskForm" method="post"action="{% url 'Quitter_Modifier' %}" >
+           {% csrf_token %}
+               <div class="modal-body"> 
+                       
+                       <div class="mb-3">
+                           <input type="hidden" name="id_groupe" id="id_groupe">
+                           <label for="taskName" class="form-label">Nom de groupe</label>
+                           <input type="text" class="form-control" id="taskName" name="nom_groupe" required>
+                       </div>
 
-                </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">
-                Fermer
-                </button>
-                <input type="submit"  name="modifier_groupe" value="Modifier" class="btn bg-primary-subtle text-primary">
-            </div>
-        </form>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-    </div>
+               </div>
+           <div class="modal-footer">
+               <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+               Fermer
+               </button>
+               <input type="submit"  name="modifier_groupe" value="Modifier" class="btn bg-primary-subtle text-primary">
+           </div>
+       </form>
+       </div>
+       <!-- /.modal-content -->
+   </div>
+   <!-- /.modal-dialog -->
+   </div>
 
-    <script>
-        document.querySelectorAll(".btn_modifier_grp").forEach(item => {
-            item.addEventListener("click", function () {
-                var groupe_id = this.getAttribute('data-id');
-                
-                document.getElementById('id_groupe').value = groupe_id;
-            }
-        )});
-    </script>
+   <script>
+       document.querySelectorAll(".btn_modifier_grp").forEach(item => {
+           item.addEventListener("click", function () {
+               var groupe_id = this.getAttribute('data-id');
+               
+               document.getElementById('id_groupe').value = groupe_id;
+           }
+       )});
+   </script>
 
    
     <!-- Modal Ajouter Groupe -->
@@ -230,47 +230,51 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                    <form method="POST" action="{% url 'Quitter_Modifier' %}"> 
+                    <form method="post" action="{% url 'Quitter_Modifier' %}"> 
                       {% csrf_token %}
-                      <input type="hidden" name="id_groupe" id="id_groupe">
+                      <input type="hidden" name="id_groupe_quitter" id="id_groupe_quitter">
                       <input type="submit" class="btn btn-danger" id="confirmDeleteBtn"  name="delete_groupe" value="Quitter">
                     </form>
                 </div>
             </div>
         </div>
-    </div>
-  
-    <script>
-        document.querySelectorAll('#btn-delete').forEach(function(button) {
-         button.addEventListener('click', function() {
-             var groupe_id = this.getAttribute('data-id');
-             
-             document.getElementById('id_groupe').value = groupe_id;
-         });
-     });
-         document.getElementById("confirmDeleteBtn").addEventListener("click", function() {
-             var modal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
-             modal.hide();
-         });
-        
- 
-         function resetForm() {
-             var emailList = document.querySelector("#emailList");
-             var emailsHidden = document.querySelector("#emailsHidden");
-             document.querySelectorAll("#taskForm input").forEach(input => {
-                 input.value = "";
-             });
- 
-             if (emailList) {
-                 emailList.innerHTML = "";
-             }
- 
-             if (emailsHidden) {
-                 emailsHidden.value = "";
-             }
-     }
-        
-    </script>
+        </div>
+      
+        <script>
+          document.querySelectorAll(".btn-delete").forEach(item => {
+                item.addEventListener("click", function () {
+                    var groupe_id = this.getAttribute('data-id');
+                    document.getElementById("id_groupe_quitter").value = groupe_id;
+                });
+            });
+    
+    
+            document.getElementById("confirmDeleteBtn").addEventListener("click", function() {
+                
+                var modal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+                modal.hide();
+    
+            });
+            
+           
+    
+            function resetForm() {
+                var emailList = document.querySelector("#emailList");
+                var emailsHidden = document.querySelector("#emailsHidden");
+                document.querySelectorAll("#taskForm input").forEach(input => {
+                    input.value = "";
+                });
+    
+                if (emailList) {
+                    emailList.innerHTML = "";
+                }
+    
+                if (emailsHidden) {
+                    emailsHidden.value = "";
+                }
+        }
+           
+        </script>
 
     
     

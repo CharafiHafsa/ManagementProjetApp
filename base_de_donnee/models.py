@@ -174,6 +174,7 @@ class Document(models.Model):
     file = models.FileField(upload_to='documents/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
     groupe = models.ForeignKey(Groupe,on_delete=models.CASCADE, related_name='documents', null=True, blank=True)
+    etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE, related_name='documents')
     groupeArchive = models.ForeignKey(GroupeArchive, on_delete=models.CASCADE, related_name='documents_archive', null=True, blank=True)
 
 class Notification(models.Model):

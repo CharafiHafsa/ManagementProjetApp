@@ -44,7 +44,7 @@
                   <div>
                     <h3>Taches</h3>
                     <p class="mb-0">
-                      il vous reste 7 taches parmi 10
+                      il vous reste {{nb_tache_non_realisé }} taches parmi {{nb_tache_total}}
                     </p>
                   </div>
                 </div>
@@ -67,7 +67,7 @@
                 <iconify-icon class="text-white fs-10 me-2" icon="solar:alarm-turn-off-bold-duotone"></iconify-icon>
                 Taches en retard
                 </h4>
-                <h3 class="fw-bolder fs-10 m-1 text-white d-flex justify-content-center">0</h3>
+                <h3 class="fw-bolder fs-10 m-1 text-white d-flex justify-content-center"> {{nb_taches_retard}} </h3>
               </div>
             </div>
           </div>
@@ -80,7 +80,7 @@
                 <iconify-icon class="text-white fs-10 me-2" icon="solar:check-square-bold-duotone"></iconify-icon>
                   Taches términées
                 </h4>
-                <h3 class="fw-bolder fs-10 m-1 text-white d-flex justify-content-center">3</h3>
+                <h3 class="fw-bolder fs-10 m-1 text-white d-flex justify-content-center">{{nb_tache_termine}}</h3>
               </div>
             </div>
           </div>
@@ -95,7 +95,7 @@
                 <iconify-icon class="text-white fs-10 me-2" icon="solar:hourglass-line-bold-duotone"></iconify-icon>
                   Taches à venir
                 </h4>
-                <h3 class="fw-bolder fs-10 m-1 text-white d-flex justify-content-center">4</h3>
+                <h3 class="fw-bolder fs-10 m-1 text-white d-flex justify-content-center">{{nb_tache_en_cours}}</h3>
               </div>
             </div>
           </div>
@@ -108,7 +108,7 @@
                     <iconify-icon class="text-white fs-10 me-2" icon="solar:users-group-rounded-bold-duotone"></iconify-icon>
                     Membres de groupe
                 </h4>
-                <h3 class="fw-bolder fs-10 m-1 text-white d-flex justify-content-center">5</h3>
+                <h3 class="fw-bolder fs-10 m-1 text-white d-flex justify-content-center">{{groupe.nbr_membre}}</h3>
               </div>
             </div>
           </div>
