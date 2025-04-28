@@ -2,15 +2,24 @@
 {% load static %}
 
 {% block content %}
-
 <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+    <h3 class="fw-bold mb-3 mb-md-0">Bonjour, <span class="text-primary">{{ professeur.nom }} {{ professeur.prenom }}</span></h3>
+    
+    <!-- Add a div with flex-grow to push the project title to the center -->
+    <div class="flex-grow-1 text-center">
+        <h3 class="fw-bold text-primary mb-0">Projet : {{ projet.nom_project }}</h3>
+    </div>
+</div>
+<hr class="mb-5">
 {% if messages %}
-{% for message in messages %}
-  <div class="alert alert-{{ message.tags }} fade-message">{{ message }}</div>
-{% endfor %}
+  {% for message in messages %}
+    {% if "projet" in message.tags%}
+      <div class="alert alert-success fade-message">{{ message }}</div>
+    {% endif %}
+  {% endfor %}
 {% endif %}
 <div class="row g-4">
-    
     <div class="d-flex justify-content-between flex-wrap gap-3">
         <button class="btn btn-dashboard p-3 flex-fill selected1" onclick="changeContent('default', this)" id="default-btn">
             <span class="iconify me-2" data-icon="solar:folder-open-linear" style="font-size: 24px;"></span>
@@ -33,570 +42,627 @@
             Groups
         </button>
     </div>
+</div>
 
-
-<div class="row g-4">
-
-    <div class="card shadow-lg p-4 bg-white border-0 raduise-for-all">
+    <!-- <div class="card shadow-lg p-4 bg-white border-0 raduise-for-all mt-3"> -->
         <div id="default-view" style="display: none;">
-            <div class="d-flex justify-content-between align-items-center mb-3 p-3">
-                <!-- Left Side: Project Dashboard -->
-                <h5 class="fw-bold text-dark d-flex align-items-center">
-                    <span class="iconify me-2" data-icon="solar:clipboard-list-linear" style="font-size: 24px;"></span>
-                    Project Dashboard
-                </h5>
-            
-                <!-- Right Side: Icons for Modals -->
-                <div>
-                    <!-- Add Project Button -->
-                    <button class="btn-indisplay" data-bs-toggle="modal" data-bs-target="#editProjetModal{{ projet.id }}">
-                        <span class="iconify icon-normal" data-icon="solar:pen-linear" style="font-size: 26px;"></span>
-                    </button>
-            
-                    <!-- Delete Project Button -->
-                    <button class="btn-indisplay" data-bs-toggle="modal" data-bs-target="#deleteProjetModal{{ projet.id }}">
-                        <span class="iconify icon-delete" data-icon="solar:trash-bin-2-linear" style="font-size: 28px;"></span>
-                    </button>
-                </div>
-                <div class="modal fade" id="editProjetModal{{ projet.id }}" tabindex="-1" aria-labelledby="editProjetModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
-                            <div class="modal-header text-white" style="background-color: #635bff;">
-                                <h5 class="modal-title" id="editProjetModalLabel">Editer Projet : {{ projet.nom_project }}</h5>
-                                <button type="button" class="btn-close custom-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="mt-4">
+                <!-- Project Overview and Project Statistics in separate rows -->
+                <div class="row">
+                    <!-- Project Overview Section (Redesigned) -->
+                    <div class="col-md-12 mb-1">
+                        <div class="card shadow-lg border-0 raduise-for-all p-2">
+                            <div class="card-body p-4">
+                                <!-- Header -->
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <div class="flex-fill"></div>
+                    
+                                    <div class="flex-fill text-center">
+                                        <h5 class="fw-bold d-inline-flex align-items-center justify-content-center m-0">
+                                            <span class="iconify me-2" data-icon="solar:clipboard-list-linear" style="font-size: 24px;"></span>
+                                            Project Dashboard
+                                        </h5>
+                                    </div>
+                    
+                                    <div class="flex-fill d-flex justify-content-end">
+                                        <button class="btn-indisplay" data-bs-toggle="modal" data-bs-target="#editProjetModal{{ projet.id }}">
+                                            <span class="iconify icon-normal" data-icon="solar:pen-linear" style="font-size: 26px;"></span>
+                                        </button>
+                                        <button class="btn-indisplay ms-2" data-bs-toggle="modal" data-bs-target="#deleteProjetModal{{ projet.id }}">
+                                            <span class="iconify icon-delete" data-icon="solar:trash-bin-2-linear" style="font-size: 28px;"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                    
+                                <!-- Project Title -->
+                                <div class="d-flex align-items-center mb-3">
+                                    <span class="iconify me-2 text-primary" data-icon="mdi:project-outline" style="font-size: 28px;"></span>
+                                    <h4 class="fw-bold text-primary mb-0">{{ projet.nom_project }}</h4>
+                                </div>
+                    
+                                <!-- Project Description & Timeline -->
+                                <div class="ps-4 border-start border-3" style="border-color: #635bff;">
+                                    <p class="mb-2  "><strong>Description:</strong> {{ projet.description }}</p>
+                                    <p class="mb-0 text-muted">
+                                        <strong>Timeline:</strong>
+                                        <span class=" ">{{ projet.date_debut }}</span> →
+                                        <span class=" ">{{ projet.date_fin }}</span>
+                                    </p>
+                                </div>
                             </div>
-                            <div class="modal-body">
-                                <form id="editProjetForm" method="POST" action="{% url 'edit_projet' projet_id=projet.id %}?next={{ request.path }}">
-                                    {% csrf_token %}
-                                    <div class="mb-3">
-                                        <label for="className{{ projet.id }}" class="form-label">Nome du projet</label>
-                                        <input type="text" class="form-control" id="projetName{{ projet.id }}" name="projetName" value="{{projet.nom_project}}">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="projetdesc{{ projet.id }}" class="form-label">Descreption du projet</label>
-                                        <input type="text" class="form-control" id="projetdesc{{ projet.id }}" name="projetdesc" value="{{projet.description}}">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="date_debut" class="form-label" style="color: #635bff;">
-                                        <span class="iconify me-2" data-icon="solar:calendar-date-outline" style="font-size: 24px;"></span>
-                                        Date de Début
-                                        </label>
-                                        <input type="date" class="form-control raduise-for-all" id="date_debut{{ projet.id }}" name="date_debut" value="{{ projet.date_debut|date:'Y-m-d' }}">
-                                    </div>
-                            
-                                    <div class="mb-3">
-                                        <label for="date_fin" class="form-label" style="color: #635bff;">
-                                        <span class="iconify me-2" data-icon="solar:calendar-date-line-duotone" style="font-size: 24px;"></span>
-                                        Date de Fin
-                                        </label>
-                                        <input type="date" class="form-control raduise-for-all" id="date_fin{{ projet.id }}" name="date_fin" value="{{ projet.date_fin|date:'Y-m-d' }}">
-                                    </div>
-                                    <div class="text-end">
-                                        <button type="submit" class="btn btn-modal-style">modifier Projet</button>
-                                    </div>
-                                </form>
+                        </div>
+                    </div>
+                    <!-- Modals for manipulation the project-->
+                    <div class="modal fade" id="editProjetModal{{ projet.id }}" tabindex="-1" aria-labelledby="editProjetModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
+                                <div class="modal-header text-white" style="background-color: #635bff;">
+                                    <h5 class="modal-title" id="editProjetModalLabel">Editer Projet : {{ projet.nom_project }}</h5>
+                                    <button type="button" class="btn-close custom-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="editProjetForm" method="POST" action="{% url 'edit_projet' projet_id=projet.id %}?next={{ request.path }}">
+                                        {% csrf_token %}
+                                        <div class="mb-3">
+                                            <label for="className{{ projet.id }}" class="form-label">Nome du projet</label>
+                                            <input type="text" class="form-control" id="projetName{{ projet.id }}" name="projetName" value="{{projet.nom_project}}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="projetdesc{{ projet.id }}" class="form-label">Descreption du projet</label>
+                                            <input type="text" class="form-control" id="projetdesc{{ projet.id }}" name="projetdesc" value="{{projet.description}}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="date_debut" class="form-label" style="color: #635bff;">
+                                            <span class="iconify me-2" data-icon="solar:calendar-date-outline" style="font-size: 24px;"></span>
+                                            Date de Début
+                                            </label>
+                                            <input type="date" class="form-control raduise-for-all" id="date_debut{{ projet.id }}" name="date_debut" value="{{ projet.date_debut|date:'Y-m-d' }}">
+                                        </div>
                                 
+                                        <div class="mb-3">
+                                            <label for="date_fin" class="form-label" style="color: #635bff;">
+                                            <span class="iconify me-2" data-icon="solar:calendar-date-line-duotone" style="font-size: 24px;"></span>
+                                            Date de Fin
+                                            </label>
+                                            <input type="date" class="form-control raduise-for-all" id="date_fin{{ projet.id }}" name="date_fin" value="{{ projet.date_fin|date:'Y-m-d' }}">
+                                        </div>
+                                        <div class="text-end">
+                                            <button type="submit" class="btn btn-modal-style">modifier Projet</button>
+                                        </div>
+                                    </form>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="deleteProjetModal{{ projet.id }}" tabindex="-1" aria-labelledby="deleteProjetModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
+                                    <div class="modal-header text-white" style="background-color: #635bff;">
+                                        <h5 class="modal-title" id="editClassModalLabel">Supprimer classe : {{ classe.nom_classe }}</h5>
+                                        <button type="button" class="btn-close custom-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>Êtes-vous sûr de vouloir supprimer ce projet ? La suppression du projet entraînera également la suppression de toutes les données associées!</p>
+                                        
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-modal-style" data-bs-dismiss="modal">Annuler</button>
+                                        
+                                        <!-- Form to submit delete request -->
+                                        <form method="POST" action="{% url 'delete_projet' projet_id=projet.id %}?next={{ request.path }}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger raduise-for-all">Oui, Supprimer</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+                <!-- Project Statistics Section -->
+                <div class="row">
+                    <div class="col-md-12 mb-1">
+                        <div class="card shadow-sm border-0 raduise-for-all p-2">
+                            <div class="card-body text-center">
+                                <h5 class="card-title fw-semibold text-primary d-flex align-items-center justify-content-center gap-2 mb-4">
+                                    <span class="iconify" data-icon="solar:pie-chart-linear" style="font-size: 26px;"></span>
+                                    <span class="fs-5">Project Statistics</span>
+                                </h5>
+                                
+                    
+                                <!-- Flexbox Container for Statistics -->
+                                <div class="d-flex justify-content-center align-items-center flex-wrap gap-4">
+                    
+                                    <!-- Total Groups -->
+                                    <div class="text-center">
+                                        <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 110px; height: 110px;">
+                                            <span class="count fw-bold fs-3 text-primary" data-target="{{ total_groups }}">0</span>
+                                        </div>
+                                        <p class="stat-label fw-semibold text-muted mt-2">Total Groups</p>
+                                    </div>
+                    
+                                    <!-- Total Students -->
+                                    <div class="text-center">
+                                        <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 110px; height: 110px;">
+                                            <span class="count fw-bold fs-3 text-primary" data-target="{{ total_students }}">0</span>
+                                        </div>
+                                        <p class="stat-label fw-semibold text-muted mt-2">Total Students</p>
+                                    </div>
+                    
+                                    <!-- Completion Percentage -->
+                                    <div class="text-center">
+                                        <div class="position-relative mx-auto mb-2" style="width: 130px; height: 130px;">
+                                            <svg viewBox="0 0 100 100" style="width: 100%; height: 100%;">
+                                                <circle class="progress-bg" cx="50" cy="50" r="40" stroke="#e6e6e6" stroke-width="6" fill="none" />
+                                                <circle class="progress-bar" cx="50" cy="50" r="40" stroke="#635bff" stroke-width="6" fill="none"
+                                                    stroke-dasharray="251" 
+                                                    stroke-dashoffset="calc(251 - ({{ completion_percentage }} * 2.51))"
+                                                    stroke-linecap="round" />
+                                            </svg>
+                                            <div class="position-absolute top-50 start-50 translate-middle fw-bold fs-4 text-primary">
+                                                <span class="count" data-target="{{ completion_percentage }}">0</span>%
+                                            </div>
+                                        </div>
+                                        
+                                        <p class="stat-label fw-semibold text-muted mt-2">Completion</p>
+                                    </div>
+                    
+                                    <!-- Total Instructions -->
+                                    <div class="text-center">
+                                        <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 110px; height: 110px;">
+                                            <span class="count fw-bold fs-3 text-primary" data-target="{{ total_instructions }}">0</span>
+                                        </div>
+                                        <p class="stat-label fw-semibold text-muted mt-2">Total Instructions</p>
+                                    </div>
+                    
+                                    <!-- Completed Instructions -->
+                                    <div class="text-center">
+                                        <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 110px; height: 110px;">
+                                            <span class="count fw-bold fs-4 text-primary" data-target="{{ completed_instructions }}">0</span>
+                                            <small class="text-muted"> / {{ total_instructions }}</small>
+                                        </div>
+                                        <p class="stat-label fw-semibold text-muted mt-2">Completed</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                            <!-- Bootstrap Modal for Delete a New Class -->
-            <div class="modal fade" id="deleteProjetModal{{ projet.id }}" tabindex="-1" aria-labelledby="deleteProjetModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
-                        <div class="modal-header text-white" style="background-color: #635bff;">
-                            <h5 class="modal-title" id="editClassModalLabel">Supprimer classe : {{ classe.nom_classe }}</h5>
-                            <button type="button" class="btn-close custom-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <p>Êtes-vous sûr de vouloir supprimer cette classe ? La suppression du projet entraînera également la suppression de toutes les données associées (étudiants, projets, etc.).</p>
-                            
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-modal-style" data-bs-dismiss="modal">Annuler</button>
-                            
-                            <!-- Form to submit delete request -->
-                            <form method="POST" action="{% url 'delete_projet' projet_id=projet.id %}?next={{ request.path }}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-danger">Oui, Supprimer</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-
-            </div>
-            
-            <div class="container mt-4">
-<!-- Project Overview and Project Statistics in separate rows -->
-<div class="row">
-    <!-- Project Overview Section (Project Info) -->
-    <div class="col-md-12 mb-4">
-        <div class="card shadow-sm border-light rounded p-3">
-            <div class="card-body">
-                <h5 class="card-title text-primary">
-                    <span class="iconify me-2" data-icon="mdi:project-outline"></span>
-                    {{ projet.nom_project }}
-                </h5>
-                <p class="card-text text-muted"><strong>Description:</strong> {{ projet.description }}</p>
-                <small class="text-muted">
-                    <strong>Timeline:</strong> {{ projet.date_debut }} - {{ projet.date_fin }}
-                </small>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Project Statistics Section -->
-<div class="row">
-    <div class="col-md-12 mb-4">
-        <div class="card shadow-sm border-light rounded p-3">
-            <div class="card-body text-center">
-                <h5 class="card-title text-primary">
-                    <span class="iconify me-2" data-icon="mdi:chart-line"></span> Project Statistics
-                </h5>
-
-                <!-- Flexbox Container for Statistics -->
-                <div class="d-flex justify-content-center align-items-center gap-5 flex-wrap">
-                    <!-- Total Groups -->
-                    <div class="stat-container">
-                        <div class="stat-circle">
-                            <span class="count" data-target="{{ total_groups }}">0</span>
-                        </div>
-                        <p class="stat-label">Total Groups</p>
-                    </div>
-
-                    <!-- Total Students -->
-                    <div class="stat-container">
-                        <div class="stat-circle">
-                            <span class="count" data-target="{{ total_students }}">0</span>
-                        </div>
-                        <p class="stat-label">Total Students</p>
-                    </div>
-
-                    <!-- Completion Percentage (Centered) -->
-                    <div class="stat-container order-3">
-                        <div class="progress-circle">
-                            <svg viewBox="0 0 100 100">
-                                <circle class="progress-bg" cx="50" cy="50" r="40"></circle>
-                                <circle class="progress-bar" cx="50" cy="50" r="40" 
-                                    style="stroke-dashoffset: calc(251 - ({{ completion_percentage }} * 2.51))">
-                                </circle>
-                            </svg>
-                            <div class="progress-text">
-                                <span class="count" data-target="{{ completion_percentage }}">0</span>%
-                            </div>
-                        </div>
-                        <p class="stat-label">Completion Percentage</p>
-                    </div>
-
-                    <!-- Total Instructions -->
-                    <div class="stat-container">
-                        <div class="stat-circle">
-                            <span class="count" data-target="{{ total_instructions }}">0</span>
-                        </div>
-                        <p class="stat-label">Total Instructions</p>
-                    </div>
-
-                    <!-- Completed Instructions -->
-                    <div class="stat-container">
-                        <div class="stat-circle">
-                            <span class="count" data-target="{{ completed_instructions }}">0</span> / {{ total_instructions }}
-                        </div>
-                        <p class="stat-label">Completed Instructions</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-            
                 <!-- Charts Section -->
-<div class="row mt-4">
-    <!-- Instruction Progress Chart -->
+                <!-- Charts Section -->
+<div class="row g-4">
+    <!-- Instruction Progress Card -->
     <div class="col-md-6 mb-4">
-        <div class="card shadow-sm border-light rounded p-3 h-100">
-            <div class="card-body d-flex flex-column justify-content-center align-items-center">
-                <h5 class="card-title text-primary text-center">
-                    <span class="iconify me-2" data-icon="mdi:chart-bar"></span> Instruction Progress
+        <div class="card shadow-lg raduise-for-all p-2 h-100">
+            <div class="card-body d-flex flex-column align-items-center">
+                <h5 class="card-title fw-semibold text-primary d-flex align-items-center justify-content-center gap-3 mb-3">
+                    <span class="iconify" data-icon="solar:chart-outline" style="font-size: 28px;"></span>
+                    Instruction Progress
                 </h5>
-                <div id="instructionChart" class="chart-container"></div>
+                <canvas id="instructionChart" width="300" height="150"></canvas> <!-- Smaller size -->
             </div>
         </div>
     </div>
 
     <!-- Group Completion Pie Chart -->
     <div class="col-md-6 mb-4">
-        <div class="card shadow-sm border-light rounded p-3 h-100">
-            <div class="card-body d-flex flex-column justify-content-center align-items-center">
-                <h5 class="card-title text-primary text-center">
-                    <span class="iconify me-2" data-icon="mdi:chart-pie"></span> Group Participation
+        <div class="card shadow-lg raduise-for-all p-2 h-100">
+            <div class="card-body d-flex flex-column align-items-center">
+                <h5 class="card-title fw-semibold text-primary d-flex align-items-center justify-content-center gap-3 mb-3">
+                    <span class="iconify" data-icon="solar:pie-chart-3-linear" style="font-size: 28px;"></span>
+                    Group Participation
                 </h5>
-                <div id="groupChart" class="chart-container"></div>
+                <canvas id="groupChart" width="300" height="150"></canvas> <!-- Smaller size -->
             </div>
         </div>
     </div>
 </div>
 
-<!-- CSS Styling -->
-<style>
-    .chart-container {
-        width: 100%;
-        height: 400px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-</style>
+                <!-- Chart.js Library -->
+                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                <script>
+                    const instructionCtx = document.getElementById('instructionChart').getContext('2d');
+                    const groupCtx = document.getElementById('groupChart').getContext('2d');
 
-            
+                    const instructionData = {
+                        labels: [
+                            {% for stat in instruction_stats %}
+                                '{{ stat.instruction.titre }}',
+                            {% endfor %}
+                        ],
+                        datasets: [
+                            {
+                                label: 'Completed Groups',
+                                data: [
+                                    {% for stat in instruction_stats %}
+                                        {{ stat.completed_groups }},
+                                    {% endfor %}
+                                ],
+                                backgroundColor: '#635bff'
+                            },
+                            {
+                                label: 'Pending Groups',
+                                data: [
+                                    {% for stat in instruction_stats %}
+                                        {{ stat.pending_groups }},
+                                    {% endfor %}
+                                ],
+                                backgroundColor: '#aca8ff'
+                            }
+                        ]
+                    };
+
+                    const instructionChart = new Chart(instructionCtx, {
+    type: 'bar',
+    data: instructionData,
+    options: {
+        responsive: true,
+        indexAxis: 'y',
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+            title: {
+                display: true,
+                text: 'Instruction Completion Status'
+            }
+        },
+        // Optional: control the chart's aspect ratio
+        aspectRatio: 1.5,  // This will make the chart a bit wider
+    }
+});
+
+const groupChart = new Chart(groupCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Completed All Instructions', 'Pending Instructions'],
+        datasets: [{
+            data: [{{ completed_instructions }}, {{ pending_instructions }}],
+            backgroundColor: ['#635bff', '#aca8ff'],
+            hoverOffset: 4
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            title: {
+                display: true,
+                text: 'Overall Group Progress'
+            }
+        },
+        // Optional: control the chart's aspect ratio
+        aspectRatio: 1.5,  // This will make the chart a bit wider
+    }
+});
+
+                </script>
+
+                <!-- CSS Styling -->
+                <style>
+                    .chart-container {
+                        width: 100%;
+                        height: 400px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                </style>
                 <!-- Instruction Details -->
-                <div class="row mt-4">
+                <div class="row">
                     <div class="col-12">
                         <div class="card shadow-sm border-light rounded p-3">
                             <div class="card-body">
-                                <h5 class="card-title text-primary">
-                                    <span class="iconify me-2" data-icon="mdi:clipboard-check"></span> Instruction Details
+                                <!-- Card Title with Icon -->
+                                <h5 class="card-title fw-semibold text-primary d-flex justify-content-center align-items-center text-center gap-3 mb-4">
+                                    <span class="iconify" data-icon="mdi:clipboard-check" style="font-size: 28px;"></span>
+                                    Détails de l'Instruction
                                 </h5>
-                                <table class="table table-striped">
-                                    <thead>
+                                
+                        
+                                <!-- Instruction Table -->
+                                <table class="table table-striped table-bordered">
+                                    <thead style="background-color: #7d58f4; color: white;">
                                         <tr>
-                                            <th>Instruction</th>
-                                            <th>Completed Groups</th>
-                                            <th>Pending Groups</th>
-                                            <th>Deadline</th>
+                                            <th scope="col">Instruction</th>
+                                            <th scope="col">Groupes Complétés</th>
+                                            <th scope="col">Groupes En Attente</th>
+                                            <th scope="col">Date Limite</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {% for stat in instruction_stats %}
-                                        <tr>
+                                        <tr class="align-middle">
                                             <td>{{ stat.instruction.titre }}</td>
                                             <td>{{ stat.completed_groups }} / {{ stat.total_groups }}</td>
                                             <td>{{ stat.pending_groups }}</td>
-                                            <td>{{ stat.deadline|default:"No Deadline" }}</td>
+                                            <td>{{ stat.deadline|default:"Aucune date limite" }}</td>
                                         </tr>
                                         {% endfor %}
                                     </tbody>
                                 </table>
                             </div>
                         </div>
+                        
                     </div>
                 </div>
-            
             </div>
-            
             <!-- JavaScript for Number Animation -->
-            <script>
-                document.addEventListener("DOMContentLoaded", function () {
-                    const counters = document.querySelectorAll(".count");
-                    counters.forEach(counter => {
-                        let target = +counter.getAttribute("data-target");
-                        let count = 0;
-                        let increment = target / 50; // Speed of counting
             
-                        function updateCount() {
-                            if (count < target) {
-                                count += increment;
-                                counter.innerText = Math.ceil(count);
-                                setTimeout(updateCount, 20);
-                            } else {
-                                counter.innerText = target;
-                            }
-                        }
-                        updateCount();
-                    });
-                });
-            </script>
             
-            <!-- Google Charts Library -->
-            <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-            <script type="text/javascript">
-                google.charts.load('current', {'packages':['corechart']});
-                google.charts.setOnLoadCallback(drawCharts);
             
-                function drawCharts() {
-                    drawInstructionChart();
-                    drawGroupChart();
-                }
-            
-                function drawInstructionChart() {
-                    var data = new google.visualization.DataTable();
-                    data.addColumn('string', 'Instruction');
-                    data.addColumn('number', 'Completed Groups');
-                    data.addColumn('number', 'Pending Groups');
-            
-                    {% for stat in instruction_stats %}
-                        data.addRow(["{{ stat.instruction.titre }}", {{ stat.completed_groups }}, {{ stat.pending_groups }}]);
-                    {% endfor %}
-            
-                    var options = {
-                        title: 'Instruction Completion Status',
-                        chartArea: {width: '80%'},
-                        colors: ['#635bff', '#aca8ff'],  // Updated colors
-                        legend: { position: 'top', alignment: 'center' },
-                        hAxis: {
-                            title: 'Instructions',
-                            minValue: 0
-                        },
-                        vAxis: {
-                            title: 'Number of Groups'
-                        },
-                        bars: 'horizontal'
-                    };
-            
-                    var chart = new google.visualization.BarChart(document.getElementById('instructionChart'));
-                    chart.draw(data, options);
-                }
-            
-                function drawGroupChart() {
-                    var data = google.visualization.arrayToDataTable([
-                        ['Status', 'Number of Groups'],
-                        ['Completed All Instructions', {{ completed_instructions }}],
-                        ['Pending Instructions', {{ pending_instructions }}]
-                    ]);
-            
-                    var options = {
-                        title: 'Overall Group Progress',
-                        pieHole: 0.4,
-                        colors: ['#635bff', '#aca8ff']  // Updated colors
-                    };
-            
-                    var chart = new google.visualization.PieChart(document.getElementById('groupChart'));
-                    chart.draw(data, options);
-                }
-            </script>
-            
+
             
         
 
         </div>
-        
-
-
-        
         <div id="instruction-view" style="display: none;">
-            <div>
-                <!-- Header Section -->
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="fw-bold text-dark d-flex align-items-center">
-                        <span class="iconify me-2 text-primary" data-icon="solar:checklist-minimalistic-outline" style="font-size: 28px;"></span>
-                        Instructions
-                    </h5>
-                    <div class="d-flex gap-3">
-                        <!-- Completed Instructions -->
-                        <div class="border border-success rounded px-3 py-1 d-flex align-items-center" 
-                             title="Total instructions complétés">
-                            <span class="iconify text-success me-1" data-icon="solar:check-circle-bold" style="font-size: 18px;"></span>
-                            <strong class="text-success">{{ completed_instructions }} / {{ total_instructions }}</strong>
+            <div class="card shadow-lg p-4 bg-white border-0 raduise-for-all mt-3">
+                <div>
+                    <!-- Header Section -->
+                    <div class="position-relative mb-3 d-flex align-items-center justify-content-between">
+                        <!-- Left Spacer -->
+                        <div class="flex-grow-1"></div>
+                    
+                        <!-- Centered Title -->
+                        <div class="position-absolute start-50 translate-middle-x text-center">
+                            <h5 class="fw-bold d-flex align-items-center justify-content-center m-0">
+                                <span class="iconify me-2" data-icon="solar:checklist-minimalistic-outline" style="font-size: 28px;"></span>
+                                Instructions
+                            </h5>
                         </div>
                     
-                        <!-- Pending Instructions -->
-                        <div class="border border-danger rounded px-3 py-1 d-flex align-items-center" 
-                             title="Total instructions non complétés">
-                            <span class="iconify text-danger me-1" data-icon="solar:close-circle-bold" style="font-size: 18px;"></span>
-                            <strong class="text-danger">{{ pending_instructions }} / {{ total_instructions }}</strong>
-                        </div>
+                        <!-- Right Side Controls -->
+                        <div class="d-flex gap-3 justify-content-end">
+                            <!-- Completed Instructions -->
+                            <div class="border border-success rounded px-3 py-1 d-flex align-items-center" 
+                                title="Total instructions complétés">
+                                <span class="iconify text-success me-1" data-icon="solar:check-circle-bold" style="font-size: 18px;"></span>
+                                <strong class="text-success">{{ completed_instructions }} / {{ total_instructions }}</strong>
+                            </div>
                     
-                        <!-- Add Instruction Button -->
-                        <button class="btn-indisplay d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#addInstructionModal">
-                            <span class="iconify icon-normal me-2" data-icon="solar:add-square-linear"></span>
-                        </button>
+                            <!-- Pending Instructions -->
+                            <div class="border border-danger rounded px-3 py-1 d-flex align-items-center" 
+                                title="Total instructions non complétés">
+                                <span class="iconify text-danger me-1" data-icon="solar:close-circle-bold" style="font-size: 18px;"></span>
+                                <strong class="text-danger">{{ pending_instructions }} / {{ total_instructions }}</strong>
+                            </div>
+                    
+                            <!-- Add Instruction Button -->
+                            <button class="btn-indisplay d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#addInstructionModal">
+                                <span class="iconify icon-normal me-2" data-icon="solar:add-square-linear"></span>
+                            </button>
+                        </div>
                     </div>
-                    
-                    
-
-                </div>
-        
-                <hr class="text-muted mb-3">
-        
-                <!-- Instructions List -->
-                {% if instruction_stats %}
-                    <ul class="list-group list-group-flush">
-                        {% for item in instruction_stats %}
-                            <li class="list-group-item py-3">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <h6 class="fw-bold text-primary d-flex align-items-center">
-                                        <span class="iconify me-2" data-icon="solar:document-text-outline" style="font-size: 22px;"></span>
-                                        {{ item.instruction.titre }}
-                                    </h6>
-                                    {% if item.instruction.livrable_requis %}
-                                        <span class="badge custom-warning text-dark d-flex align-items-center px-2 py-1">
-                                            <span class="iconify me-1" data-icon="solar:cloud-check-linear" style="font-size: 18px;"></span>
-                                            Livrable requis
-                                        </span>
-                                    {% endif %}
-                                </div>
-        
-                                <div class="mt-2 d-flex justify-content-between align-items-center flex-wrap">
-                                    <!-- Statistics Section -->
-                                    <div class="d-flex gap-4 text-secondary" style="font-size: 15px;">
-                                        <p class="mb-0 d-flex align-items-center text-success">
-                                            <span class="iconify me-1" data-icon="solar:check-read-linear"></span>
-                                            <strong>Complétés:</strong> 
-                                            <span class="fw-bold ms-1">{{ item.completed_groups }} / {{ item.total_groups }}</span>
-                                        </p>                                        
-                                        <p class="mb-0 d-flex align-items-center text-danger">
-                                            <span class="iconify me-1" data-icon="solar:close-circle-outline"></span>
-                                            <strong>En attente:</strong> 
-                                            <span class="fw-bold ms-1">{{ item.pending_groups }} / {{ item.total_groups }}</span>
-                                        </p>
+                    <hr class="text-muted mb-3">
+                    <!-- Instructions List -->
+                    {% if instruction_stats %}
+                        <ul class="list-group list-group-flush">
+                            {% for item in instruction_stats %}
+                                <li class="list-group-item py-3" data-bs-toggle="modal" data-bs-target="#editInstructionModal{{ item.instruction.id }}" style="cursor: pointer;">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h6 class="fw-bold text-primary d-flex align-items-center">
+                                            <span class="iconify me-2" data-icon="solar:document-text-outline" style="font-size: 22px;"></span>
+                                            {{ item.instruction.titre }}
+                                        </h6>
+                                        {% if item.instruction.livrable_requis %}
+                                            <span class="badge custom-warning   d-flex align-items-center px-2 py-1">
+                                                <span class="iconify me-1" data-icon="solar:cloud-check-linear" style="font-size: 18px;"></span>
+                                                Livrable requis
+                                            </span>
+                                        {% endif %}
                                     </div>
-        
-                                    <!-- Date Limit -->
-                                    {% if item.instruction.date_limite %}
-                                        <small class="text-danger d-flex align-items-center">
-                                            <span class="iconify me-1" data-icon="solar:calendar-linear"></span>
-                                            <strong>Date limite:</strong> {{ item.instruction.date_limite }}
-                                        </small>
-                                    {% endif %}
-                                </div>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <p class="text-muted text-center py-3">Pas d'instructions pour ce projet.</p>
-                {% endif %}
-            </div>
-                    <!-- Add Instruction Modal -->
-        <div class="modal fade" id="addInstructionModal" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
-                    <div class="modal-header text-white" style="background-color: #635bff;">
-                        <h5 class="modal-title">Ajouter une instruction</h5>
-                        <button type="button" class="btn-close custom-close" data-bs-dismiss="modal" aria-label="Close"></button>
-
-                    </div>
-                    <div class="modal-body">
-                        <form method="post" action="{% url 'add_instruction' projet.id %}">
-                            {% csrf_token %}
-                            <div class="mb-3">
-                                <label class="form-label">Titre</label>
-                                <input type="text" name="titre" class="form-control raduise-for-all" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Date limite (optionnel)</label>
-                                <input type="date" name="date_limite" class="form-control raduise-for-all">
-                            </div>
-                            <div class="form-check mb-3">
-                                <input type="checkbox" name="livrable_requis" class="form-check-input raduise-for-all" style="border: 1px solid #635bff;">
-                                <label class="form-check-label">Livrable requis</label>
-                            </div>
-                            <button type="submit" class="btn btn-modal-style">Ajouter</button>
-                        </form>
-                    </div>
+            
+                                    <div class="mt-2 d-flex justify-content-between align-items-center flex-wrap">
+                                        <!-- Statistics Section -->
+                                        <div class="d-flex gap-4 text-secondary" style="font-size: 15px;">
+                                            <p class="mb-0 d-flex align-items-center text-success">
+                                                <span class="iconify me-1" data-icon="solar:check-read-linear"></span>
+                                                <strong>Complétés:</strong> 
+                                                <span class="fw-bold ms-1">{{ item.completed_groups }} / {{ item.total_groups }}</span>
+                                            </p>                                        
+                                            <p class="mb-0 d-flex align-items-center text-danger">
+                                                <span class="iconify me-1" data-icon="solar:close-circle-outline"></span>
+                                                <strong>En attente:</strong> 
+                                                <span class="fw-bold ms-1">{{ item.pending_groups }} / {{ item.total_groups }}</span>
+                                            </p>
+                                        </div>
+            
+                                        <!-- Date Limit -->
+                                        {% if item.instruction.date_limite %}
+                                            <small class="text-danger d-flex align-items-center">
+                                                <span class="iconify me-1" data-icon="solar:calendar-linear"></span>
+                                                <strong>Date limite:</strong> {{ item.instruction.date_limite }}
+                                            </small>
+                                        {% endif %}
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted text-center py-3">Pas d'instructions pour ce projet.</p>
+                    {% endif %}
                 </div>
-            </div>
-        </div>
-        </div>
-        
-        
-          
-        
-        
+                        <!-- Add Instruction Modal -->
+                <div class="modal fade" id="addInstructionModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
+                            <div class="modal-header text-white" style="background-color: #635bff;">
+                                <h5 class="modal-title">Ajouter une instruction</h5>
+                                <button type="button" class="btn-close custom-close" data-bs-dismiss="modal" aria-label="Close"></button>
 
-        
-        <div id="announce-view" style="display: none;">
-            <h5 class="fw-bold text-dark text-center mb-3">
-                <span class="iconify me-2" data-icon="solar:chat-round-line-outline" style="font-size: 24px;"></span>
-                Announcements
-            </h5>
-        
-            <!-- Add Announcement Form -->
-            <form method="post" action="{% url 'add_announce' projet.id %}" class="d-flex align-items-center">
-                {% csrf_token %}
-                <textarea name="contenu" class="form-control me-2" placeholder="Écrivez une annonce..." required></textarea>
-                <button type="submit" class="btn-indisplay">
-                    <span class="iconify icon-normal me-2" data-icon="solar:add-square-linear" style="font-size: 24px;"></span>
-                </button>
-            </form>
-        
-            <!-- List of Announcements -->
-            <div class="mt-4">
-                {% for announce in announces %}
-                    <div class="card mb-3">
-                        <div class="card-body d-flex justify-content-between align-items-center">
-                            <p class="mb-0">{{ announce.contenu }}</p>
-                            <div>
-                                <!-- Edit Icon (Triggers Modal) -->
-                                <button class="btn-indisplay btn-sm" data-bs-toggle="modal" data-bs-target="#editModal{{ announce.id }}">
-                                    <span class="iconify icon-normal me-2" data-icon="solar:pen-linear" style="font-size: 24px;"></span>
-                                </button>
-        
-                                <!-- Delete Icon (Triggers Confirmation Modal) -->
-                                <button class="btn-indisplay btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal{{ announce.id }}">
-                                    <span class="iconify icon-delete me-2" data-icon="solar:trash-bin-2-linear" style="font-size: 24px;"></span>
-                                </button>
                             </div>
-                        </div>
-                    </div>
-        
-                    <!-- Edit Modal -->
-                    <div class="modal fade" id="editModal{{ announce.id }}" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
-                                <div class="modal-header text-white" style="background-color: #635bff;">
-                                    <h5 class="modal-title" id="editModalLabel">Modifier l'annonce</h5>
-                                    <button type="button" class="btn-close custom-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <form method="post" action="{% url 'modify_announce' announce.id %}">
+                            <div class="modal-body">
+                                <form method="post" action="{% url 'add_instruction' projet.id %}">
                                     {% csrf_token %}
-                                    <div class="modal-body">
-                                        <textarea name="contenu" class="form-control">{{ announce.contenu }}</textarea>
+                                    <div class="mb-3">
+                                        <label class="form-label">Titre</label>
+                                        <input type="text" name="titre" class="form-control raduise-for-all" required>
                                     </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-ret" data-bs-dismiss="modal">Annuler</button>
-                                        <button type="submit" class="btn btn-form-classe">Enregistrer</button>
+                                    <div class="mb-3">
+                                        <label class="form-label">Date limite (optionnel)</label>
+                                        <input type="date" name="date_limite" class="form-control raduise-for-all">
                                     </div>
+                                    <div class="form-check mb-3">
+                                        <input type="checkbox" name="livrable_requis" class="form-check-input raduise-for-all" style="border: 1px solid #635bff;">
+                                        <label class="form-check-label">Livrable requis</label>
+                                    </div>
+                                    <button type="submit" class="btn btn-modal-style">Ajouter</button>
                                 </form>
                             </div>
                         </div>
                     </div>
-        
-                    <!-- Delete Confirmation Modal -->
-                    <div class="modal fade" id="deleteModal{{ announce.id }}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
-                                <div class="modal-header text-white" style="background-color: #635bff;">
-                                    <h5 class="modal-title" id="deleteModalLabel">Confirmer la suppression</h5>
-                                    <button type="button" class="btn-close custom-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    Êtes-vous sûr de vouloir supprimer cette annonce ?
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-ret" data-bs-dismiss="modal">Annuler</button>
-                                    <form method="post" action="{% url 'delete_announce' announce.id %}" class="d-inline">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-danger raduise-for-all">Supprimer</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
+                </div>
+
+                {% for item in instruction_stats %}
+<div class="modal fade" id="editInstructionModal{{ item.instruction.id }}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
+            <div class="modal-header text-white" style="background-color: #635bff;">
+                <h5 class="modal-title">Modifier l'instruction</h5>
+                <button type="button" class="btn-close custom-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'edit_instruction' item.instruction.id %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Titre</label>
+                        <input type="text" name="titre" class="form-control raduise-for-all"
+                               value="{{ item.instruction.titre }}" required>
                     </div>
-        
-                {% empty %}
-                    <p class="text-center text-muted">Aucune annonce pour ce projet.</p>
-                {% endfor %}
+                    <div class="mb-3">
+                        <label class="form-label">Date limite (optionnel)</label>
+                        <input type="date" name="date_limite" class="form-control raduise-for-all"
+                               value="{{ item.instruction.date_limite|date:'Y-m-d' }}">
+                    </div>
+                    <div class="form-check mb-3">
+                        <input type="checkbox" name="livrable_requis" class="form-check-input raduise-for-all"
+                               {% if item.instruction.livrable_requis %}checked{% endif %}>
+                        <label class="form-check-label">Livrable requis</label>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <button type="submit" class="btn btn-modal-style">Éditer</button>
+                        <a href="{% url 'delete_instruction' item.instruction.id %}" class="btn btn-danger raduise-for-all">Supprimer</a>
+                    </div>
+                </form>
             </div>
         </div>
-        
-        
-        
-        <div id="ressources-view" style="display: none;">
-            <div class="d-flex justify-content-between align-items-center mb-3 p-3">
-                <h5 class="fw-bold text-dark d-flex align-items-center">
-                    <span class="iconify me-2" data-icon="solar:book-bookmark-minimalistic-linear" style="font-size: 24px;"></span>
-                    Ressources
-                </h5>
-                <button class="btn-indisplay d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#addRessourceModal">
-                    <span class="iconify icon-normal me-2" data-icon="solar:add-square-linear" style="font-size: 28px;"></span>
-                </button>
+    </div>
+</div>
+{% endfor %}
+
             </div>
+        </div>
+        <div id="announce-view" style="display: none;">
+            <div class="card shadow-lg p-4 bg-white border-0 raduise-for-all mt-3">
+                <h5 class="fw-bold d-flex align-items-center justify-content-center mb-3">
+                    <span class="iconify me-2" data-icon="solar:chat-round-line-outline" style="font-size: 24px;"></span>
+                    Announcements
+                </h5>
+            
+                <!-- Add Announcement Form -->
+                <form method="post" action="{% url 'add_announce' projet.id %}" class="d-flex align-items-center">
+                    {% csrf_token %}
+                    <textarea name="contenu" class="form-control me-2" placeholder="Écrivez une annonce..." required></textarea>
+                    <button type="submit" class="btn-indisplay">
+                        <span class="iconify icon-normal me-2" data-icon="solar:add-square-linear" style="font-size: 24px;"></span>
+                    </button>
+                </form>
+            
+
+                <!-- List of Announcements -->
+                <style>
+                    /* Darker border for list items */
+                    .custom-list .list-group-item {
+                        border: 1px solid #ccc; /* Light border color */
+                    }
+                </style>
+                <div class="mt-4">
+                    <ul class="list-group custom-list">
+                        {% for announce in announces %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <p class="mb-0" style="flex: 1;">{{ announce.contenu }}</p>
+                                <div>
+                                    <!-- Edit Icon (Triggers Modal) -->
+                                    <button class="btn-indisplay btn-sm" data-bs-toggle="modal" data-bs-target="#editModal{{ announce.id }}">
+                                        <span class="iconify icon-normal me-2" data-icon="solar:pen-linear" style="font-size: 24px;"></span>
+                                    </button>
+
+                                    <!-- Delete Icon (Triggers Confirmation Modal) -->
+                                    <button class="btn-indisplay btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal{{ announce.id }}">
+                                        <span class="iconify icon-delete me-2" data-icon="solar:trash-bin-2-linear" style="font-size: 24px;"></span>
+                                    </button>
+                                </div>
+                            </li>
+
+                            <!-- Edit Modal -->
+                            <div class="modal fade" id="editModal{{ announce.id }}" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
+                                        <div class="modal-header text-white" style="background-color: #635bff;">
+                                            <h5 class="modal-title" id="editModalLabel">Modifier l'annonce</h5>
+                                            <button type="button" class="btn-close custom-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <form method="post" action="{% url 'modify_announce' announce.id %}">
+                                            {% csrf_token %}
+                                            <div class="modal-body">
+                                                <textarea name="contenu" class="form-control" rows="5">{{ announce.contenu }}</textarea>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                <button type="submit" class="btn btn-primary">Enregistrer</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Delete Confirmation Modal -->
+                            <div class="modal fade" id="deleteModal{{ announce.id }}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
+                                        <div class="modal-header text-white" style="background-color: #d9534f;">
+                                            <h5 class="modal-title" id="deleteModalLabel">Confirmer la suppression</h5>
+                                            <button type="button" class="btn-close custom-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Êtes-vous sûr de vouloir supprimer cette annonce ?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                            <form method="post" action="{% url 'delete_announce' announce.id %}" class="d-inline">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-danger raduise-for-all">Supprimer</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        {% empty %}
+                            <p class="text-center text-muted">Aucune annonce pour ce projet.</p>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+        <div id="ressources-view" style="display: none;">
+            <div class="card shadow-lg p-4 bg-white border-0 raduise-for-all mt-3">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <!-- Centered Title -->
+                    <div class="flex-grow-1 text-center">
+                        <h5 class="fw-bold m-0 d-inline-flex align-items-center justify-content-center">
+                            <span class="iconify me-2" data-icon="solar:book-bookmark-minimalistic-linear" style="font-size: 24px;"></span>
+                            Ressources
+                        </h5>
+                    </div>
+                
+                    <!-- Button on the right -->
+                    <button class="btn-indisplay d-flex align-items-center ms-2" data-bs-toggle="modal" data-bs-target="#addRessourceModal">
+                        <span class="iconify icon-normal me-2" data-icon="solar:add-square-linear" style="font-size: 28px;"></span>
+                    </button>
+                </div>
+                
             <div class="row">
                 {% for ressource in ressources %}
                 <div class="col-md-6 col-lg-4 mb-0.5">
@@ -604,17 +670,17 @@
                         <div class="card-body d-flex justify-content-between align-items-center">
                             <div>
                                 {% if ressource.file %}
-                                <a href="{{ ressource.file.url }}" download="" class="fw-bold text-dark">
+                                <a href="{{ ressource.file.url }}" download="" class="fw-bold  ">
                                     <span class="iconify me-2" data-icon="solar:file-check-linear" style="font-size: 24px; color: #635bff"></span>
                                     {{ ressource.titre }}
                                 </a>
                                 {% elif ressource.video_url %}
-                                <a href="{{ ressource.video_url }}" target="_blank" class="fw-bold text-dark">
+                                <a href="{{ ressource.video_url }}" target="_blank" class="fw-bold  ">
                                     <span class="iconify me-2" data-icon="solar:chat-round-video-linear" style="font-size: 24px; color: #635bff"></span>
                                     {{ ressource.titre }}
                                 </a>
                                 {% elif ressource.url %}
-                                <a href="{{ ressource.url }}" target="_blank" class="fw-bold text-dark">
+                                <a href="{{ ressource.url }}" target="_blank" class="fw-bold  ">
                                     <span class="iconify me-2" data-icon="solar:link-circle-linear" style="font-size: 24px; color: #635bff"></span>
                                     {{ ressource.titre }}
                                 </a>
@@ -752,44 +818,47 @@
             </div>
         </div>
 
-            
+    </div>
         </div>
-
-        
-
-
         <div id="groupes-view" style="display: none;">
-            <h5 class="fw-bold text-dark text-center mb-3">
+            <div class="card shadow-lg p-4 bg-white border-0 raduise-for-all mt-3">
+            <h5 class="fw-bold   text-center mb-3">
                 <span class="iconify me-2" data-icon="solar:users-group-rounded-linear" style="font-size: 24px;"></span>
                 Groupes
             </h5>
         
             <div class="container">
-                <div class="row">
+                <ul class="list-group border rounded-3 overflow-hidden shadow-sm">
                     {% for groupe in groupes %}
-                    <div class="col-md-6 col-lg-4 mb-1">
-                        <div class="card shadow-lg border-0 rounded-3 transition-all">
-                            <div class="card-body">
-                                <h6 class="fw-bold text-primary d-flex align-items-center">
-                                    <span class="iconify me-2" data-icon="solar:user-group-rounded-bold" style="font-size: 20px;"></span>
-                                    {{ groupe.nom_groupe }}
-                                </h6>
-                                <p class="mb-1"><strong>Membres :</strong> {{ groupe.nbr_membre }}</p>
+                    <li class="list-group-item d-flex justify-content-between align-items-center py-3 px-3 group-item-hover">
+                        <div class="d-flex align-items-center">
+                            <span class="iconify me-3 text-primary" data-icon="solar:user-group-rounded-bold" style="font-size: 20px;"></span>
+                            <div>
+                                <h6 class="mb-0 fw-semibold  ">{{ groupe.nom_groupe }}</h6>
+                                <small class="text-muted">{{ groupe.nbr_membre }} membre{{ groupe.nbr_membre|pluralize }}</small>
                             </div>
                         </div>
-                    </div>
+                        <a href="{% url 'groupe_stats' projet.id groupe.id %}" class="info btn-indisplay btn-sm d-flex align-items-center gap-1 px-2 py-1 rounded-pill" style="font-size: 14px; border: 1px solid #635bff;">
+                            <span class="iconify icon-normal" data-icon="solar:eye-linear" style="font-size: 18px;"></span> Info
+                        </a>
+                    </li>
                     {% empty %}
-                    <div class="col-12 text-center text-muted">
-                        <p>Aucun groupe n'a été créé.</p>
-                    </div>
+                    <li class="list-group-item text-center text-muted py-3">
+                        Aucun groupe n'a été créé.
+                    </li>
                     {% endfor %}
-                </div>
+                </ul>
+            </div>
+            
+            
+            
                 
             </div>
         </div>
+        </div>
         
-
-    </div>
+<!-- 
+    </div> -->
     <script>
         function changeContent(view, button) {
     // Hide all sections
@@ -826,12 +895,29 @@
 window.onload = function() {
     document.getElementById("default-btn").click();
 };
+document.addEventListener("DOMContentLoaded", function () {
+        const counters = document.querySelectorAll(".count");
+        counters.forEach(counter => {
+            let target = +counter.getAttribute("data-target");
+            let count = 0;
+            let increment = target > 0 ? target / 50 : 1; // Ensure increment is at least 1
 
+            function updateCount() {
+                if (count < target) {
+                    count += increment;
+                    counter.innerText = Math.ceil(count);
+                    setTimeout(updateCount, 20);  // You can increase this value if the count is too fast
+                } else {
+                    counter.innerText = target;
+                }
+            }
+            updateCount();
+        });
+    });
 
 
     </script>
-</div>
-</div>
+
 
 
 

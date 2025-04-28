@@ -1,49 +1,166 @@
-/* POPPINS FONT */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+/* Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
-body{
+body {
     font-family: 'Poppins', sans-serif;
     background: #ececec;
+    background-image: url(../img/auth/back.png);
+    background-size: cover;
 }
+
 /*------------ Login container ------------*/
-.box-area{
-    width: 930px;
+.box-area-sign {
+    max-width: 960px;
+    width: 100%;
+    margin: auto;
 }
-.box-area-sign{
-    width: 960px;
-}
-.login-btn{
+
+/*------------ Button ------------*/
+.login-btn {
     color: #ffffff;
-    background: #635bff;
-    transition: all 0.5s ease;
+    background: #653ffb;
+    transition: all 0.3s ease;
+    border-radius: 10px;
+    font-weight: 600;
 }
-.login-btn:hover{
+.login-btn:hover {
     background: #cac8ff;
+    color: #653ffb;
 }
+
+/*------------ Left box ------------*/
+.left-box {
+    background: #653ffb;
+    border-top-left-radius: 30px;
+    border-bottom-left-radius: 30px;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+.left-box img {
+    max-width: 250px;
+    margin-bottom: 15px;
+}
+
+.left-box p {
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.left-box small {
+    width: 17rem;
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+}
+
 /*------------ Right box ------------*/
-.right-box{
-    padding: 40px 30px 40px 40px;
+.right-box {
+    padding: 40px 30px;
 }
-/*------------ Custom Placeholder ------------*/
-::placeholder{
+
+.header-text h2 {
+    font-size: 30px;
+    font-weight: 600;
+}
+
+.header-text p {
+    font-size: 16px;
+    color: #777;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+/* Custom Placeholder */
+::placeholder {
     font-size: 16px;
 }
-.rounded-4{
-    border-radius: 20px;
+/*------------ Password Requirements Box ------------*/
+.password-requirements-box {
+    margin-top: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 15px;
 }
-.rounded-5{
-    border-radius: 30px;
+
+.password-requirements-box ul {
+    list-style-type: none;
+    padding-left: 0;
 }
-/*------------ For small screens------------*/
-@media only screen and (max-width: 768px){
-     .box-area{
+
+.password-requirements-box li {
+    font-size: 14px;
+    padding: 5px 0;
+    transition: color 0.3s ease;
+}
+
+/* Green for fulfilled requirements */
+.password-requirements-box .fulfilled {
+    color: green;
+}
+
+/*------------ Password Error Message ------------*/
+.password-error-message {
+    margin-top: 20px;
+    display: none;
+    transition: all 0.3s ease;
+}
+
+.password-error-message .alert {
+    font-size: 14px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: #f5c6cb;
+}
+
+/*------------ Password Input Field Focused State ------------*/
+.input-group input:focus {
+    border-color: #653ffb;
+    box-shadow: 0 0 5px rgba(101, 63, 251, 0.5);
+}
+
+/*------------ Password Field Styling ------------*/
+.input-group input {
+    transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+/*------------ Responsive Design for Password Section ------------*/
+@media only screen and (max-width: 768px) {
+    .password-requirements-box {
+        padding: 10px;
+    }
+
+    .password-requirements-box ul li {
+        font-size: 12px;
+    }
+
+    .password-error-message .alert {
+        font-size: 12px;
+    }
+}
+
+/*------------ Responsive Design ------------*/
+@media only screen and (max-width: 768px) {
+    .box-area-sign {
         margin: 0 10px;
-     }
-     .left-box{
-        height: 100px;
+    }
+
+    .left-box {
+        height: auto;
         overflow: hidden;
-     }
-     .right-box{
         padding: 20px;
-     }
+    }
+
+    .right-box {
+        padding: 20px;
+    }
+
+    .login-btn {
+        font-size: 18px;
+    }
 }

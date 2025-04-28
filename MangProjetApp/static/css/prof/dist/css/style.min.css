@@ -4943,6 +4943,9 @@
 [data-bs-theme="dark"] .sidebar-item .sidebar-link {
   color: var(--bs-body-color);
 }
+[data-bs-theme="dark"] .sidebar-item .sidebar-link .icon-text {
+  color: #8e88c8;
+}
 
 [data-bs-theme="dark"] .sidebar-item .sidebar-link:hover {
   background-color: var(--sidebar-hover-bg);
@@ -4951,6 +4954,9 @@
 
 [data-bs-theme="dark"] .sidebar-item.selected .sidebar-link {
   background-color: var(--sidebar-active-bg);
+  color: #fff;
+}
+[data-bs-theme="dark"] .sidebar-item.selected .sidebar-link .icon-text {
   color: #fff;
 }
 
@@ -20523,7 +20529,7 @@ strong {
 .custom-warning {
   background-color: #cac8ff;
   border-radius: 6px;
-  color: #cac8ff;
+  color: #635bff;
   transition: all 0.5s ease;
 
 }
@@ -20685,10 +20691,12 @@ input {
 }
 
 
-
-
-
-
+.student-title {
+  color: #6358ff;
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
 
 /** DARK MODE **/
 [data-bs-theme="dark"] .btn-modal-style {
@@ -20785,6 +20793,12 @@ input {
   color: #635bff !important;
   border: 2px solid #635bff; /* Green border */
 }
+
+.info:hover{
+  color: #635bff;
+  background-color: #cac8ff;
+}
+
 /* Dark Mode Styles for Buttons */
 [data-bs-theme="dark"] .btn-ret {
   background-color: #1a1a2e;  /* Darker background */
@@ -20870,6 +20884,93 @@ input {
   color: #a89af0; /* Lighter color */
   transition: all 0.5s ease;
 }
+/* Dark mode for cards */
+[data-bs-theme="dark"] .card {
+  background-color: #27293d !important;
+  color: #f0f0f0;
+  border: 1px solid #2d2d3a;
+  /* border-radius: 12px; */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+[data-bs-theme="dark"] .card-body {
+  background-color: #27293d;
+  color: #f0f0f0;
+}
+[data-bs-theme="dark"] .card-son{
+  background-color: #27293c;
+  color: #f0f0f0;
+}
+[data-bs-theme="dark"] .card-project {
+  background-color: #27384b;
+}
+
+
+[data-bs-theme="dark"] .card .card-title a {
+  color: #ffffff;
+}
+
+[data-bs-theme="dark"] .card .card-title a:hover {
+  color: #9fcdff;
+}
+
+[data-bs-theme="dark"] .card .dropdown-menu {
+  background-color: #2a2a3a;
+  border: none;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+[data-bs-theme="dark"] .card .dropdown-item {
+  color: #ddd;
+}
+
+[data-bs-theme="dark"] .card .dropdown-item:hover {
+  background-color: #3c3c4f;
+  color: #fff;
+}
+
+[data-bs-theme="dark"] .card .text-muted {
+  color: #bbb !important;
+}
+
+[data-bs-theme="dark"] .card .d-flex.justify-content-around {
+  background-color: #27293d;
+  border-top: 1px solid #3c3f57;
+  color: #ccc;
+}
+
+[data-bs-theme="dark"] .card i {
+  color: #ccc;
+}
+
+/* form */
+[data-bs-theme="dark"] .form-label{
+  color: #635bff;
+}
+[data-bs-theme="dark"] .form-control:disabled{
+  background-color: #1e1e2f;  /* Soft dark background */
+  color: #888; 
+  opacity: 1;
+}
+/* DARK MODE */
+
+[data-bs-theme="dark"] h3,
+[data-bs-theme="dark"] p {
+  color: #cac8ff;
+}
+
+/* LIGHT MODE (optional, to be more explicit) */
+
+[data-bs-theme="light"] h3,
+[data-bs-theme="light"] p {
+  color: #2c2c2c; /* or any color you want in light mode */
+}
+
+/* DEFAULT LIGHT MODE (optional if [data-bs-theme="light"] is not set) */
+h3, p {
+  color: #2c2c2c;
+}
+
 
 /* Dark Mode Input Styles */
 [data-bs-theme="dark"] input {

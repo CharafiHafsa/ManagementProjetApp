@@ -1,101 +1,164 @@
 {% extends 'prof/base.html' %}
 {% load static %}
+
 {% block content %}
-<div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold">My Classes</h2>
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createClassModal">
-            + Create New Class
-        </button>
+<style>
+    .dashboard-card {
+        border: none;
+        border-radius: 1rem;
+        box-shadow: 0 0.5rem 1.2rem rgba(0,0,0,0.1);
+        transition: 0.3s;
+    }
+    .dashboard-card:hover {
+        transform: scale(1.01);
+    }
+    .dashboard-section {
+        margin-bottom: 3rem;
+    }
+    .dashboard-header {
+        background: linear-gradient(to right, #703bf6, #6366f1);
+        color: white;
+        border-radius: 1rem;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+    .dashboard-header img {
+        height: 80px;
+        width: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid white;
+    }
+</style>
+
+<!-- Dashboard Header -->
+<div class="dashboard-header d-flex justify-content-between align-items-center">
+    <div>
+        <h2 class="fw-bold mb-1">Bonjour, {{ professeur.nom }} {{ professeur.prenom }}</h2>
+        <p class="mb-0">Voici un aperçu de votre activité récente</p>
     </div>
+    <img src="{{ professeur.photo_profil.url }}" alt="Profil">
+</div>
+
+<div class="card shadow-lg border-0 raduise-for-all p-4">
+<!-- Class Statistics Section -->
+<div class="row dashboard-section">
+    <div class="col-12">
+        <h4 class="fw-bold text-primary mb-3">Statistiques des Classes</h4>
+    </div>
+
+    {% for stat in class_stats %}
+        <div class="col-md-4 ">
+            <div class="card shadow-lg">
+                <div class="card-header text-white" style="background-color: #703bf6;">
+                    <h5 class="card-title">
+                        <a href="{% url 'classe_detail' stat.classe.id %}" class="text-white text-decoration-none">{{ stat.classe.nom_classe }}</a>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h6>Nombre de Projets</h6>
+                            <p class="fs-4 fw-bold">{{ stat.num_projects }}</p>
+                        </div>
+                        <div>
+                            <h6>Nombre d'Étudiants</h6>
+                            <p class="fs-4 fw-bold">{{ stat.num_students }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+</div>
+
+<div class="card shadow-lg border-0 raduise-for-all p-4">
+<!-- Row 1: Recently Created Classes -->
+<div class="dashboard-section">
+    <h4 class="fw-bold text-primary mb-3 d-flex align-items-center">
+        <span class="iconify me-2" data-icon="solar:notebook-minimalistic-linear" style="font-size: 25px;"></span>
+        Classes récentes
+    </h4>
+    
+    <div class="d-flex flex-nowrap overflow-auto gap-3">
+        {% for classe in recent_classes %}
+            <a href="{% url 'classe_detail' classe.id %}" class="text-decoration-none">
+                <div class="card dashboard-card p-3" style="min-width: 300px;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ classe.nom_classe }}</h5>
+                        <p class="card-text">{{ classe.description|default:"Pas de description." }}</p>
+                        <span class="badge bg-primary">Code: {{ classe.code_classe }}</span>
+                    </div>
+                </div>
+            </a>
+        {% empty %}
+            <p class="text-muted">Aucune classe récente.</p>
+        {% endfor %}
+    </div>
+</div>
+</div>
+
+<div class="card shadow-lg border-0 raduise-for-all p-4">
+<!-- Row 1b: Recently Created Projects -->
+<div class="dashboard-section mt-5">
+    <h4 class="fw-bold text-primary mb-3 d-flex align-items-center">
+        <span class="iconify me-2" data-icon="solar:folder-outline" style="font-size: 24px;"></span>
+         Projets récents
+    </h4>
+    <div class="d-flex flex-nowrap overflow-auto gap-3">
+        {% for projet in recent_projects %}
+            <a href="{% url 'projet_detail' projet.id %}" class="text-decoration-none">
+                <div class="card dashboard-card p-3" style="min-width: 300px;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ projet.nom_project }}</h5>
+                        <p class="card-text">Classe: {{ projet.code_classe.nom_classe }}</p>
+                        <small class="text-muted">Du {{ projet.date_debut }} au {{ projet.date_fin }}</small>
+                    </div>
+                </div>
+            </a>
+        {% empty %}
+            <p class="text-muted">Aucun projet récent.</p>
+        {% endfor %}
+    </div>
+</div>
+</div>
+
+<div class="card shadow-lg border-0 raduise-for-all p-4">
+<!-- Row 2: Instructions & Announcements -->
+<div class="dashboard-section">
     <div class="row">
-        <!-- Sidebar for class list -->
-        <div class="col-md-3">
-            <div class="list-group" id="classList">
-                {% for class in classes %}
-                    <a href="#" class="list-group-item list-group-item-action class-item" data-class-id="{{ class.id }}">
-                        {{ class.nom_classe }}
-                    </a>
-                {% endfor %}
-            </div>
+        <div class="col-md-6 mb-4">
+            <h4 class="fw-bold text-primary mb-3 d-flex align-items-center">
+                <span class="iconify me-2" data-icon="solar:clock-circle-outline" style="font-size: 24px;"></span>
+            Dates limites à venir</h4>
+            {% for instruction in upcoming_instructions %}
+                <div class="card dashboard-card alert-warning mb-3 p-3">
+                    <strong>{{ instruction.titre }}</strong><br>
+                    Projet: <a href="{% url 'projet_detail' instruction.projet.id %}" class="text-decoration-none">{{ instruction.projet.nom_project }}</a><br>
+                    <small>À remettre avant le {{ instruction.date_limite }}</small>
+                </div>
+            {% empty %}
+                <p class="text-muted">Aucune instruction proche de la date limite.</p>
+            {% endfor %}
         </div>
-        
-        <!-- Global Statistics -->
-        <div class="col-md-3">
-            <div class="card p-3">
-                <h5>Global Statistics</h5>
-                <p>Total Classes: {{ total_classes }}</p>
-                <p>Total Students: {{ total_students }}</p>
-                <p>Total Projects: {{ total_projects }}</p>
-            </div>
-        </div>
-        
-        <!-- Class-specific statistics -->
-        <div class="col-md-6">
-            <div class="card p-3" id="classStatistics">
-                <h5>Select a class to view details</h5>
-                <p id="studentsCount">Students: -</p>
-                <p id="projectsCount">Projects: -</p>
-            </div>
-        </div>
-        <script>
-            document.querySelectorAll(".class-item").forEach(item => {
-    item.addEventListener("click", function(event) {
-        event.preventDefault();
-        const class_id = this.dataset.classId;  // Ensure it's the correct case
-        console.log("Class ID:", class_id);  // Debugging line
 
-        fetch(`/get_class_stats/${class_id}/`)  // Endpoint to fetch class stats
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to fetch class statistics');
-                }
-                return response.json();
-            })
-            .then(data => {
-                document.getElementById("studentsCount").innerText = `Students: ${data.students}`;
-                document.getElementById("projectsCount").innerText = `Projects: ${data.projects}`;
-            })
-            .catch(error => {
-                console.error(error);
-                // Handle the error, e.g., display a message to the user
-                document.getElementById("studentsCount").innerText = 'Error fetching statistics';
-                document.getElementById("projectsCount").innerText = 'Error fetching statistics';
-            });
-    });
-});
-
-            </script>
-    </div>
-</div>
-
-<!-- Bootstrap Modal for Creating a New Class -->
-<div class="modal fade" id="createClassModal" tabindex="-1" aria-labelledby="createClassModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="createClassModalLabel">Create New Class</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="createClassForm" method="POST">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label for="className" class="form-label">Class Name</label>
-                        <input type="text" class="form-control" id="className" name="nom_classe" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="subject" class="form-label">Subject</label>
-                        <input type="text" class="form-control" id="subject" name="subject" required>
-                    </div>
-                    <div class="text-end">
-                        <button type="submit" class="btn btn-primary">Create Class</button>
-                    </div>
-                </form>
-            </div>
+        <div class="col-md-6 mb-4">
+            <h4 class="fw-bold text-primary mb-3 d-flex align-items-center">
+                <span class="iconify me-2" data-icon="mingcute:announcement-line" style="font-size: 24px;"></span>
+                Annonces récentes
+            </h4>
+            {% for annonce in recent_announces %}
+                <div class="card dashboard-card alert-info mb-3 p-3">
+                    <strong><a href="{% url 'projet_detail' annonce.projet.id %}" class="text-decoration-none">{{ annonce.projet.nom_project }}</a></strong><br>
+                    {{ annonce.contenu|truncatewords:20 }}<br>
+                    <small>Publiée le {{ annonce.date_publication|date:"d M Y H:i" }}</small>
+                </div>
+            {% empty %}
+                <p class="text-muted">Aucune annonce récente.</p>
+            {% endfor %}
         </div>
     </div>
 </div>
-
-
+</div>
 {% endblock content %}

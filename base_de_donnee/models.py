@@ -3,7 +3,11 @@ from django.contrib.auth.hashers import check_password
 import uuid
 from django.utils.timezone import now
 import datetime
-
+import random
+from django.core.files import File
+from django.conf import settings
+import os
+from django.utils import timezone
 
 # Manager personnalisé pour Professeur
 class ProfesseurManager(models.Manager):
@@ -72,12 +76,26 @@ class Classe(models.Model):
     nom_classe = models.CharField(max_length=255)
     professeur = models.ForeignKey(Professeur, on_delete=models.CASCADE, related_name="classes")
     description =models.CharField(default='nouveau classe')
-
+    image = models.ImageField(upload_to='images/', blank=True, null=True)
 
     def save(self, *args, **kwargs):
         if not self.code_classe:
             self.code_classe = self.generate_unique_code()
+        if not self.image:
+            default_images = [
+                'blog-img1.jpg',
+                'blog-img2.jpg',
+                'blog-img3.jpg',
+                'blog-img4.jpg',
+                'blog-img5.jpg'
+            ]
+            chosen = random.choice(default_images)
+            image_path = os.path.join(settings.BASE_DIR, 'static','img','defaullt_classe_images', chosen)
+            with open(image_path, 'rb') as f:
+                self.image.save(chosen, File(f), save=False)
         super().save(*args, **kwargs)
+
+
 
     def generate_unique_code(self):
         return str(uuid.uuid4())[:8].upper()  # Generates an 8-character unique code
@@ -96,7 +114,7 @@ class Project(models.Model):
     nom_project = models.CharField(max_length=255)
     code_classe = models.ForeignKey(Classe, on_delete=models.CASCADE, related_name="projets")
     
-    def _str_(self):
+    def __str__(self):
         return self.nom_project
 
     def save(self, *args, **kwargs):
@@ -187,6 +205,19 @@ class Calendrier(models.Model):
     date_fin = models.DateField(null=True)
     status = models.CharField(max_length=10, choices=couleurs)
 
+# class PCalendrier(models.Model):
+#     couleurs = [
+#         ('rouge', 'rouge'),
+#         ('vert', 'vert'),
+#         ('bleu', 'bleu'),
+#         ('jaune', 'jaune'),
+#     ]
+#     etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE, related_name="line_time")
+#     evenement = models.CharField(max_length=255, null=True)
+#     date_debut = models.DateField(null=True)
+#     date_fin = models.DateField(null=True)
+#     status = models.CharField(max_length=10, choices=couleurs)
+
 class Event(models.Model):
     title = models.CharField(max_length=255)
     start_date = models.DateField()
@@ -216,3 +247,32 @@ class Document(models.Model):
 class Notification(models.Model):
     etudiant = models.ForeignKey(Etudiant,  on_delete=models.CASCADE, related_name='notifications' )
     groupe = models.ForeignKey( Groupe,  on_delete=models.CASCADE, related_name='notifications')
+
+
+class PNotification(models.Model):
+    DEST_TYPE_CHOICES = (
+        ('class', 'Classe'),
+        ('group', 'Groupe'),
+        ('student', 'Étudiant'),
+    )
+
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    created_at = models.DateTimeField(default=timezone.now)
+    is_read = models.BooleanField(default=False)
+
+    destination_type = models.CharField(max_length=10, choices=DEST_TYPE_CHOICES)
+    classe = models.ForeignKey('Classe', null=True, blank=True, on_delete=models.CASCADE)
+    groupe = models.ForeignKey('Groupe', null=True, blank=True, on_delete=models.CASCADE)
+    student = models.ForeignKey('Etudiant', null=True, blank=True, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.title
+    
+
+class PEvent(models.Model):
+    title = models.CharField(max_length=200)
+    date = models.DateField()
+
+    def __str__(self):
+        return self.title

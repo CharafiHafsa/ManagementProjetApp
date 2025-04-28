@@ -2,73 +2,47 @@
 {% load static %}
 
 {% block content %}
-
-<div class="container mb-3">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+    <h3 class="fw-bold mb-3 mb-md-0">Bonjour, <span class="text-primary">{{professor.nom}} {{professor.prenom}}</span></h3>
+    <h3 class="fw-bold text-primary mb-0">La Classe : {{ classe.nom_classe }}</h3>
     
-    {% if messages %}
+    <p class="mb-0">
+        <a href="#" data-bs-toggle="modal" data-bs-target="#codeModal" class="text-decoration-none  fw-bold">
+            <span class="iconify" data-icon="solar:rounded-magnifer-zoom-in-linear" style="font-size: 24px;"></span>
+            <strong class="ms-2">Code :</strong> {{ classe.code_classe }}
+        </a>
+    </p>
+</div>
+<div class="modal fade" id="codeModal" tabindex="-1" aria-labelledby="codeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
+            <div class="modal-header text-white" style="background-color: #635bff;">
+                <h5 class="modal-title text-white" id="codeModalLabel">Classe Code</h5>
+                <button type="button" class="btn-close custom-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <p style="font-size: 30px; font-weight: bold;">
+                    {{ classe.code_classe }}
+                </p>
+                <!-- Share Button (Example with Share Icon) -->
+                <button class="btn btn-ret" onclick="shareCode()">
+                    <span class="iconify" data-icon="solar:share-linear" style="font-size: 24px;"></span> Share
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<hr class="mb-5">
+{% if messages %}
   {% for message in messages %}
-    <div class="alert alert-{{ message.tags }} fade-message">{{ message }}</div>
+    {% if "projet" in message.tags or "classes" in message.tags %}
+      <div class="alert alert-success fade-message">{{ message }}</div>
+    {% endif %}
   {% endfor %}
 {% endif %}
 
 
-    
-
     <div class="row g-4">
-        <!-- Action Buttons -->
-        <div class="card shadow-lg p-4 text-center bg-white border-0 raduise-for-all">
-            <div class="d-flex justify-content-between align-items-center mb-1">
-                <h2 class="fw-bold text-primary mb-0">La Classe : {{ classe.nom_classe }}</h2>
-                
-                <!-- Clickable Code -->
-                <p class="mb-0">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#codeModal" class="text-decoration-none text-dark fw-bold">
-                        <span class="iconify" data-icon="solar:rounded-magnifer-zoom-in-linear" style="font-size: 24px;"></span>
-                        <strong class="ms-2">Code :</strong> {{ classe.code_classe }}
-                    </a>
-                </p>
-            </div>
-            
-
-            <!-- Modal Structure -->
-            <div class="modal fade" id="codeModal" tabindex="-1" aria-labelledby="codeModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
-                        <div class="modal-header text-white" style="background-color: #635bff;">
-                            <h5 class="modal-title text-white" id="codeModalLabel">Classe Code</h5>
-                            <button type="button" class="btn-close custom-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body text-center">
-                            <p style="font-size: 30px; font-weight: bold;">
-                                {{ classe.code_classe }}
-                            </p>
-                            <!-- Share Button (Example with Share Icon) -->
-                            <button class="btn btn-ret" onclick="shareCode()">
-                                <span class="iconify" data-icon="solar:share-linear" style="font-size: 24px;"></span> Share
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <script>
-                function shareCode() {
-                    const code = '{{ classe.code_classe }}';
-                    if (navigator.share) {
-                        navigator.share({
-                            title: 'Classe Code',
-                            text: 'Check out this code: ' + code,
-                            url: window.location.href
-                        }).then(() => {
-                            console.log('Successfully shared');
-                        }).catch((error) => {
-                            console.error('Error sharing:', error);
-                        });
-                    } else {
-                        alert('Sharing is not supported on your browser.');
-                    }
-                }
-            </script>
-
             <div class="d-flex justify-content-between flex-wrap gap-3">
                 <button class="btn btn-dashboard p-3 flex-fill selected1" onclick="changeContent('default', this)" id="default-btn">
                     <span class="iconify me-2" data-icon="solar:folder-open-linear" style="font-size: 24px;"></span>
@@ -91,9 +65,534 @@
                     Ajouter Projet
                 </button>
             </div>
+    </div>
+    <div class="card shadow-lg p-4 bg-white border-0 raduise-for-all mt-3">
+    <div class="row g-4 ">
+        <!-- Class Details -->
+            <div id="class-details" >
+                <!-- Default View -->
+                <div id="default-view">
+                    <div class="d-flex flex-column gap-2">
+                        <h5 class="fw-bold text-center mb-3 d-flex align-items-center justify-content-center">
+                            <span class="iconify me-2" data-icon="solar:clipboard-list-linear" style="font-size: 24px;"></span>
+                            <span>{{ classe.projets.count }}</span>
+                            <span class="ms-2">Projets</span>
+                        </h5>
+                        {% if projects %}
+                        <div class="row">
+                            {% for project in projects %}
+                                <div class="col-md-4 mb-4">
+                                        <div class="card card-project  shadow-sm raduise-for-all position-relative">
+                                            <!-- Menu Icon for Edit/Delete -->
+                                            <div class="position-absolute top-0 end-0 p-2">
+                                                <div class="dropdown">
+                                                    <span class="iconify menu-icon dropdown-toggle" data-icon="solar:menu-dots-square-linear" data-bs-toggle="dropdown" aria-expanded="false"></span>
+                                                    <ul class="dropdown-menu raduise-for-all">
+                                                        <li>
+                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#editProjetModal{{ project.id }}">
+                                                                Edit
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#deleteProjetModal{{ project.id }}">
+                                                                Delete
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                
+                                            </div>
+                                            <!-- Edit Project Modal -->
+                                            <div class="modal fade" id="editProjetModal{{ project.id }}" tabindex="-1" aria-labelledby="editProjetModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
+                                                        <div class="modal-header text-white" style="background-color: #635bff;">
+                                                            <h5 class="modal-title" id="editProjetModalLabel">Éditer Projet : {{ project.nom_project }}</h5>
+                                                            <button type="button" class="btn-close custom-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form id="editProjetForm" method="POST" action="{% url 'edit_projet' project.id %}?next={{ request.path }}">
+                                                                {% csrf_token %}
+                                                                <div class="mb-3">
+                                                                    <label for="projetName{{ project.id }}" class="form-label">Nom du projet</label>
+                                                                    <input type="text" class="form-control" id="projetName{{ project.id }}" name="projetName" value="{{ project.nom_project }}">
+                                                                </div>
+                                                                <div class="mb-3">
+                                                                    <label for="projetdesc{{ project.id }}" class="form-label">Description du projet</label>
+                                                                    <input type="text" class="form-control" id="projetdesc{{ project.id }}" name="projetdesc" value="{{ project.description }}">
+                                                                </div>
+                                                                <div class="mb-3">
+                                                                    <label for="date_debut{{ project.id }}" class="form-label" style="color: #635bff;">
+                                                                        <span class="iconify me-2" data-icon="solar:calendar-date-outline" style="font-size: 24px;"></span>
+                                                                        Date de Début
+                                                                    </label>
+                                                                    <input type="date" class="form-control raduise-for-all" id="date_debut{{ project.id }}" name="date_debut" value="{{ project.date_debut|date:'Y-m-d' }}">
+                                                                </div>
+                                                                <div class="mb-3">
+                                                                    <label for="date_fin{{ project.id }}" class="form-label" style="color: #635bff;">
+                                                                        <span class="iconify me-2" data-icon="solar:calendar-date-line-duotone" style="font-size: 24px;"></span>
+                                                                        Date de Fin
+                                                                    </label>
+                                                                    <input type="date" class="form-control raduise-for-all" id="date_fin{{ project.id }}" name="date_fin" value="{{ project.date_fin|date:'Y-m-d' }}">
+                                                                </div>
+                                                                <div class="text-end">
+                                                                    <button type="submit" class="btn btn-modal-style">Modifier Projet</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Delete Project Modal -->
+                                            <div class="modal fade" id="deleteProjetModal{{ project.id }}" tabindex="-1" aria-labelledby="deleteProjetModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
+                                                        <div class="modal-header text-white" style="background-color: #635bff;">
+                                                            <h5 class="modal-title" id="deleteProjetModalLabel">Supprimer Projet : {{ project.nom_project }}</h5>
+                                                            <button type="button" class="btn-close custom-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>Êtes-vous sûr de vouloir supprimer ce projet ? La suppression entraînera également la suppression de toutes les données associées (étudiants, tâches, etc.).</p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-modal-style" data-bs-dismiss="modal">Annuler</button>
+                                                            <form method="POST" action="{% url 'delete_projet' project.id %}">
+                                                                {% csrf_token %}
+                                                                <button type="submit" class="btn btn-danger raduise-for-all">Oui, Supprimer</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card-body card-son .card-body-project">
+                                                <h5 class="card-title text-primary">{{ project.nom_project }}</h5>
+                                                <p class="card-text text-muted">{{ project.description }}</p>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <small class="text-muted">Du {{ project.date_debut }} au {{ project.date_fin }}</small>
+                                                    <a href="{% url 'projet_detail' project.id %}" class="btn btn-sm btn-form-classe raduise-for-all">Details</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-center text-muted">Aucun projet disponible.</p>
+                    {% endif %}
 
-            <script>
-                function changeContent(view, button) {
+
+                    </div>
+                </div>
+                <!-- Edit Form View (Hidden by Default) -->
+                <div id="edit-form" style="display: none;">
+                    
+                    <h5 class="fw-bold  text-center mb-3">
+                        <span class="iconify me-2" data-icon="solar:pen-linear" style="font-size: 24px;"></span>
+                        Modifier Classe
+                    </h5>
+                    <form method="POST" action="{% url 'edit_classe' class_id=classe.id %}?next={{ request.path }}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="nom_classe" class="form-label" style="color: #635bff;">
+                            <span class="iconify" data-icon="solar:ruler-cross-pen-broken" style="font-size: 24px;"></span>
+                                Nom de la classe
+                            </label>
+                            <input type="text" class="form-control raduise-for-all" id="nom_classe" name="className" value="{{ classe.nom_classe }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="code_classe" class="form-label" style="color: #635bff">
+                                <span class="iconify" data-icon="solar:password-minimalistic-input-linear" style="font-size: 24px;"></span>
+                                Code de la classe
+                            </label>
+                            <input type="text" class="form-control raduise-for-all" id="code_classe" name="code_classe" value="{{ classe.code_classe }}" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label" style="color: #635bff">
+                            <span class="iconify" data-icon="solar:clipboard-list-linear" style="font-size: 24px;"></span>
+                                Description
+                            </label>
+                            <textarea class="form-control raduise-for-all" id="description" name="classdesc" rows="4">{{ classe.description }}</textarea>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-form-classe flex-fill p-3">
+                                <span class="iconify me-2" data-icon="mynaui:save" style="font-size: 24px;"></span>
+                                Enregistrer les modifications
+                            </button>
+                            <button type="button" class="btn btn-ret flex-fill p-3" onclick="changeContent('default')">
+                                <span class="iconify me-2" data-icon="solar:rewind-back-outline" style="font-size: 24px;"></span>
+                                Retour
+                            </button>
+                        </div>                        
+                    </form>
+                </div>
+                <!-- Delete Confirmation View (Hidden by Default) -->
+                <div id="delete-confirmation" style="display: none;">
+                    <h5 class="fw-bold text-center mb-3">
+                        <span class="iconify me-2" data-icon="solar:trash-bin-2-linear" style="font-size: 24px;"></span>
+                        Supprimer Classe
+                    </h5>
+                
+                    <h6 class="fw-bold text-danger text-center mb-2">Êtes-vous sûr de vouloir supprimer cette classe ?</h6>
+                
+                    <p class="text-danger text-center mb-4 d-flex justify-content-center align-items-center gap-2" style="font-size: 0.95rem;">
+                        <span class="iconify text-danger" data-icon="solar:danger-triangle-outline" style="font-size: 20px; vertical-align: middle;"></span>
+                        <span class="d-inline-block" style="line-height: 1.3;"> 
+                            Cette action supprimera également toutes les données liées à cette classe, y compris les projets, les étudiants et les statistiques associés.
+                        </span>
+                    </p>
+                    
+                    
+                    
+                
+                    <form method="POST" action="{% url 'delete_classe' class_id=classe.id %}?next={{ request.path }}">
+                        {% csrf_token %}
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-danger flex-fill p-3 raduise-for-all">Oui, Supprimer</button>
+                            <button type="button" class="btn btn-ret flex-fill p-3" onclick="changeContent('default')">
+                                <span class="iconify me-2" data-icon="solar:rewind-back-outline" style="font-size: 24px;"></span>
+                                Annuler
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+
+                
+<!-- Manage Students (Hidden by Default) -->
+<div id="students-management">
+    <h5 class="fw-bold text-center mb-3">
+        <span class="iconify me-2" data-icon="solar:user-id-linear" style="font-size: 24px;"></span>
+        Gestion des Étudiants
+    </h5>
+
+    <div class="list-group">
+        {% if etudiants_data %}
+            {% for entry in etudiants_data %}
+                {% with etudiant=entry.etudiant projets_etudiant=entry.projets %}
+                    <div class="list-group-item student-card d-flex align-items-center justify-content-between p-3">
+                        <div class="d-flex align-items-center">
+                            <div class="avatar me-3">
+                                <span class="iconify" data-icon="solar:user-circle-linear" style="font-size: 40px;"></span>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1">{{ etudiant.nom }} {{ etudiant.prenom }}</h6>
+                                <p class="mb-0 text-muted small">{{ etudiant.email_etudiant }}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <button class="btn btn-outline-info btn-sm me-2" data-bs-toggle="modal" data-bs-target="#detailEtudiantModal{{ etudiant.id }}">
+                                <span class="iconify" data-icon="solar:eye-linear"></span>
+                            </button>
+                            <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#supprimerEtudiantModal{{ etudiant.id }}">
+                                <span class="iconify" data-icon="solar:trash-bin-trash-linear"></span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Modal Détail Étudiant -->
+                    <div class="modal fade" id="detailEtudiantModal{{ etudiant.id }}" tabindex="-1" aria-labelledby="detailEtudiantModalLabel{{ etudiant.id }}" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content modal-etudiant">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Détails de l'étudiant</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p><strong>Nom :</strong> {{ etudiant.nom }}</p>
+                                    <p><strong>Prénom :</strong> {{ etudiant.prenom }}</p>
+                                    <p><strong>Email :</strong> {{ etudiant.email_etudiant }}</p>
+                                    <p><strong>Filière :</strong> {{ etudiant.filiere }}</p>
+                                
+                                    <div class="section-divider"></div>
+                                
+                                    <p class="section-title">Participation aux projets :</p>
+                                    {% for projet in projets_etudiant %}
+                                        {% if projet.groupe %}
+                                            <p class="projet-item">
+                                                <span class="iconify folder-icon" data-icon="solar:folder-open-linear"></span>
+                                                <strong>{{ projet.nom_projet }} :</strong> Groupe {{ projet.groupe }}
+                                            </p>
+                                        {% else %}
+                                            <p class="projet-item">
+                                                <span class="iconify folder-icon" data-icon="solar:folder-open-linear"></span>
+                                                <strong>{{ projet.nom_projet }} :</strong> <span class="text-danger">Non affecté</span>
+                                            </p>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal Supprimer Étudiant -->
+                    <div class="modal fade" id="supprimerEtudiantModal{{ etudiant.id }}" tabindex="-1" aria-labelledby="supprimerEtudiantModalLabel{{ etudiant.id }}" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content modal-etudiant">
+                                <div class="modal-header bg-danger text-white">
+                                    <h5 class="modal-title">Supprimer Étudiant</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Êtes-vous sûr de vouloir supprimer <strong>{{ etudiant.nom }} {{ etudiant.prenom }}</strong>&nbsp;?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <form method="POST" action="{% url 'supprimer_etudiant' etudiant.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger">Oui, Supprimer</button>
+                                    </form>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endwith %}
+            {% endfor %}
+        {% else %}
+            <p class="text-center text-muted">Aucun étudiant dans cette classe.</p>
+        {% endif %}
+    </div>
+          </div>
+<style>
+    /* === Carte Étudiant === */
+.student-card {
+    background-color: #f9f9ff;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    margin-bottom: 15px;
+    padding: 15px 20px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid #e4e7ec;
+  }
+  
+  .student-card:hover {
+    transform: scale(1.01);
+    box-shadow: 0 6px 20px rgba(99, 91, 255, 0.2);
+  }
+  
+  .student-card h6 {
+    margin: 0;
+    font-size: 16px;
+  }
+  
+  .student-card p {
+    margin: 0;
+    font-size: 14px;
+  }
+  
+  .student-card .avatar span {
+    color: #635bff;
+  }
+  .student-card .btn-outline-info,
+  .student-card .btn-outline-danger {
+    border-radius: 0.5rem; 
+    padding: 0.45rem 0.7rem;
+    display: flex;
+  }
+  
+  
+  /* === Modal Étudiant === */
+  
+  .modal-content.modal-etudiant {
+    background-color: #f9f9ff;
+    border-radius: 1.2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border: none;
+    font-family: var(--bs-font-sans-serif);
+    color: var(--bs-body-color);
+    overflow: hidden;
+  }
+  
+  .modal-etudiant .modal-header {
+    background-color: var(--bs-primary);
+    color: var(--bs-white);
+    border-bottom: none;
+    padding: 1rem 1.5rem;
+    border-top-left-radius: 1.2rem;
+    border-top-right-radius: 1.2rem;
+  }
+  
+  .modal-etudiant .modal-title {
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin: 0;
+  }
+  
+  .modal-etudiant .btn-close {
+    filter: brightness(0) invert(1);
+    opacity: 1;
+  }
+  .modal-etudiant .btn-close:hover {
+    transform: rotate(90deg);
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 50%;
+  }  
+  
+  .modal-etudiant .modal-body {
+    padding: 2rem;
+    background-color: var(--bs-body-bg);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .modal-etudiant .modal-body p {
+    margin: 0 0 0.8rem;
+    line-height: 1.7;
+    font-size: 0.97rem;
+  }
+  
+  .modal-etudiant .modal-body strong {
+    color: var(--bs-dark-text);
+    font-weight: 600;
+  }
+  
+  .modal-etudiant hr {
+    border-color: var(--bs-border-color);
+    margin: 1.5rem 0 1rem;
+  }
+  .modal-etudiant .modal-body .section-title {
+    font-weight: 600;
+    font-size: 1rem;
+    text-align: center;
+    margin-bottom: 1rem;
+    color: var(--bs-dark-text);
+  }
+  .modal-etudiant .modal-body p strong {
+    display: inline-block;
+    min-width: 100px;
+    font-weight: 600;
+    color: var(--bs-dark-text);
+  }
+  
+  /* Ligne séparatrice avant la section projets */
+  .modal-etudiant .section-divider {
+    height: 1px;
+    background-color: var(--bs-border-color);
+    margin: 1rem 0;
+  }
+  
+  /* === Liste des projets affectés === */
+  .projet-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.97rem;
+    margin-bottom: 0.8rem;
+    line-height: 1.6;
+  }
+  
+  .projet-item .iconify {
+    color: var(--bs-primary);
+    font-size: 1.1rem;
+  }
+  
+  .badge-groupe {
+    padding: 0.3rem 0.6rem;
+    border-radius: 0.6rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    background-color: var(--bs-primary-bg-subtle);
+    color: var(--bs-primary-text);
+  }
+  
+  .badge-na {
+    background-color: var(--bs-danger-bg-subtle);
+    color: var(--bs-danger);
+  }
+  
+.modal-etudiant .modal-footer .btn {
+    border-radius: 0.6rem !important; /* arrondi doux */
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+}
+  
+</style>
+                </div>
+                <!-- Add Project View(Hidden by Default) -->
+                <div id="add-project" style="display: none;">
+                    <h5 class="fw-bold text-center mb-3">
+                        <span class="iconify me-2" data-icon="solar:add-square-linear" style="font-size: 24px;"></span>
+                        Ajouter un Projet
+                    </h5>
+                    <!-- Add Project Form -->
+                    <form id="add-project-form" method="POST" action="{% url 'add_project' classe.id %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="nom_project" class="form-label" style="color: #635bff;">
+                            <span class="iconify me-2" data-icon="solar:ruler-cross-pen-broken" style="font-size: 24px;"></span>
+                                Nom du Projet
+                            </label>
+                            <input type="text" class="form-control raduise-for-all" id="nom_project" name="nom_project" required>
+                        </div>
+                
+                        <div class="mb-3">
+                            <label for="description" class="form-label" style="color: #635bff;">
+                            <span class="iconify me-2" data-icon="solar:clipboard-list-linear" style="font-size: 24px;"></span>
+                            Description
+                        </label>
+                            <textarea class="form-control raduise-for-all" id="description" name="description" rows="3" required></textarea>
+                        </div>
+                        <div class="row">
+
+                            <div class="mb-3 col-6">
+                                <div class="d-flex align-items-center gap-2">
+                                    <label for="date_debut" class="form-label m-0" style="color: #635bff; min-width: 150px;">
+                                        <span class="iconify me-2" data-icon="solar:calendar-date-outline" style="font-size: 24px;"></span>
+                                        Date de Début
+                                    </label>
+                                    <input type="date" class="form-control raduise-for-all" id="date_debut" name="date_debut" required>
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="mb-3 col-6">
+                                <div class="d-flex align-items-center gap-2">
+                                    <label for="date_fin" class="form-label m-0" style="color: #635bff; min-width:150px">
+                                        <span class="iconify me-2" data-icon="solar:calendar-date-line-duotone" style="font-size: 24px;"></span>
+                                        Date de Fin
+
+                                    </label>
+                                    <input type="date" class="form-control raduise-for-all" id="date_fin" name="date_fin" required>
+                                </div>
+                            </div>
+                        </div>
+                            <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-form-classe flex-fill p-3">
+                                <span class="iconify me-2" data-icon="mynaui:save" style="font-size: 24px;"></span>
+                                Ajouter Projet
+                            </button>
+                            <button type="button" class="btn btn-ret flex-fill p-3" onclick="changeContent('default')">
+                                <span class="iconify me-2" data-icon="solar:rewind-back-outline" style="font-size: 24px;"></span>
+                                Retour
+                            </button>
+                        </div> 
+                    </form>
+                </div>
+            </div>
+    </div>
+</div>
+
+
+<script>
+    function shareCode() {
+        const code = '{{ classe.code_classe }}';
+        if (navigator.share) {
+            navigator.share({
+                title: 'Classe Code',
+                text: 'Check out this code: ' + code,
+                url: window.location.href
+            }).then(() => {
+                console.log('Successfully shared');
+            }).catch((error) => {
+                console.error('Error sharing:', error);
+            });
+        } else {
+            alert('Sharing is not supported on your browser.');
+        }
+    }
+    function changeContent(view, button) {
                     // Hide all sections
                     document.getElementById('default-view').style.display = 'none';
                     document.getElementById('edit-form').style.display = 'none';
@@ -128,330 +627,6 @@
                 window.onload = function() {
                     document.getElementById("default-btn").click();
                 };
-            </script>
-
-        </div>
-    </div>
-    
-    <div class="row g-4 ">
-        <!-- Class Details -->
-            <div id="class-details" class="card shadow-lg p-4 bg-white border-0 raduise-for-all">
-                <!-- Default View -->
-                <div id="default-view">
-                    <div class="d-flex flex-column gap-2">
-                        <h5 class="fw-bold text-dark text-center mb-3">
-                            <span class="iconify me-2" data-icon="solar:clipboard-list-linear" style="font-size: 24px;"></span>
-                            Les Projets
-                        </h5>
-                        {% if projects %}
-                        <div class="row">
-                            {% for project in projects %}
-                                <div class="col-md-4 mb-4">
-                                        <div class="card card-project shadow-sm border-light raduise-for-all position-relative">
-                                            <!-- Menu Icon for Edit/Delete -->
-                                            <div class="position-absolute top-0 end-0 p-2">
-                                                <div class="dropdown">
-                                                    <span class="iconify menu-icon dropdown-toggle" data-icon="solar:menu-dots-square-linear" data-bs-toggle="dropdown" aria-expanded="false"></span>
-                                                    <ul class="dropdown-menu raduise-for-all">
-                                                        <li>
-                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#editProjetModal{{ project.id }}">
-                                                                Edit
-                                                            </a>
-                                                        </li>
-                                                        <li>
-                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#deleteProjetModal{{ project.id }}">
-                                                                Delete
-                                                            </a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                                
-                                            </div>
-                                            
-                                            <!-- Edit Project Modal -->
-                                            <div class="modal fade" id="editProjetModal{{ project.id }}" tabindex="-1" aria-labelledby="editProjetModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
-                                                        <div class="modal-header text-white" style="background-color: #635bff;">
-                                                            <h5 class="modal-title" id="editProjetModalLabel">Éditer Projet : {{ project.nom_project }}</h5>
-                                                            <button type="button" class="btn-close custom-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <form id="editProjetForm" method="POST" action="{% url 'edit_projet' project.id %}">
-                                                                {% csrf_token %}
-                                                                <div class="mb-3">
-                                                                    <label for="projetName{{ project.id }}" class="form-label">Nom du projet</label>
-                                                                    <input type="text" class="form-control" id="projetName{{ project.id }}" name="projetName" value="{{ project.nom_project }}">
-                                                                </div>
-                                                                <div class="mb-3">
-                                                                    <label for="projetdesc{{ project.id }}" class="form-label">Description du projet</label>
-                                                                    <input type="text" class="form-control" id="projetdesc{{ project.id }}" name="projetdesc" value="{{ project.description }}">
-                                                                </div>
-                                                                <div class="mb-3">
-                                                                    <label for="date_debut{{ project.id }}" class="form-label" style="color: #635bff;">
-                                                                        <span class="iconify me-2" data-icon="solar:calendar-date-outline" style="font-size: 24px;"></span>
-                                                                        Date de Début
-                                                                    </label>
-                                                                    <input type="date" class="form-control raduise-for-all" id="date_debut{{ project.id }}" name="date_debut" value="{{ project.date_debut|date:'Y-m-d' }}">
-                                                                </div>
-                                                                <div class="mb-3">
-                                                                    <label for="date_fin{{ project.id }}" class="form-label" style="color: #635bff;">
-                                                                        <span class="iconify me-2" data-icon="solar:calendar-date-line-duotone" style="font-size: 24px;"></span>
-                                                                        Date de Fin
-                                                                    </label>
-                                                                    <input type="date" class="form-control raduise-for-all" id="date_fin{{ project.id }}" name="date_fin" value="{{ project.date_fin|date:'Y-m-d' }}">
-                                                                </div>
-                                                                <div class="text-end">
-                                                                    <button type="submit" class="btn btn-modal-style">Modifier Projet</button>
-                                                                </div>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            
-                                            <!-- Delete Project Modal -->
-                                            <div class="modal fade" id="deleteProjetModal{{ project.id }}" tabindex="-1" aria-labelledby="deleteProjetModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
-                                                        <div class="modal-header text-white" style="background-color: #635bff;">
-                                                            <h5 class="modal-title" id="deleteProjetModalLabel">Supprimer Projet : {{ project.nom_project }}</h5>
-                                                            <button type="button" class="btn-close custom-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <p>Êtes-vous sûr de vouloir supprimer ce projet ? La suppression entraînera également la suppression de toutes les données associées (étudiants, tâches, etc.).</p>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-modal-style" data-bs-dismiss="modal">Annuler</button>
-                                                            <form method="POST" action="{% url 'delete_projet' project.id %}">
-                                                                {% csrf_token %}
-                                                                <button type="submit" class="btn btn-danger">Oui, Supprimer</button>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            
-                                        
-
-    
-                                            <div class="card-body">
-                                                <h5 class="card-title text-primary">{{ project.nom_project }}</h5>
-                                                <p class="card-text text-muted">{{ project.description }}</p>
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <small class="text-muted">Du {{ project.date_debut }} au {{ project.date_fin }}</small>
-                                                    <a href="{% url 'projet_detail' project.id %}" class="btn btn-sm btn-outline-primary raduise-for-all">Details</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        <p class="text-center text-muted">Aucun projet disponible.</p>
-                    {% endif %}
-
-
-                    </div>
-                </div>
-
-                <!-- Edit Form (Hidden by Default) -->
-                <div id="edit-form" style="display: none;">
-                    <h5 class="fw-bold text-dark text-center mb-3">
-                        <span class="iconify me-2" data-icon="solar:pen-linear" style="font-size: 24px;"></span>
-                        Modifier Classe
-                    </h5>
-                    <form method="POST" action="{% url 'edit_classe' class_id=classe.id %}?next={{ request.path }}">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="nom_classe" class="form-label" style="color: #635bff;">
-                            <span class="iconify" data-icon="solar:ruler-cross-pen-broken" style="font-size: 24px;"></span>
-                                Nom de la classe
-                            </label>
-                            <input type="text" class="form-control raduise-for-all" id="nom_classe" name="className" value="{{ classe.nom_classe }}">
-                        </div>
-                        <div class="mb-3">
-                            <label for="code_classe" class="form-label" style="color: #635bff">
-                                <span class="iconify" data-icon="solar:password-minimalistic-input-linear" style="font-size: 24px;"></span>
-                                Code de la classe
-                            </label>
-                            <input type="text" class="form-control raduise-for-all" id="code_classe" name="code_classe" value="{{ classe.code_classe }}" disabled>
-                        </div>
-                        <div class="mb-3">
-                            <label for="description" class="form-label" style="color: #635bff">
-                            <span class="iconify" data-icon="solar:clipboard-list-linear" style="font-size: 24px;"></span>
-                                Description
-                            </label>
-                            <textarea class="form-control raduise-for-all" id="description" name="classdesc" rows="4">{{ classe.description }}</textarea>
-                        </div>
-                        <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-form-classe flex-fill p-3">Enregistrer les modifications</button>
-                            <button type="button" class="btn btn-ret flex-fill p-3" onclick="changeContent('default')">Retour</button>
-                        </div>                        
-                    </form>
-                </div>
-
-                <!-- Delete Confirmation (Hidden by Default) -->
-                <div id="delete-confirmation" style="display: none;">
-                    <h5 class="fw-bold text-dark text-center mb-3">
-                        <span class="iconify me-2" data-icon="solar:trash-bin-2-linear" style="font-size: 24px;"></span>
-                        Supprimer Classe
-                    </h5>
-                    <h6 class="fw-bold text-danger">Êtes-vous sûr de vouloir supprimer cette classe ?</h6>
-                    <form method="POST" action="{% url 'delete_classe' class_id=classe.id %}?next={{ request.path }}">
-                        {% csrf_token %}
-                        <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-danger flex-fill p-3 raduise-for-all">Oui, Supprimer</button>
-                            <button type="button" class="btn btn-ret flex-fill p-3" onclick="changeContent('default')">Annuler</button>
-                        </div>
-                    </form>
-                    
-                    
-                    
-                </div>
-
-                <!-- Manage Students (Hidden by Default) -->
-                <div id="students-management" style="display: none;">
-                        <h5 class="fw-bold text-dark text-center mb-3">
-                            <span class="iconify me-2" data-icon="solar:user-id-linear" style="font-size: 24px;"></span>
-                            Gestion des Étudiants
-                        </h5>
-                
-                    <!-- Students List -->
-                    <div class="list-group">
-                        <!-- Student Item -->
-                        <div class="list-group-item student-card d-flex align-items-center justify-content-between p-3">
-                            <div class="d-flex align-items-center">
-                                <div class="avatar me-3">
-                                    <span class="iconify" data-icon="solar:user-circle-linear" style="font-size: 40px;"></span>
-                                </div>
-                                <div>
-                                    <h6 class="fw-bold mb-1">Ali Bennani</h6>
-                                    <p class="mb-0 text-muted small">ali.bennani@example.com</p>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center">
-                                <span class="badge bg-success me-3">Actif</span>
-                                <!-- Action Menu -->
-                                <div class="dropdown">
-                                    <span class="menu-icon" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <span class="iconify" data-icon="solar:menu-dots-square-linear"></span>
-                                    </span>
-                                    <ul class="dropdown-menu raduise-for-all">
-                                        <li><a class="dropdown-item" href="#"><span class="iconify me-2" data-icon="solar:eye-linear"></span>Voir</a></li>
-                                        <li><a class="dropdown-item" href="#"><span class="iconify me-2" data-icon="solar:pen-line-duotone"></span>Éditer</a></li>
-                                        <li><a class="dropdown-item text-danger" href="#"><span class="iconify me-2" data-icon="solar:trash-bin-trash-linear"></span>Supprimer</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                
-                        <div class="list-group-item student-card d-flex align-items-center justify-content-between p-3">
-                            <div class="d-flex align-items-center">
-                                <div class="avatar me-3">
-                                    <span class="iconify" data-icon="solar:user-circle-linear" style="font-size: 40px;"></span>
-                                </div>
-                                <div>
-                                    <h6 class="fw-bold mb-1">Sara El Idrissi</h6>
-                                    <p class="mb-0 text-muted small">sara.idrissi@example.com</p>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center">
-                                <span class="badge bg-danger me-3">Inactif</span>
-                                <div class="dropdown raduise-for-all">
-                                    <span class="menu-icon" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <span class="iconify" data-icon="solar:menu-dots-square-linear"></span>
-                                    </span>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="#"><span class="iconify me-2" data-icon="solar:eye-linear"></span>Voir</a></li>
-                                        <li><a class="dropdown-item" href="#"><span class="iconify me-2" data-icon="solar:pen-line-duotone"></span>Éditer</a></li>
-                                        <li><a class="dropdown-item text-danger" href="#"><span class="iconify me-2" data-icon="solar:trash-bin-trash-linear"></span>Supprimer</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-
-                <!-- Add Project (Hidden by Default) -->
-                <div id="add-project" style="display: none;">
-                    <h5 class="fw-bold text-dark text-center mb-3">
-                        <span class="iconify me-2" data-icon="solar:add-square-linear" style="font-size: 24px;"></span>
-                        Ajouter un Projet
-                    </h5>
-                
-                    <!-- Add Project Form -->
-                    <form id="add-project-form" method="POST" action="{% url 'add_project' classe.id %}">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="nom_project" class="form-label" style="color: #635bff;">
-                            <span class="iconify me-2" data-icon="solar:ruler-cross-pen-broken" style="font-size: 24px;"></span>
-                                Nom du Projet
-                            </label>
-                            <input type="text" class="form-control raduise-for-all" id="nom_project" name="nom_project" required>
-                        </div>
-                
-                        <div class="mb-3">
-                            <label for="description" class="form-label" style="color: #635bff;">
-                            <span class="iconify me-2" data-icon="solar:clipboard-list-linear" style="font-size: 24px;"></span>
-                            Description
-                        </label>
-                            <textarea class="form-control raduise-for-all" id="description" name="description" rows="3"></textarea>
-                        </div>
-                
-                        <div class="mb-3">
-                            <label for="date_debut" class="form-label" style="color: #635bff;">
-                            <span class="iconify me-2" data-icon="solar:calendar-date-outline" style="font-size: 24px;"></span>
-                            Date de Début
-                            </label>
-                            <input type="date" class="form-control raduise-for-all" id="date_debut" name="date_debut" required>
-                        </div>
-                
-                        <div class="mb-3">
-                            <label for="date_fin" class="form-label" style="color: #635bff;">
-                            <span class="iconify me-2" data-icon="solar:calendar-date-line-duotone" style="font-size: 24px;"></span>
-                            Date de Fin
-                            </label>
-                            <input type="date" class="form-control raduise-for-all" id="date_fin" name="date_fin" required>
-                        </div>
-                        <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-form-classe flex-fill p-3">Ajouter Projet</button>
-                            <button type="button" class="btn btn-ret flex-fill p-3" onclick="changeContent('default')">Retour</button>
-                        </div> 
-                    </form>
-                </div>
-                
-                
-
-            </div>
-            <!-- Stats & Extra Info -->
-    
-        
-    </div>
-    <div class="row g-4 mt-4">
-        <div class="col-md">
-            <div class="card shadow-lg p-4 text-center bg-light border-0 raduise-for-all">
-                <h6 class="fw-bold text-secondary">
-                    <span class="iconify me-2" data-icon="solar:users-group-two-rounded-line-duotone" style="font-size: 27px; margin-right: 10px;"></span>
-                    Nombre d'Étudiants
-                </h6>
-                <h3 class="fw-bold text-primary">{{ classe.etudiants.count }}</h3>
-            </div>
-        </div>
-        <div class="col-md">
-            <div class="card shadow-lg p-4 text-center bg-light border-0 raduise-for-all">
-                <h6 class="fw-bold text-secondary">
-                    <span class="iconify me-2" data-icon="solar:folder-open-linear" style="font-size: 27px; margin-right: 10px;"></span>
-                    Nombre de Projets
-                </h6>
-                <h3 class="fw-bold text-primary">{{ classe.projets.count }}</h3>
-            </div>
-        </div>
-    </div>
-
-</div>
-
-
+</script>
 
 {% endblock content %}

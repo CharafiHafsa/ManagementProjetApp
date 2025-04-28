@@ -1,0 +1,549 @@
+{% extends 'prof/base.html' %}
+{% load static %}
+
+{% block content %}
+    <!-- Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3">
+        <!-- Left: Greeting -->
+        <h3 class="fw-bold text-center text-md-start mb-2 mb-md-0">
+            Bonjour, <span class="text-primary">{{ professeur.nom }} {{ professeur.prenom }}</span>
+        </h3>
+    
+        <!-- Center: Group Name -->
+        <h3 class="fw-bold text-primary text-center mb-2 mb-md-0 order-3 order-md-2">
+            Groupe : {{ groupe.nom_groupe }}
+        </h3>
+    
+        <!-- Right: Icon -->
+        <div class="order-2 order-md-3 mb-2 mb-md-0">
+            <span class="iconify" data-icon="fluent:meet-now-28-regular" style="font-size: 28px;"></span>
+        </div>
+    </div>
+    
+    <hr class="mb-5">
+    {% if messages %}
+    {% for message in messages %}
+      {% if "groupe" in message.tags%}
+        <div class="alert alert-success fade-message">{{ message }}</div>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+    <!-- Toggle Buttons -->
+    <div class="row g-4 mb-4">
+        <div class="d-flex justify-content-between flex-wrap gap-3">
+            <button class="btn btn-dashboard p-3 flex-fill" onclick="toggleView('global')">
+                <span class="iconify me-2" data-icon="solar:chart-2-linear" style="font-size: 24px;"></span>
+                Statistiques Globales 
+            </button>
+            <button class="btn btn-dashboard p-3 flex-fill" onclick="toggleView('membres')">
+                <span class="iconify me-2" data-icon="solar:users-group-two-rounded-broken" style="font-size: 24px;"></span>
+                Statistiques des Membres
+            </button>
+        </div>
+    </div>
+
+    <!-- Global Stats -->
+    <div id="global-view">
+        <!-- First Row - Instructions and Tâches Circles -->
+        <div class="row mb-2">
+            <!-- Card for Instructions Circles -->
+            <div class="col-md-6">
+                <div class="card shadow-lg border-0 rounded p-3">
+                    <h4 class="mx-2 mb-3 d-flex align-items-center gap-2">
+                        <span class="iconify" data-icon="solar:clipboard-text-outline" style="font-size: 22px;"></span>
+                        Instructions
+                    </h4>
+                    
+                    <div class="d-flex flex-wrap justify-content-around mb-4">
+                        <div class="text-center d-flex flex-column align-items-center">
+                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 70px; height: 70px; font-size: 20px;">
+                                {{ total_instructions }}
+                            </div>
+                            <small class="mt-2">Total Instructions</small>
+                        </div>
+                        <div class="text-center d-flex flex-column align-items-center">
+                            <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center" style="width: 70px; height: 70px; font-size: 20px;">
+                                {{ completed_instructions }}
+                            </div>
+                            <small class="mt-2">Instructions Terminées</small>
+                        </div>
+                        <div class="text-center d-flex flex-column align-items-center">
+                            <div class="rounded-circle bg-danger text-white d-flex align-items-center justify-content-center" style="width: 70px; height: 70px; font-size: 20px;">
+                                {{ incompleted_instructions }}
+                            </div>
+                            <small class="mt-2">Instructions Non Terminées</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Card for Tâches Circles -->
+            <div class="col-md-6">
+                <div class="card shadow-lg border-0 rounded p-3">
+                    <h4 class="mx-2 mb-3 d-flex align-items-center gap-2">
+                        <span class="iconify me-2" data-icon="solar:clipboard-list-linear" style="font-size: 24px;"></span>
+                        Taches
+                    </h4>
+                    <div class="d-flex flex-wrap justify-content-around mb-4">
+                        <div class="text-center d-flex flex-column align-items-center">
+                            <div class="rounded-circle bg-info text-white d-flex align-items-center justify-content-center" style="width: 70px; height: 70px; font-size: 20px;">
+                                {{ total_tasks }}
+                            </div>
+                            <small class="mt-2">Total Tâches</small>
+                        </div>
+                        <div class="text-center d-flex flex-column align-items-center">
+                            <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center" style="width: 70px; height: 70px; font-size: 20px;">
+                                {{ completed_tasks }}
+                            </div>
+                            <small class="mt-2">Tâches Terminées</small>
+                        </div>
+                        <div class="text-center d-flex flex-column align-items-center">
+                            <div class="rounded-circle bg-warning text-dark d-flex align-items-center justify-content-center" style="width: 70px; height: 70px; font-size: 20px;">
+                                {{ incompleted_tasks }}
+                            </div>
+                            <small class="mt-2">Tâches En cours</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+
+    
+        <!-- Second Row - Instructions Table -->
+        <div class="row mb-2">
+            <div class="col-12">
+                <div class="card shadow-lg border-0 rounded p-3">
+                    <h4 class="mx-2 mb-3 d-flex align-items-center gap-2">
+                        <span class="iconify" data-icon="solar:clipboard-text-outline" style="font-size: 22px;"></span>
+                        Liste des Instructions
+                    </h4>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover shadow-sm" id="instructionsTable" >
+                            <thead style="background-color: #7d58f4; color: white;">
+                                <tr>
+                                    <th class="sortable" data-sort="number">No</th>
+                                    <th class="sortable" data-sort="titre">Titre</th>
+                                    <th class="sortable" data-sort="statut">Statut</th>
+                                    <th class="sortable" data-sort="deadline">Deadline</th>
+                                    <th class="sortable" data-sort="retard">En retard</th>
+                                    <th class="sortable" data-sort="livrable">Livrable</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for instruction in instructions %}
+                                <tr>
+                                    <td class="sortable-number">{{ forloop.counter }}</td>
+
+                                    <td>{{ instruction.titre }}</td>
+                                    <td>
+                                        {% if instruction.est_termine %}
+                                        <span class="badge bg-success">
+                                            <span class="iconify me-1" data-icon="solar:check-read-outline" style="font-size: 20px;"></span>
+                                            Terminé
+                                        </span>
+                                        {% else %}
+                                        <span class="badge bg-warning text-dark">
+                                            <span class="iconify me-1" data-icon="solar:history-2-broken" style="font-size: 20px;"></span>
+                                            En cours
+                                        </span>
+                                        {% endif %}
+                                    </td>
+                                    <td {% if instruction.en_retard %} class="text-danger fw-bold" {% endif %}>
+                                        {{ instruction.date_limite|default:"Non définie" }}
+                                    </td>
+                                    <td>
+                                        {% if instruction.en_retard %}
+                                        <span class="text-danger fw-bold">
+                                            <span class="iconify me-1" data-icon="solar:danger-circle-linear" style="font-size: 20px;"></span>
+                                            Oui
+                                        </span>
+                                        {% else %}
+                                        Non
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if instruction.fichier_livrable %}
+                                        <a href="{{ instruction.fichier_livrable }}" download class="btn btn-sm" style="background-color: #7d58f4; color: aliceblue;">
+                                            <span class="iconify me-1" data-icon="solar:download-minimalistic-bold" style="font-size: 20px;"></span>
+                                             Télécharger</a>
+                                        {% elif instruction.livrable_requis %}
+                                        <span class="text-muted">Attendu</span>
+                                        {% else %}
+                                        Aucun
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        
+
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Third Row - Tâches Table -->
+        <div class="row mb-2">
+            <div class="col-12">
+                <div class="card shadow-lg border-0 rounded p-3">
+                    <h4 class="mx-2 mb-3 d-flex align-items-center gap-2">
+                        <span class="iconify me-2" data-icon="solar:clipboard-list-linear" style="font-size: 24px;"></span>
+                        Détails des Tâches
+                    </h4>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover shadow-sm" id="tachesTable">
+                            <thead style="background-color: #7d58f4; color: white;">
+                                <tr>
+                                    <th>No</th>
+                                    <th class="sortable" data-sort="titre">Description</th>
+                                    <th class="sortable" data-sort="statut">Statut</th>
+                                    <th class="sortable" data-sort="deadline">Deadline</th>
+                                    <th class="sortable" data-sort="titre">Étudiant Assigné</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for tache in taches %}
+                                <tr>
+                                    <td class="sortable-number">{{ forloop.counter }}</td>
+                                    <td>{{ tache.description_tache }}</td>
+                                    <td>
+                                        {% if tache.status == 'Terminé' %}
+                                        <span class="badge bg-success">
+                                            <span class="iconify me-1" data-icon="solar:check-read-outline" style="font-size: 20px;"></span>
+                                            Terminé</span>
+                                        {% else %}
+                                        <span class="badge bg-warning text-dark">
+                                            <span class="iconify me-1" data-icon="solar:history-2-broken" style="font-size: 20px;"></span>
+                                            En cours</span>
+                                        {% endif %}
+                                    </td>
+                                    <td {% if tache.deadline and tache.deadline < today and tache.status != 'Terminé' %} class="text-danger fw-bold" {% endif %}>
+                                        {{ tache.deadline }}
+                                    </td>
+                                    <td>{{ tache.etudiant.nom }} {{ tache.etudiant.prenom }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted">Aucune tâche assignée pour ce groupe.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                function initSortableTable(tableId, sortMap) {
+                    const table = document.getElementById(tableId);
+                    const tbody = table.querySelector("tbody");
+                    const headers = table.querySelectorAll("th");
+        
+                    let sortDirection = {};
+        
+                    headers.forEach((header, columnIndex) => {
+                        const key = sortMap[columnIndex];
+                        if (!key) return;
+        
+                        sortDirection[key] = 1;
+        
+                        header.classList.add('sortable');
+                        header.setAttribute('data-sort', key);
+        
+                        header.addEventListener('click', function () {
+                            const rows = Array.from(tbody.rows);
+                            rows.sort((rowA, rowB) => {
+                                let cellA = rowA.cells[columnIndex].textContent.trim();
+                                let cellB = rowB.cells[columnIndex].textContent.trim();
+                                
+                                if (key === 'number') {
+                                    return sortDirection[key] * (parseInt(cellA) - parseInt(cellB));
+                                }
+        
+                                if (key === 'statut') {
+                                    cellA = cellA.includes('Terminé') ? '1' : '0';
+                                    cellB = cellB.includes('Terminé') ? '1' : '0';
+                                }
+        
+                                if (key === 'deadline') {
+                                    const dateA = new Date(cellA);
+                                    const dateB = new Date(cellB);
+                                    return sortDirection[key] * (dateA - dateB);
+                                }
+        
+                                return sortDirection[key] * cellA.localeCompare(cellB);
+                            });
+        
+                            rows.forEach((row, index) => {
+                                row.cells[0].textContent = index + 1; // réindexation #
+                                tbody.appendChild(row);
+                            });
+        
+                            sortDirection[key] *= -1;
+                        });
+                    });
+                }
+        
+                // 🎯 Appelle la fonction pour chaque table avec les colonnes à trier
+                initSortableTable('instructionsTable', {
+                    0: 'number',
+                    1: 'titre',
+                    2: 'statut',
+                    3: 'deadline',
+                    4: 'retard',
+                    5: 'livrable',
+                });
+        
+                initSortableTable('tachesTable', {
+                    0: 'number',
+                    1: 'description',
+                    2: 'statut',
+                    3: 'deadline',
+                    4: 'etudiant',
+                });
+            });
+        </script>
+        
+    </div>
+    
+
+    <!-- Member Stats -->
+    <div id="membres-view" class="d-none">
+        <div class="card shadow-lg border-0 rounded p-3">
+            <h4 class="mx-2 mb-4">
+                <span class="iconify me-2" data-icon="solar:user-circle-outline" style="font-size: 24px;"></span>
+                Statistiques des Membres
+            </h4>
+            <div class="row">
+                <!-- Sidebar Membres -->
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <div class="list-group">
+                        {% for membre in membres %}
+                        <a onclick="showStats({{ membre.id }})"
+                           class="list-group-item list-group-item-action d-flex align-items-center"
+                           style="cursor:pointer;">
+                            <img src="{{ membre.photo_profil.url }}" class="rounded-circle me-2" style="width: 40px; height: 40px;">
+                            <span>{{ membre.nom }} {{ membre.prenom }}</span>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+    
+                <!-- Statistiques -->
+                <div class="col-md-9">
+                    <div id="default-message" class="text-center mt-5">
+                        <h5 class="text-muted">Sélectionnez un étudiant pour afficher ses statistiques 
+                            <span class="iconify ms-2" data-icon="solar:chart-linear" style="font-size: 24px;"></span>
+                        </h5>
+                    </div>
+    
+                    {% for membre in membres %}
+                    <div id="stats-{{ membre.id }}" class="member-stats d-none">
+                        <div class="card shadow-sm p-4">
+                            <div class="d-flex align-items-center mb-4">
+                                <img src="{{ membre.photo_profil.url }}" class="rounded-circle me-3" style="width: 80px; height: 80px;">
+                                <div>
+                                    <h4 class="mb-0">{{ membre.nom }} {{ membre.prenom }}</h4>
+                                    <p class="text-muted mb-0">
+                                        <a href="mailto:{{ membre.email_etudiant }}">{{ membre.email_etudiant }}</a>
+                                    </p>
+                                    
+                                </div>
+                            </div>
+                    <!-- 📋 Student Information -->
+                    <div class="mb-4">
+                        <h5 class="student-title">
+                            <span class="iconify me-2" data-icon="solar:user-id-linear" style="font-size: 24px;"></span>
+                            Informations de l'étudiant
+                        </h5>
+                        <ul class="list-group">
+                    
+                            <!-- Filière -->
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>Filière:</strong>
+                                    {% if membre.filiere %}
+                                        {{ membre.filiere }}
+                                    {% else %}
+                                        <span class="text-muted">Non spécifié</span>
+                                    {% endif %}
+                                </div>
+                                {% if not membre.filiere %}
+                                <form method="POST" action="{% url 'notifier_champ_manquant' projet.id groupe.id membre.id 'filiere' %}">
+                                    {% csrf_token %}
+                                    <button class="btn btn-sm btn-warning">Notifier</button>
+                                </form>
+                                {% endif %}
+                            </li>
+                    
+                            <!-- Département -->
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>Département:</strong>
+                                    {% if membre.departement %}
+                                        {{ membre.departement }}
+                                    {% else %}
+                                        <span class="text-muted">Non spécifié</span>
+                                    {% endif %}
+                                </div>
+                                {% if not membre.departement %}
+                                <form method="POST" action="{% url 'notifier_champ_manquant' projet.id groupe.id membre.id 'departement' %}">
+                                    {% csrf_token %}
+                                    <button class="btn btn-sm btn-warning">Notifier</button>
+                                </form>
+                                {% endif %}
+                            </li>
+                    
+                            <!-- Dernière connexion -->
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>Dernière Connexion:</strong>
+                                    {% if membre.last_login %}
+                                        {{ membre.last_login }}
+                                    {% else %}
+                                        <span class="text-muted">Jamais connecté</span>
+                                    {% endif %}
+                                </div>
+                            </li>
+                    
+                            <!-- Statut vérifié -->
+                            <li class="list-group-item">
+                                <strong>Statut vérifié:</strong>
+                                {% if membre.is_verified %}
+                                    <span class="badge bg-success">Vérifié</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Non vérifié</span>
+                                {% endif %}
+                            </li>
+                    
+                        </ul>
+                    </div>
+                    
+                            <!-- 📋 Task List -->
+                            <div class="mb-4">
+                                <h5 class="student-title">
+                                    <span class="iconify me-2" data-icon="solar:clipboard-linear" style="font-size: 24px;"></span>
+                                    Détails des Tâches
+                                </h5>
+                                <ul class="list-group">
+                                    {% for tache in membre.taches %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        {{ tache.description_tache }}
+                                        {% if tache.status == 'Terminé' %}
+                                        <span class="badge bg-success">
+                                            <span class="iconify me-1" data-icon="solar:check-read-outline" style="font-size: 20px;"></span>
+                                        </span>
+                                        {% else %}
+                                        <span class="badge bg-warning text-dark">
+                                            <span class="iconify" data-icon="solar:history-2-broken" style="font-size: 20px;"></span>
+                                        </span>
+                                        {% endif %}
+                                    </li>
+                                    {% empty %}
+                                    <li class="list-group-item text-center text-muted">Aucune tâche trouvée.</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+
+                            
+                    
+                            <!-- 📊 Chart -->
+                            <div>
+                                <h5 class="student-title">
+                                    <span class="iconify me-2" data-icon="solar:chart-linear" style="font-size: 24px;"></span>
+                                    Progression Globale
+                                </h5>
+                                <div class="chart-wrapper">
+                                    <canvas id="chart-{{ membre.id }}"></canvas>
+                                </div>
+                            
+                                <style>
+                                    .chart-wrapper {
+                                        width: 250px;
+                                        height: 250px;
+                                        margin: auto;
+                                        position: relative;
+                                    }
+                            
+                                    .chart-wrapper canvas {
+                                        width: 100% !important;
+                                        height: 100% !important;
+                                    }
+                                </style>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+ 
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        function toggleView(view) {
+            const globalView = document.getElementById("global-view");
+            const membresView = document.getElementById("membres-view");
+    
+            if (view === "global") {
+                globalView.classList.remove("d-none");
+                membresView.classList.add("d-none");
+            } else {
+                globalView.classList.add("d-none");
+                membresView.classList.remove("d-none");
+            }
+        }
+    
+        function showStats(membreId) {
+            document.getElementById("default-message").classList.add("d-none");
+            document.querySelectorAll(".member-stats").forEach(div => div.classList.add("d-none"));
+            document.getElementById("stats-" + membreId).classList.remove("d-none");
+        }
+    
+        {% for membre in membres %}
+    // Check if there are tasks
+    if ({{ membre.nb_taches_total }} > 0) {
+        var completedTasks = {{ membre.nb_taches_terminees }};
+        var totalTasks = {{ membre.nb_taches_total }};
+        var incompleteTasks = totalTasks - completedTasks;
+
+        new Chart(document.getElementById('chart-{{ membre.id }}').getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Tâches Terminées', 'Tâches En Cours'],
+                datasets: [{
+                    data: [completedTasks, incompleteTasks],
+                    backgroundColor: ['#6358ff', '#cac8ff']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom' },
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                var total = tooltipItem.dataset.data[0] + tooltipItem.dataset.data[1];
+                                var value = tooltipItem.raw;
+                                var percentage = Math.round((value / total) * 100);
+                                return tooltipItem.label + ': ' + percentage + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+{% endfor %}
+
+
+    </script>
+    
+{% endblock %}

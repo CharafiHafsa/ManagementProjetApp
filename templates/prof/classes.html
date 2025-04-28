@@ -1,17 +1,11 @@
 {% extends 'prof/base.html' %} 
 {% load static %}
 {% block content %} 
-{% if messages %}
-  {% for message in messages %}
-    {% if "classes" in message.tags %}
-    <div class="alert alert-success fade-message">{{ message }}</div>
-    {% endif %}
-  {% endfor %}
-{% endif %}
+
 
 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
-    <h2 class="fw-bold mb-3 mb-md-0">{{professor.nom}}</h2>
-    <h2 class="fw-bold mb-3 mb-md-0">Mes classes</h2>
+    <h3 class="fw-bold mb-3 mb-md-0">Bonjour, <span class="text-primary">{{professor.nom}} {{professor.prenom}}</span></h3>
+    <h3 class="fw-bold mb-3 mb-md-0">Mes classes</h3>
     
     <!-- Flex container for icon and search input -->
     <div class="d-flex align-items-center">
@@ -21,6 +15,14 @@
 
     </div>
 </div>
+<hr class="mb-5">
+{% if messages %}
+  {% for message in messages %}
+    {% if "classes" in message.tags %}
+    <div class="alert alert-success fade-message">{{ message }}</div>
+    {% endif %}
+  {% endfor %}
+{% endif %}
     <!-- Classes Grid -->
     <div class="row" id="classList">
 
@@ -50,8 +52,9 @@
                         </div>
                     </div>
                     <a href="{% url 'classe_detail' classe.id %}"> 
-                        <img src="{% static 'css/prof/MatDash Bootstrap Admin_files/blog-img1.jpg' %}" class="card-img-top" alt="matdash-img">
+                        <img src="{{ classe.image.url}}" class="class-image card-img-top" alt="matdash-img">
                     </a>
+                    
                     <div class="card-body text-center mt-3" style="padding: 10px;">
                         <h5 class="card-title">
                             <a href="{% url 'classe_detail' classe.id %}" class="text-decoration-none" >{{ classe.nom_classe }}</a>
@@ -59,14 +62,15 @@
                     </div>
                     <div class="d-flex justify-content-around p-3 border-top text-muted">
                         <div class="d-flex align-items-center">
-                            <i class="fas fa-user"></i>
+                            <span class="iconify" data-icon="solar:users-group-two-rounded-outline" style="font-size: 18px;"></span>
                             <span class="ms-2">{{ classe.etudiants_count }} étudiants</span>
                         </div>
                         <div class="d-flex align-items-center">
-                            <i class="fas fa-folder"></i>
-                            <span class="ms-2">{{classe.projects_count}} projets</span>
+                            <span class="iconify" data-icon="solar:folder-outline" style="font-size: 18px;"></span>
+                            <span class="ms-2">{{ classe.projects_count }} projets</span>
                         </div>
                     </div>
+                    
                 </div>
             </div>
             <!-- Bootstrap Modal for Edit a New Class -->
@@ -161,30 +165,30 @@
 
 <script>
     function toggleSearchInput() {
-var searchInput = document.getElementById("searchInput");
-// Toggle visibility of the search input
-if (searchInput.style.display === "none" || searchInput.style.display === "") {
-searchInput.style.display = "inline-block"; // Show input
-} else {
-searchInput.style.display = "none"; // Hide input
-}
-}
-const searchInput = document.getElementById('searchInput');
-const classList = document.getElementById('classList');
-const classItems = classList.getElementsByClassName('class-item');
-
-searchInput.addEventListener('input', function() {
-    const searchText = searchInput.value.toLowerCase();
-    
-    Array.from(classItems).forEach(function(item) {
-        const className = item.querySelector('.card-title a').textContent.toLowerCase();
-        if (className.includes(searchText)) {
-            item.style.display = '';  // Show the item
+        var searchInput = document.getElementById("searchInput");
+        // Toggle visibility of the search input
+        if (searchInput.style.display === "none" || searchInput.style.display === "") {
+        searchInput.style.display = "inline-block"; // Show input
         } else {
-            item.style.display = 'none';  // Hide the item
+        searchInput.style.display = "none"; // Hide input
         }
+        }
+        const searchInput = document.getElementById('searchInput');
+        const classList = document.getElementById('classList');
+        const classItems = classList.getElementsByClassName('class-item');
+
+        searchInput.addEventListener('input', function() {
+            const searchText = searchInput.value.toLowerCase();
+            
+            Array.from(classItems).forEach(function(item) {
+                const className = item.querySelector('.card-title a').textContent.toLowerCase();
+                if (className.includes(searchText)) {
+                    item.style.display = '';  // Show the item
+                } else {
+                    item.style.display = 'none';  // Hide the item
+                }
+            });
     });
-});
     document.addEventListener("DOMContentLoaded", function () {
         let editButtons = document.querySelectorAll(".edit-class-btn");
         let editModal = document.getElementById("editClassModal");

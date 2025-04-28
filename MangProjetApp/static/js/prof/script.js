@@ -167,3 +167,24 @@ function toggleTheme() {
         searchInput.style.display = "none"; // Hide input
     }
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+  const counters = document.querySelectorAll(".count");
+  counters.forEach(counter => {
+      let target = +counter.getAttribute("data-target");
+      let count = 0;
+      let increment = target > 0 ? target / 50 : 1; // Ensure increment is at least 1
+
+      function updateCount() {
+          if (count < target) {
+              count += increment;
+              counter.innerText = Math.ceil(count);
+              setTimeout(updateCount, 20);  // You can increase this value if the count is too fast
+          } else {
+              counter.innerText = target;
+          }
+      }
+      updateCount();
+  });
+});
+

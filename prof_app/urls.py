@@ -27,9 +27,19 @@ urlpatterns = [
     path('announce/<int:announce_id>/modify/', views.modify_announce, name="modify_announce"),
     path('projet/<int:projet_id>/ressource/add/', views.add_ressource, name="add_ressource"),
     path('ressource/<int:ressource_id>/delete/', views.delete_ressource, name="delete_ressource"),
+    path('instruction/<int:id>/edit/', views.edit_instruction, name='edit_instruction'),    
+    path('instruction/<int:id>/delete/', views.delete_instruction, name='delete_instruction'),  
+
+    path('projet/<int:projet_id>/groupe/<int:groupe_id>/', views.groupe_stats_view, name='groupe_stats'),
+    path('projet/<int:projet_id>/groupe/<int:groupe_id>/notifier/<int:etudiant_id>/<str:champ>/', views.notifier_champ_manquant, name='notifier_champ_manquant'),
+
 
     path('chat', views.chat_view, name='chat'),
-    
+    path('etudiant/<int:etudiant_id>/supprimer/', views.supprimer_etudiant, name='supprimer_etudiant'),
+    path('mes-projets/', views.project_list, name='mes_projets'),
+
+    path('calendar/', views.calendar_view, name='calendar'),
+    path('add-event/', views.add_event, name='add_event'),
     
 
 

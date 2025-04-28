@@ -1,5 +1,62 @@
-{% extends 'prof/base.html' %} 
+{% extends 'prof/base.html' %}
 {% load static %}
-{% block content %} 
-<h1>Calender</h1>
-{% endblock content %}
+
+{% block content %}
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+
+<div class="container mt-4">
+    <h2 class="fw-bold text-primary mb-4">Mon Calendrier</h2>
+
+    <div id="calendar"></div>
+</div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+
+        var events = JSON.parse('{{ events|escapejs }}');
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            height: 'auto',
+            locale: 'fr',  // Optional: French language
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,listWeek'
+            },
+            events: events,
+            dateClick: function(info) {
+                let title = prompt('Nom de l\'événement:');
+                if (title) {
+                    fetch("{% url 'add_event' %}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRFToken": "{{ csrf_token }}"
+                        },
+                        body: JSON.stringify({
+                            title: title,
+                            date: info.dateStr
+                        })
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            location.reload();
+                        } else {
+                            alert("Erreur lors de l'ajout !");
+                        }
+                    });
+                }
+            }
+        });
+
+        calendar.render();
+    });
+</script>
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+
+
+{% endblock %}
