@@ -8,6 +8,7 @@ from django.core.files import File
 from django.conf import settings
 import os
 from django.utils import timezone
+from datetime import timedelta
 
 # Manager personnalisé pour Professeur
 class ProfesseurManager(models.Manager):
@@ -77,6 +78,7 @@ class Classe(models.Model):
     professeur = models.ForeignKey(Professeur, on_delete=models.CASCADE, related_name="classes")
     description =models.CharField(default='nouveau classe')
     image = models.ImageField(upload_to='images/', blank=True, null=True)
+    is_archived = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         if not self.code_classe:
@@ -205,18 +207,6 @@ class Calendrier(models.Model):
     date_fin = models.DateField(null=True)
     status = models.CharField(max_length=10, choices=couleurs)
 
-# class PCalendrier(models.Model):
-#     couleurs = [
-#         ('rouge', 'rouge'),
-#         ('vert', 'vert'),
-#         ('bleu', 'bleu'),
-#         ('jaune', 'jaune'),
-#     ]
-#     etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE, related_name="line_time")
-#     evenement = models.CharField(max_length=255, null=True)
-#     date_debut = models.DateField(null=True)
-#     date_fin = models.DateField(null=True)
-#     status = models.CharField(max_length=10, choices=couleurs)
 
 class Event(models.Model):
     title = models.CharField(max_length=255)
@@ -249,30 +239,42 @@ class Notification(models.Model):
     groupe = models.ForeignKey( Groupe,  on_delete=models.CASCADE, related_name='notifications')
 
 
-class PNotification(models.Model):
-    DEST_TYPE_CHOICES = (
-        ('class', 'Classe'),
-        ('group', 'Groupe'),
-        ('student', 'Étudiant'),
-    )
-
+class PENotification(models.Model):
+    etudiants = models.ManyToManyField('Etudiant', related_name="prof_etud_notifications", blank=True)
     title = models.CharField(max_length=255)
     content = models.TextField()
     created_at = models.DateTimeField(default=timezone.now)
     is_read = models.BooleanField(default=False)
 
-    destination_type = models.CharField(max_length=10, choices=DEST_TYPE_CHOICES)
-    classe = models.ForeignKey('Classe', null=True, blank=True, on_delete=models.CASCADE)
-    groupe = models.ForeignKey('Groupe', null=True, blank=True, on_delete=models.CASCADE)
-    student = models.ForeignKey('Etudiant', null=True, blank=True, on_delete=models.CASCADE)
+    def __str__(self):
+        return self.title
+
+class ProfNotification(models.Model):
+    professeur = models.ForeignKey(Professeur, on_delete=models.CASCADE, related_name="pnotifications")
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return f"{self.professeur.nom} - {self.title}"
+
+class PEvent(models.Model):
+    title = models.CharField(max_length=200)
+    start = models.DateField(default=datetime.date.today)
+    end = models.DateField()
+    color = models.CharField(max_length=50)  # Default FullCalendar color
 
     def __str__(self):
         return self.title
     
 
-class PEvent(models.Model):
-    title = models.CharField(max_length=200)
-    date = models.DateField()
+class Meeting(models.Model):
+    target_type = models.CharField(max_length=255)
+    target_id = models.PositiveIntegerField()
+    meeting_link = models.URLField()
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+    created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return self.title
+        return f"Meeting for {self.target_type} {self.target_id} at {self.start_time}"

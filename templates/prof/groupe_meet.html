@@ -1,0 +1,83 @@
+{% extends 'prof/base.html' %}
+{% load static %}
+{% block content %}
+<div class="d-flex align-items-center justify-content-between mb-4 flex-nowrap w-100 text-nowrap gap-3" style="overflow-x: auto;">
+    <!-- Left: Greeting -->
+    <div class="text-nowrap">
+        <h3 class="fw-bold mb-0">
+            Bonjour, 
+            <span style="color: #635bff;">{{ professeur.nom }} {{ professeur.prenom }}</span>
+        </h3>
+    </div>
+
+    <!-- Center: Title -->
+    <div class="flex-grow-1 text-center text-nowrap">
+        <h3 class="fw-bold mb-0" style="color: #635bff;">Démarrer une Réunion</h3>
+    </div>
+
+    <!-- Right: Optional future button -->
+    <div class="text-nowrap">
+        <!-- Placeholder for future content -->
+    </div>
+</div>
+
+<hr class="mb-3">
+<div class="alert alert-warning text-center mb-3" role="alert" style="font-weight: 600;">
+    🚧 La fonctionnalité "Meet" est encore en cours de développement. Merci de votre patience !
+</div>
+    {% for classe in classes %}
+        <div class="card shadow-sm mb-4">
+            <div class="card-header  text-white d-flex justify-content-between align-items-center" style="background-color: #7652fa;">
+                <h5 class="mb-0">{{ classe.nom_classe }}</h5>
+                <form method="post" action="{% url 'launch_meet' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="target_type" value="classe">
+                    <input type="hidden" name="target_id" value="{{ classe.id }}">
+                    <button type="submit" class="btn btn-light-meet btn-sm">Meet Classe</button>
+                </form>
+            </div>
+            <div class="card-body">
+                {% for projet in classe.projets.all %}
+                    <div class="mb-3">
+                        <button class="btn btn-outline-meet w-100 text-start" type="button" data-bs-toggle="collapse" data-bs-target="#projet{{ projet.id }}">
+                            <strong><span class="iconify me-2" data-icon="solar:folder-outline" style="font-size: 24px;"></span>
+                                {{ projet.nom_project }}
+                            </strong>
+                        </button>
+
+                        <div class="collapse mt-2" id="projet{{ projet.id }}">
+                            <ul class="list-group list-group-flush">
+                                {% for groupe in projet.groupe_set.all %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center" style="color: #7652fa;">
+                                        <span>
+                                            <span class="iconify" data-icon="solar:users-group-two-rounded-outline" style="font-size: 18px;"></span>
+                                            <strong>{{ groupe.nom_groupe }}</strong>
+                                            <small>({{ groupe.nbr_membre }} membres)</small>
+                                        </span>
+                                        <form method="post" action="{% url 'launch_meet' %}" class="m-0">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="target_type" value="groupe">
+                                            <input type="hidden" name="target_id" value="{{ groupe.id }}">
+                                            <button type="submit" class="btn btn-sm btn-success">Meet Groupe</button>
+                                        </form>
+                                    </li>
+                                {% empty %}
+                                    <li class="list-group-item text-muted">Aucun groupe disponible.</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="text-muted">Aucun projet associé à cette classe.</p>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+
+
+<!-- Bootstrap 5 Collapse functionality -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" 
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+O2fC5hLZp1W2KkHq/j4LE6U+ww8A" 
+        crossorigin="anonymous"></script>
+
+{% endblock %}

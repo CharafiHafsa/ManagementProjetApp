@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2>Dashboard</h2>
+    <h3>Upcoming Meetings</h3>
+    <ul>
+        {% for meeting in meetings %}
+            <li>
+                <strong>{{ meeting.target_type }} (ID: {{ meeting.target_id }})</strong>
+                <br>
+                <a href="{{ meeting.meeting_link }}" class="btn btn-primary" target="_blank">Join Meeting</a>
+            </li>
+        {% empty %}
+            <p>No upcoming meetings.</p>
+        {% endfor %}
+    </ul>
+{% endblock %}

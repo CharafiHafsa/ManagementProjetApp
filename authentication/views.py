@@ -304,7 +304,10 @@ def update_password(request):
          
     return render(request, 'authentification/update_password.html')
 
+
 def logout_user(request):
-    request.session.flush()
     logout(request)
-    return redirect('login')
+    return redirect('login') 
+
+
+

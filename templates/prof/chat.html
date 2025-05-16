@@ -99,23 +99,59 @@
 }
 
 </style>
-<div class="chat-container">
-    <h2>Chatbot</h2>
-    <hr>
-    <div class="chat-box" id="chat-box">
-        <!-- Messages will be appended here -->
+<div class="d-flex align-items-center justify-content-between mb-3 flex-nowrap w-100" style="overflow-x: auto; gap: 1rem;">
+    <!-- Left: Greeting -->
+    <div class="text-nowrap">
+        <h3 class="fw-bold mb-0">
+            Bonjour, 
+            <span style="color: #653bff;">{{ professeur.nom }} {{ professeur.prenom }}</span>
+        </h3>
     </div>
-    <div class="row g-2">
-        <div class="col">
-            <input type="text" id="user-input" placeholder="Type your message..." class="form-control">
-        </div>
-        <div class="col-auto">
-            <button onclick="sendMessage()" class="btn btn-primary">Send</button>
-        </div>
+
+    <!-- Center: Project title -->
+    <div class="text-center flex-grow-1 text-nowrap">
+        <h3 class="fw-bold mb-0" style="color: #653bff;">Chatbot</h3>
     </div>
-    
-    
+
+    <!-- Right: Chatbot icon with name -->
+    <div class="d-flex align-items-center text-nowrap">
+        <span class="iconify me-2" data-icon="mage:robot-happy" style="font-size: 24px; color: #653bff;"></span>
+        <span class="fw-bold" style="color: #653bff;">StudyMate</span>
+    </div>
 </div>
+
+
+<hr class="mb-5">
+
+<!-- Include Font Awesome in your <head> if not already -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <div class="chat-container">
+        <!-- Enhanced header -->
+        <!-- Enhanced header -->
+        <div class="d-flex align-items-center mb-3" style="color: #653bff;">
+            <span class="iconify me-2" data-icon="mage:robot-happy" style="font-size: 30px;"></span>
+            <h3 class="mb-0 fw-bold" style="color: #653bff;">StudyMate</h3>
+        </div>
+
+        <hr>
+    
+        <!-- Chat box -->
+        <div class="chat-box" id="chat-box">
+            <!-- Messages will be appended here -->
+        </div>
+    
+        <!-- Input section -->
+        <div class="row g-2">
+            <div class="col">
+                <input type="text" id="user-input" placeholder="Type your message..." class="form-control">
+            </div>
+            <div class="col-auto">
+                <button onclick="sendMessage()" class="btn btn-primary">Send</button>
+            </div>
+        </div>
+    </div>
+    
 
 <script>
 function sendMessage() {

@@ -2,17 +2,23 @@
 {% load static %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
-    <h3 class="fw-bold mb-3 mb-md-0">Bonjour, <span class="text-primary">{{professor.nom}} {{professor.prenom}}</span></h3>
-    <h3 class="fw-bold text-primary mb-0">La Classe : {{ classe.nom_classe }}</h3>
-    
-    <p class="mb-0">
-        <a href="#" data-bs-toggle="modal" data-bs-target="#codeModal" class="text-decoration-none  fw-bold">
-            <span class="iconify" data-icon="solar:rounded-magnifer-zoom-in-linear" style="font-size: 24px;"></span>
-            <strong class="ms-2">Code :</strong> {{ classe.code_classe }}
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
+    <h3 class="fw-bold mb-0">
+        Bonjour, <span style="color: #635bff;">{{ professor.nom }} {{ professor.prenom }}</span>
+    </h3>
+
+    <h3 class="fw-bold mb-0 text-nowrap" style="color: #635bff;">
+        La Classe : {{ classe.nom_classe }}
+    </h3>
+
+    <div class="text-nowrap">
+        <a href="#" data-bs-toggle="modal" data-bs-target="#codeModal" class="text-decoration-none fw-bold">
+            <span class="iconify" data-icon="solar:rounded-magnifer-zoom-in-linear" style="font-size: 24px; color: #635bff;"></span>
+            <strong class="ms-2" style="color: #635bff;">Code :</strong> {{ classe.code_classe }}
         </a>
-    </p>
+    </div>
 </div>
+
 <div class="modal fade" id="codeModal" tabindex="-1" aria-labelledby="codeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
@@ -165,7 +171,7 @@
                                                 </div>
                                             </div>
                                             <div class="card-body card-son .card-body-project">
-                                                <h5 class="card-title text-primary">{{ project.nom_project }}</h5>
+                                                <h5 class="card-title" style="color: #635bff;">{{ project.nom_project }}</h5>
                                                 <p class="card-text text-muted">{{ project.description }}</p>
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <small class="text-muted">Du {{ project.date_debut }} au {{ project.date_fin }}</small>

@@ -1,55 +1,3 @@
-{% extends 'prof/base.html' %}
-{% load static %}
-{% block content %}
-    <div class="card shadow p-3">
-        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h3 style="color: #635bff;">Mes Notifications</h3>
-            {% if notifications %}
-                <button id="mark-all-read" class="btn btn-sm btn-form-classe d-flex align-items-center">
-                <span class="iconify me-2" data-icon="solar:bell-linear" style="font-size: 24px; line-height: 1;"></span>
-                Tout marquer comme lu
-                </button>
-            {% endif %}
-        </div>
-        
-        {% if notifications %}
-        <div class="d-flex flex-column gap-3" id="notifications-container">
-            {% for notif in notifications %}
-            <div class="notification-item d-flex align-items-start justify-content-between border raduise-for-all p-3 position-relative shadow-sm {% if not notif.is_read %}bg-notif{% endif %}" data-id="{{ notif.id }}">
-                <div class="d-flex align-items-start gap-3">
-                    <div class="notif-square mt-1"></div>
-                    <div>
-                        <a href="#" class="mark-as-read fw-bold mb-1 text-decoration-none"style="color: #f41b43;"  data-id="{{ notif.id }}">
-                            <span class="iconify me-2" data-icon="solar:alarm-linear" style="font-size: 22px; color: #f41b43;"></span>
-                            {{ notif.title }}
-                        </a>
-                        <div style="color: rgb(71, 71, 71);" class="ms-4">{{ notif.content }}</div>
-                        <small class="text-secondary ms-4">{{ notif.created_at|date:"d/m/Y H:i" }}</small>
-                    </div>
-                </div>
-                <button class="delete-notification btn-close" aria-label="Supprimer" title="Supprimer" data-id="{{ notif.id }}"></button>
-            </div>
-            {% endfor %}
-        </div>
-        {% else %}
-        <p class="text-muted">Aucune notification pour le moment.</p>
-        {% endif %}
-    </div>
-
-
-<style>
-    .notif-square {
-        width: 4px;
-        height: 70px;
-        background-color: #f41b43;
-        border-radius: 2px;
-    }
-    .bg-notif{
-        background-color: #fa9fafad;
-    }
-</style>
-<script>
     document.addEventListener('DOMContentLoaded', function() {
     // CSRF token setup for AJAX
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
@@ -87,7 +35,7 @@
         .then(response => {
             if (response.ok) {
                 const notification = document.querySelector(`.notification-item[data-id="${notifId}"]`);
-                notification.classList.remove('bg-notif');
+                notification.classList.remove('bg-light');
                 // Optionally show a success message
             }
         })
@@ -129,7 +77,7 @@
         .then(response => {
             if (response.ok) {
                 document.querySelectorAll('.notification-item').forEach(item => {
-                    item.classList.remove('bg-notif');
+                    item.classList.remove('bg-light');
                 });
                 document.getElementById('mark-all-read')?.remove();
                 // Optionally show a success message
@@ -138,5 +86,3 @@
         .catch(error => console.error('Error:', error));
     }
 });
-</script>
-{% endblock %}

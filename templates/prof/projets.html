@@ -13,14 +13,31 @@
         transform: scale(1.02);
     }
 </style>
+<div class="d-flex align-items-center justify-content-between mb-3 flex-nowrap w-100 text-nowrap gap-3" style="overflow-x: auto;">
+    <!-- Left: Greeting -->
+    <div class="text-nowrap">
+        <h3 class="fw-bold mb-0">
+            Bonjour, <span style="color: #635bff;">{{ professeur.nom }} {{ professeur.prenom }}</span>
+        </h3>
+    </div>
 
-<div class="container mt-4">
-    <h2 class="fw-bold text-primary mb-4">Mes Projets</h2>
+    <!-- Center: Project Title -->
+    <div class="flex-grow-1 text-center text-nowrap">
+        <h3 class="fw-bold mb-0" style="color: #635bff;">Mes Projets</h3>
+    </div>
 
+    <!-- Optional Right Column -->
+    <div class="text-nowrap">
+        <!-- You can add a button/icon/etc. here later -->
+    </div>
+</div>
+
+<hr class="mb-5">
+    
     <!-- Search and Filter -->
     <form method="get" class="row mb-4">
         <div class="col-md-6 mb-2">
-            <input type="text" name="search" class="form-control" placeholder="Rechercher un projet..." value="{{ request.GET.search }}">
+            <input type="text" id="searchInput" class="form-control" placeholder="Rechercher un projet...">
         </div>
         <div class="col-md-4 mb-2">
             <select name="class_filter" class="form-select">
@@ -33,18 +50,20 @@
             </select>
         </div>
         <div class="col-md-2 mb-2">
-            <button type="submit" class="btn btn-primary w-100">Filtrer</button>
+            <button type="submit" class="btn btn-form-classe w-100">Filtrer</button>
         </div>
     </form>
 
     <!-- Projects List -->
     <div class="row">
         {% for projet in projets %}
-            <div class="col-md-4 mb-4">
-                <div class="card project-card p-3 h-100">
+        <div class="col-md-4 mb-4 project-card-wrapper" data-name="{{ projet.nom_project|lower }}">
+            <div class="card project-card p-3 h-100">
+                <!-- content as before -->
+    
                     <div class="card-body d-flex flex-column justify-content-between">
                         <div>
-                            <h5 class="card-title">{{ projet.nom_project }}</h5>
+                            <h5 class="card-title" style="color: #635bff; font-weight: bold; font-size: 18px;">{{ projet.nom_project }}</h5>
                             <p class="card-text mb-1">
                                 <strong>Classe:</strong> {{ projet.code_classe.nom_classe }}
                             </p>
@@ -56,7 +75,7 @@
                             </p>
                         </div>
                         <div class="text-end mt-3">
-                            <a href="{% url 'projet_detail' projet.id %}" class="btn btn-outline-primary">Voir</a>
+                            <a href="{% url 'projet_detail' projet.id %}" class="btn btn-form-classe">Voir</a>
                         </div>
                     </div>
                 </div>
@@ -65,5 +84,24 @@
             <p class="text-muted">Aucun projet trouvé.</p>
         {% endfor %}
     </div>
-</div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const searchInput = document.getElementById("searchInput");
+            const projectCards = document.querySelectorAll(".project-card-wrapper");
+        
+            searchInput.addEventListener("input", function() {
+                const searchTerm = searchInput.value.toLowerCase();
+        
+                projectCards.forEach(card => {
+                    const projectName = card.getAttribute("data-name");
+                    if (projectName.startsWith(searchTerm)) {
+                        card.style.display = "block";
+                    } else {
+                        card.style.display = "none";
+                    }
+                });
+            });
+        });
+    </script>
+
 {% endblock %}

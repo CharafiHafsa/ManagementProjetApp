@@ -20787,7 +20787,9 @@ input {
   background-color: #cac8ff !important;
   color: #635bff !important;
 }
-
+.text-main-color{
+  color: #635bff !important;
+}
 .selected1 {
   background-color: #cac8ff !important;
   color: #635bff !important;
@@ -20797,6 +20799,16 @@ input {
 .info:hover{
   color: #635bff;
   background-color: #cac8ff;
+}
+.btn-light-meet{
+  background-color: #cac8ff;
+  border-radius: 3px;
+  color: #7652fa;
+  transition: all 0.5s ease;
+}
+.btn-light-meet:hover{
+  background-color: #653bff;
+  color: #cac8ff;
 }
 
 /* Dark Mode Styles for Buttons */

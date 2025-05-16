@@ -44,13 +44,13 @@
 <!-- Class Statistics Section -->
 <div class="row dashboard-section">
     <div class="col-12">
-        <h4 class="fw-bold text-primary mb-3">Statistiques des Classes</h4>
+        <h4 class="fw-bold mb-3" style="color: #635bff;">Statistiques des Classes</h4>
     </div>
 
     {% for stat in class_stats %}
         <div class="col-md-4 ">
             <div class="card shadow-lg">
-                <div class="card-header text-white" style="background-color: #703bf6;">
+                <div class="card-header text-white" style="background-color: #635bff;">
                     <h5 class="card-title">
                         <a href="{% url 'classe_detail' stat.classe.id %}" class="text-white text-decoration-none">{{ stat.classe.nom_classe }}</a>
                     </h5>
@@ -76,7 +76,7 @@
 <div class="card shadow-lg border-0 raduise-for-all p-4">
 <!-- Row 1: Recently Created Classes -->
 <div class="dashboard-section">
-    <h4 class="fw-bold text-primary mb-3 d-flex align-items-center">
+    <h4 class="fw-bold mb-3 d-flex align-items-center" style="color: #635bff;">
         <span class="iconify me-2" data-icon="solar:notebook-minimalistic-linear" style="font-size: 25px;"></span>
         Classes récentes
     </h4>
@@ -102,7 +102,7 @@
 <div class="card shadow-lg border-0 raduise-for-all p-4">
 <!-- Row 1b: Recently Created Projects -->
 <div class="dashboard-section mt-5">
-    <h4 class="fw-bold text-primary mb-3 d-flex align-items-center">
+    <h4 class="fw-bold mb-3 d-flex align-items-center" style="color: #635bff;">
         <span class="iconify me-2" data-icon="solar:folder-outline" style="font-size: 24px;"></span>
          Projets récents
     </h4>
@@ -129,7 +129,7 @@
 <div class="dashboard-section">
     <div class="row">
         <div class="col-md-6 mb-4">
-            <h4 class="fw-bold text-primary mb-3 d-flex align-items-center">
+            <h4 class="fw-bold mb-3 d-flex align-items-center" style="color: #635bff;">
                 <span class="iconify me-2" data-icon="solar:clock-circle-outline" style="font-size: 24px;"></span>
             Dates limites à venir</h4>
             {% for instruction in upcoming_instructions %}
@@ -144,7 +144,7 @@
         </div>
 
         <div class="col-md-6 mb-4">
-            <h4 class="fw-bold text-primary mb-3 d-flex align-items-center">
+            <h4 class="fw-bold mb-3 d-flex align-items-center" style="color: #635bff;">
                 <span class="iconify me-2" data-icon="mingcute:announcement-line" style="font-size: 24px;"></span>
                 Annonces récentes
             </h4>

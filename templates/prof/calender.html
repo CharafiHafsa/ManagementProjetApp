@@ -2,61 +2,490 @@
 {% load static %}
 
 {% block content %}
+<style>
+  
+/* Style the buttons in the header */
+.fc-prev-button,
+.fc-next-button{
+    background-color: #f5f5f5 !important; /* Custom background color */
+    color: rgb(32, 27, 27) !important; /* Text color */
+    border-radius: 12px 0px 0px 12px !important; /* Rounded corners */
+    padding: 7px 11px !important;
+    font-size: 0.85rem !important;
+    font-weight: bold; /* Make text bold */
+    border: none !important; /* Remove borders */
+    transition: background-color 0.3s, color 0.3s; /* Smooth color transition */
+}
+.fc-next-button{
+    border-radius: 0px 12px 12px 0px !important; /* Rounded corners */
+    margin-left: 2px !important;
+}
+.fc-prev-button{
+    border-radius: 12px 0px 0px 12px !important; /* Rounded corners */
+    margin-right: 2px !important;
+}
+.fc-today-button {
+    background-color: #653bff !important; /* Custom background color */
+    color: white !important; /* Text color */
+    border-radius: 8px !important; /* Rounded corners */
+    padding: 7px 11px !important;
+    font-size: 0.85rem !important;
+    border: none !important; /* Remove borders */
+    transition: background-color 0.3s, color 0.3s !important; /* Smooth color transition */
+}
+.fc-dayGridMonth-button,
+.fc-timeGridWeek-button,
+.fc-listWeek-button {
+    background-color: #f5f5f5 !important; /* Custom background color */
+    color: rgb(27, 27, 27) !important; /* Text color */
+    border-radius: 12px !important;
+    border: none !important; /* Remove borders */
+    transition: background-color 0.3s, color 0.3s !important; /* Smooth color transition */
+}
+.fc-dayGridMonth-button{
+    border-radius: 12px 0px 0px 12px !important; /* Rounded corners */
+}
+.fc-timeGridWeek-button {
+    border-radius: 0px !important; /* Rounded corners */
+}
+.fc-listWeek-button {
+    border-radius: 0px 12px 12px 0px !important; /* Rounded corners */
+}
+.fc-prev-button:hover,
+.fc-next-button:hover,
+.fc-today-button:hover,
+.fc-dayGridMonth-button:hover,
+.fc-timeGridWeek-button:hover,
+.fc-listWeek-button:hover {
+    background-color: #653bff !important; /* Change background on hover */
+    color: white !important; /* Change text color */
+}
+
+/* Active button style */
+.fc-button-active {
+    background-color: #653bff !important;
+    color: white !important;
+}
+
+
+/* table  =================================================*/
+.fc-scrollgrid {
+    border-top: none !important; /* Remove borders */
+    box-shadow: none !important; /* Remove shadow */
+}
+/* Style the header of the calendar table */
+.fc-col-header-cell {
+    background-color: #f5f5f5 !important; /* Change header background color */
+    color: rgb(41, 41, 41) !important; 
+    border: none !important; /* Remove borders */
+    padding: 10px !important; /* Adjust padding */
+}
+
+.fc-col-header-cell-cushion{
+    font-weight: normal !important; 
+    color: rgb(41, 41, 41);
+}
+/* Style the day cells in the calendar */
+.fc-daygrid-day-number {
+    color: #653bff; /* Change date text color */
+}
+
+/* Style the current day cell */
+.fc-daygrid-day.fc-day-today .fc-daygrid-day-number {
+    font-weight: bold !important; /* Make current day bold */
+}
+
+.fc-day-today{
+    background-color: #cac8ff !important; /* Light grey background for today */
+    border-radius: 2px !important; /* Rounded corners for today */
+    color: #653bff !important; /* Change text color for today */
+}
+.fc-theme-standard td {
+    border: 1px solid !important;
+    border-color: #e0e0e0 !important; /* Light grey border color */
+}
+/* Add hover effect for day cells */
+.fc-daygrid-day:hover {
+    background-color: #e0e0e0 !important; /* Light grey background on hover */
+    cursor: pointer;
+}
+/* Capitalize day names in the calendar header (Mon, Tue, etc.) */
+.fc-col-header-cell-cushion {
+    text-transform: capitalize;
+}
+.fc-toolbar-title {
+  font-size: 1.5rem !important;
+  font-weight: 600 !important;
+}
+.fc-col-header-cell-cushion {
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+}
+/* Capitalize button labels */
+.fc-toolbar button {
+    text-transform: capitalize !important;
+}
+/* events style =========================  */
+.event-personal.fc-daygrid-event::before {
+    content: '';
+    position: absolute;
+    left: -1px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 100%;
+    border-radius: 2px;
+    background-color: #3b0093 !important;
+
+}
+.event-personal.fc-daygrid-event {
+    background-color: #8e46f992 !important;
+}
+.fc-daygrid-event {
+    position: relative;
+    padding-left: 20px !important; 
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border: none !important;
+    border-radius: 0px 20px 20px 0px !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+}
+
+.fc-daygrid-event::before {
+    content: '';
+    position: absolute;
+    left: -1px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 100%;
+    border-radius: 2px;
+}
+.fc-daygrid-event.event-red {
+    background-color: #ffa1b2a6 !important;
+    color: #f41b43 !important;
+}
+.fc-daygrid-event.event-red:hover {
+    background-color: #fcbbc6a0 !important;
+    color: #f41b43 !important;
+}
+.fc-daygrid-event.event-red::before{
+    background-color: #fd2d53 !important;
+}
+.fc-daygrid-event.event-blue::before {
+    background-color: #0169f1  !important;
+}
+.fc-daygrid-event.event-blue {
+    background-color: #b7d5fdb5  !important;
+    color: #0169f1 !important;
+}
+.fc-daygrid-event.event-blue:hover {
+    background-color: #d4e6feb5  !important;
+}
+.fc-daygrid-event.event-green::before {
+    background-color: #20c96c  !important;
+}
+.fc-daygrid-event.event-green {
+    background-color: #b8efd1b2  !important;
+    color: #20c96c !important;
+}
+.fc-daygrid-event.event-green:hover {
+    background-color: #d7fde8b2  !important;
+}
+.fc-daygrid-event.event-yellow::before {
+    background-color: #fdc16a   !important;
+}
+.fc-daygrid-event.event-yellow {
+    background-color: #fee8c8be   !important;
+    color: #fdc16a !important;
+}
+.fc-daygrid-event.event-yellow:hover {
+    background-color: #fff0d9be   !important;
+}
+.fc-daygrid-event.event-purple::before {
+    background-color: #5f76e8  !important;
+}
+.fc-daygrid-event.event-purple {
+    background-color: #c6cdf1ca  !important;
+    color: #5f76e8 !important;
+}
+.fc-daygrid-event.event-purple:hover {
+    background-color: #e1e6fbca  !important;
+}
+.fc-daygrid-event a {
+    font-weight: bold !important;
+    display: block !important;
+    padding-left: 20px !important;
+    text-decoration: none !important;
+}
+
+a.fc-daygrid-event.event-red {
+    background-color: #ff4f6fa6 !important;
+    color: #f41b43 !important;
+}
+
+a.fc-daygrid-event.event-blue {
+    background-color: #76b1feb5 !important;
+    color: #0169f1 !important;
+}
+
+a.fc-daygrid-event.event-green {
+    background-color: #8cedb8b2 !important;
+    color: #20c96c !important;
+}
+
+a.fc-daygrid-event.event-yellow {
+    background-color: #ead1abbe !important;
+    color: #fdc16a !important;
+}
+
+a.fc-daygrid-event.event-purple {
+    background-color: #9babffca !important;
+    color: #5f76e8 !important;
+}
+.fc-daygrid-event.event-red .fc-event-title {
+    color: #f41b43 !important;
+}
+.fc-daygrid-event.event-blue .fc-event-title {
+    color: #0169f1 !important;
+}
+.fc-daygrid-event.event-green .fc-event-title {
+    color: #20c96c !important;
+}
+.fc-daygrid-event.event-yellow .fc-event-title {
+    color: #fdc16a !important;
+}
+.fc-daygrid-event.event-purple .fc-event-title {
+    color: #5f76e8 !important;
+}
+
+
+
+</style>
+<!-- Dashboard header -->
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3">
+    <h3 class="fw-bold mb-0">Bonjour, 
+        <span style="color: #653bff;">{{ professeur.nom }} {{ professeur.prenom }}</span>
+    </h3>
+
+    <h3 class="fw-bold mb-0 text-nowrap" style="color: #653bff;">Calendrier</h3>
+
+
+    <!-- Right: Optional future button -->
+    <div class="text-nowrap">
+    </div>
+</div>
+<hr class="mb-3">
+<!-- Card container -->
+<div class="card shadow-sm border-0 mb-5" >
+    <div class="card-body p-4">
+        <div id="calendar"></div>
+    </div>
+</div>
+<!-- Shared Add/Edit Event Modal -->
+<div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
+        <div class="modal-header" style="background-color: #653bff; color: white;">
+          <h5 class="modal-title" id="eventModalLabel">Ajouter / Modifier un événement</h5>
+          <button type="button" class="btn-close custom-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+        </div>
+        <div class="modal-body">
+          <form id="eventForm">
+            <input type="hidden" id="eventId">
+            <div class="mb-3">
+              <label for="eventTitle" class="form-label">Nom de l'événement</label>
+              <input type="text" class="form-control" id="eventTitle" required>
+            </div>
+            <div class="mb-3">
+              <label for="eventColor" class="form-label">Couleur</label>
+              <select id="eventColor" class="form-select" required>
+                <option value="event-red">Rouge</option>
+                <option value="event-blue">Bleu</option>
+                <option value="event-green">Vert</option>
+                <option value="event-yellow">Jaune</option>
+                <option value="event-purple">Violet</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="eventStart" class="form-label">Date de début</label>
+              <input type="date" class="form-control" id="eventStart" required>
+            </div>
+            <div class="mb-3">
+              <label for="eventEnd" class="form-label">Date de fin</label>
+              <input type="date" class="form-control" id="eventEnd" required>
+            </div>
+            <div class="d-flex justify-content-between">
+              <button type="submit" class="btn btn-modal-style">Sauvegarder</button>
+              <button type="button" class="btn btn-danger raduise-for-all" id="deleteEventBtn" style="display: none;">Supprimer</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Warning Modal for Project Events -->
+<div class="modal fade" id="projectWarningModal" tabindex="-1" aria-labelledby="projectWarningModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
+        <div class="modal-header bg-warning">
+          <h5 class="modal-title">Événement non modifiable</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+        </div>
+        <div class="modal-body">
+          <p>L’événement " <strong id="projectModalTitle"></strong> " fait partie d’un projet. Vous ne pouvez pas le modifier ici.</p>
+          <p>Veuillez aller à la page du projet pour changer les dates.</p>
+        </div>
+        <div class="modal-footer">
+          <a href="#" id="goToProjectBtn" class="btn btn-form-classe">Aller au projet</a>
+          <button type="button" class="btn btn-ret" data-bs-dismiss="modal">Fermer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+<!-- Calendar scripts -->
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
 
-<div class="container mt-4">
-    <h2 class="fw-bold text-primary mb-4">Mon Calendrier</h2>
+<script>
+    
+    document.addEventListener('DOMContentLoaded', function () {
+      var calendarEl = document.getElementById('calendar');
+      var events = {{ events|safe }};
+      const modal = new bootstrap.Modal(document.getElementById('eventModal'));
+  
+      function openModal(data = {}) {
+        document.getElementById("eventId").value = data.id || "";
+        document.getElementById("eventTitle").value = data.title || "";
+        document.getElementById("eventStart").value = data.start || "";
+        document.getElementById("eventEnd").value = data.end || "";
+        document.getElementById("eventColor").value = data.color || "event-blue";
+        document.getElementById("deleteEventBtn").style.display = data.id ? "block" : "none";
 
-    <div id="calendar"></div>
-</div>
+        modal.show();
+      }
+      document.getElementById("deleteEventBtn").addEventListener("click", function () {
+    const eventId = document.getElementById("eventId").value;
+    if (!eventId) return;
 
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
-
-        var events = JSON.parse('{{ events|escapejs }}');
-
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            height: 'auto',
-            locale: 'fr',  // Optional: French language
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek,listWeek'
+    if (confirm("Voulez-vous vraiment supprimer cet événement ?")) {
+        fetch(`/prof/calender/delete-event/${eventId}/`, {
+            method: "DELETE",
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken"),
             },
-            events: events,
-            dateClick: function(info) {
-                let title = prompt('Nom de l\'événement:');
-                if (title) {
-                    fetch("{% url 'add_event' %}", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "X-CSRFToken": "{{ csrf_token }}"
-                        },
-                        body: JSON.stringify({
-                            title: title,
-                            date: info.dateStr
-                        })
-                    })
-                    .then(response => {
-                        if (response.ok) {
-                            location.reload();
-                        } else {
-                            alert("Erreur lors de l'ajout !");
-                        }
-                    });
-                }
+        })
+        .then(response => {
+            if (response.ok) {
+                $("#eventModal").modal("hide");
+                // Option 1: Just reload the whole page
+                window.location.reload();
+
+                // OR Option 2: Better - refresh only events
+                // $('#eventModal').on('hidden.bs.modal', function () {
+                //     calendar.refetchEvents();
+                //     $('#eventModal').off('hidden.bs.modal');
+                // });
+            } else {
+                alert("Erreur lors de la suppression de l'événement.");
             }
         });
+    }
+});
 
-        calendar.render();
+// Utility to get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+        const cookies = document.cookie.split(";");
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === name + "=") {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+  
+      var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        height: 'auto',
+        locale: 'fr',
+        headerToolbar: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek,listWeek'
+        },
+        events: events,
+        dateClick: function (info) {
+          openModal({
+            start: info.dateStr,
+            end: info.dateStr,
+          });
+        },
+        eventClick: function (info) {
+          const eventObj = info.event.extendedProps;
+  
+          if (eventObj.type === 'project') {
+            document.getElementById('projectModalTitle').innerText = info.event.title; 
+            document.getElementById('goToProjectBtn').setAttribute("href", `/prof/classe/${eventObj.project_id}/detail_projet`);
+            new bootstrap.Modal(document.getElementById('projectWarningModal')).show();
+          } else {
+            openModal({
+              id: info.event.id,
+              title: info.event.title,
+              start: info.event.startStr,
+              end: info.event.endStr,
+              color: info.event.classNames.find(c => c.startsWith('event-')) || "event-blue"
+            });
+          }
+        }
+      });
+  
+      setTimeout(() => calendar.render(), 100);
+      document.getElementById("openEventModalBtn").addEventListener("click", function () {
+        const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD
+        openModal({
+            start: today,
+            end: today,
+        });
+        });
+
+
+  
+      document.getElementById("eventForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const id = document.getElementById("eventId").value;
+        const title = document.getElementById("eventTitle").value;
+        const start = document.getElementById("eventStart").value;
+        const end = document.getElementById("eventEnd").value;
+        const color = document.getElementById("eventColor").value;
+  
+        fetch("/prof/calender/add-or-edit-event/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}"
+          },
+          body: JSON.stringify({ id, title, start, end, color })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.message) {
+            location.reload();
+          } else {
+            alert("Erreur: " + (data.error || "Inconnue"));
+          }
+        })
+        .catch(err => alert("Erreur réseau !"));
+      });
     });
-</script>
-<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
-
-
+  </script>
+    
 {% endblock %}

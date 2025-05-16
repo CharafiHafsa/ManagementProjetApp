@@ -11,12 +11,20 @@ from django.utils.timezone import now
 from django.db.models import Count
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
+import json
+from django.views.decorators.http import require_http_methods
+import uuid
+from datetime import timedelta
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 
 genai.configure(api_key="AIzaSyBNRe5yW4uRQNmjg1GcEZEpiXuPysY7xrQ")
 
 def prof_accueil(request):
     prof_id = request.session.get('user_id')
+    if not prof_id:
+        return redirect('login')
     prof = Professeur.objects.filter(id=prof_id).first()
     
     # Filter only the professor's classes
@@ -64,8 +72,6 @@ def prof_accueil(request):
         'class_stats': class_stats  # Adding the class statistics to the context
     }
     return render(request, 'prof/home.html', context)
-    
-    
 
 def get_class_stats(request, class_id):
     try:
@@ -94,7 +100,8 @@ def prof_classes(request):
 
     if prof:
         # Filter the classes assigned to the professor
-        classes = Classe.objects.filter(professeur=prof)
+        classes = Classe.objects.filter(professeur=prof, is_archived=False)
+
 
         # If there's a search query, filter the classes by name
         if query:
@@ -114,6 +121,8 @@ def create_class(request):
     if request.method == 'POST' :
         className = request.POST.get('className')
         prof_id = request.session.get('user_id')
+        if not prof_id:
+            return redirect('login')
         prof = Professeur.objects.filter(id=prof_id).first()
 
         if not className :
@@ -129,6 +138,42 @@ def create_class(request):
 
             return redirect('prof_classes')
     return render(request, 'prof/classes.html')
+
+def archive_classe(request, class_id):
+    classe = get_object_or_404(Classe, id=class_id)
+    classe.is_archived = True
+    classe.save()
+    return HttpResponseRedirect(reverse('prof_classes'))
+
+def archived_classes(request):
+    prof_id = request.session.get('user_id')
+    if not prof_id:
+        return redirect('login')
+    prof = Professeur.objects.filter(id=prof_id).first()
+    classes = Classe.objects.filter(professeur=prof, is_archived=True)
+
+    # Add counts as before
+    for classe in classes:
+        classe.etudiants_count = classe.etudiants.count()
+        classe.projects_count = classe.projets.count()
+
+    return render(request, 'prof/archived_classes.html', {'classes': classes, 'professor': prof})
+
+def unarchive_classe(request, class_id):
+    classe = get_object_or_404(Classe, id=class_id)
+    classe.is_archived = False
+    classe.save()
+    messages.success(request, f"La classe {classe.nom_classe} a été désarchivée avec succès.")
+    return redirect('archived_classes')
+
+def classe_etudiants(request, class_id):
+    classe = get_object_or_404(Classe, id=class_id)
+    prof_id = request.session.get('user_id')
+    if not prof_id:
+        return redirect('login')
+    professor = Professeur.objects.filter(id=prof_id).first()
+    etudiants = classe.etudiants.all()
+    return render(request, 'prof/classe_etudiants.html', {'professor': professor, 'classe': classe, 'etudiants': etudiants})
 
 def edit_classe(request, class_id):
 
@@ -162,6 +207,8 @@ def delete_classe(request, class_id):
 def classe_detail(request, class_id):
     classe = get_object_or_404(Classe, id=class_id)
     prof_id = request.session.get('user_id')
+    if not prof_id:
+        return redirect('login')
     professor = Professeur.objects.filter(id=prof_id).first()
     projects = Project.objects.filter(code_classe=classe)
 
@@ -228,14 +275,13 @@ def add_project(request, class_id):
                 )
                 new_project.save()
                 print(f"Saved project: {new_project.nom_project}")
+                etudiants = classe.etudiants.all()
                 messages.success(request, "Projet ajouté avec succès !", extra_tags="projet")
-                PNotification.objects.create(
-                    title="Nouveau projet ajouté",
-                    content=f"Le projet '{nom_project}' a été ajouté à votre classe.",
-                    destination_type='class',
-                    classe=classe
+                notif = PENotification.objects.create(
+                    title="Nouveau projet",
+                    content=f"Un nouveau projet '{new_project.nom_project}' a été ajouté à votre classe."
                 )
-                
+                notif.etudiants.set(etudiants)
             except Exception as e:
                 print(f"Error: {e}")
                 messages.error(request, f"Erreur lors de l'ajout du projet: {e}", extra_tags="projet")
@@ -271,6 +317,13 @@ def edit_projet(request, projet_id):
         if updated:
             projet.save()
             messages.success(request, "Project updated successfully!", extra_tags="projet")
+            classe = projet.code_classe
+            etudiants = classe.etudiants.all()
+            notif = PENotification.objects.create(
+                title="Modifie un projet",
+                content=f"le projet '{projet.nom_project}' a été modifié ."
+            )
+            notif.etudiants.set(etudiants)
         else:
             messages.error(request, "Please fill all fields.", extra_tags="projet")
 
@@ -292,6 +345,8 @@ def delete_projet(request, projet_id):
 def projet_detail(request, projet_id):
     
     prof_id = request.session.get('user_id')
+    if not prof_id:
+        return redirect('login')
     prof = Professeur.objects.filter(id=prof_id).first()
     projet = get_object_or_404(Project, id=projet_id)
     
@@ -339,8 +394,6 @@ def projet_detail(request, projet_id):
         'groupes' : groupes,
     })
 
-
-
 def add_instruction(request, projet_id):
     if request.method == "POST":
         titre = request.POST.get("titre")
@@ -348,25 +401,27 @@ def add_instruction(request, projet_id):
         livrable_requis = request.POST.get("livrable_requis") == "on"
 
         projet = get_object_or_404(Project, id=projet_id)
+        
+        # Create the instruction
         instruction = Instruction.objects.create(
             projet=projet,
             titre=titre,
             date_limite=date_limite if date_limite else None,
             livrable_requis=livrable_requis
         )
-
-        for groupe in projet.groupe_set.all():
-            PNotification.objects.create(
-                title="Nouvelle instruction",
-                content=f"Une nouvelle instruction a été ajoutée pour le projet '{projet.nom_project}'.",
-                destination_type='group',
-                groupe=groupe
+        
+        classe = projet.code_classe
+        etudiants = classe.etudiants.all()
+        notif = PENotification.objects.create(
+            title="Nouvelle Instruction",
+            content=f"l'instruction' '{instruction.titre}' a été ajouté au projet '{projet.nom_project}' ."
         )
-
+        notif.etudiants.set(etudiants)
+        # Redirect or respond after the instruction is created
+        messages.success(request, "Instruction ajoutée avec succès!")
         return redirect('projet_detail', projet_id=projet.id)
 
     return JsonResponse({"error": "Invalid request"}, status=400)
-
 
 def edit_instruction(request, id):
     instruction = get_object_or_404(Instruction, id=id)
@@ -404,15 +459,13 @@ def add_announce(request, projet_id):
         if contenu:
             Announce.objects.create(projet=projet, contenu=contenu)
             messages.success(request, "Annonce ajoutée avec succès.", extra_tags="projet")
-
-            # 🔔 Notifier tous les groupes associés au projet
-            for groupe in projet.groupe_set.all():
-                PNotification.objects.create(
-                    title="Nouvelle annonce",
-                    content=f"Une annonce a été publiée pour le projet '{projet.nom_project}'.",
-                    destination_type='group',
-                    groupe=groupe
-                )
+            classe = projet.code_classe
+            etudiants = classe.etudiants.all()
+            notif = PENotification.objects.create(
+                title="Nouvelle Announce",
+                content=f"l'announce a été ajouté au projet '{projet.nom_project}' ."
+            )
+            notif.etudiants.set(etudiants)
         else:
             messages.error(request, "Le contenu ne peut pas être vide.", extra_tags="projet")
 
@@ -463,18 +516,20 @@ def add_ressource(request, projet_id):
             video_url=video_url if video_url else None,
             url=url if url else None
         )
+        classe = project.code_classe
+        etudiants = classe.etudiants.all()
+        notif = PENotification.objects.create(
+            title="Nouvelle Ressource",
+            content=f"Une nouvelle ressource  a été ajoutée au projet '{projet.nom_project}'."
+        )
+        notif.etudiants.set(etudiants)
+ 
+
+
 
         messages.success(request, "Ressource ajoutée avec succès.", extra_tags="projet")
 
-        # 🔔 Notifier tous les groupes associés au projet
-        for groupe in projet.groupe_set.all():
-            PNotification.objects.create(
-                title="Nouvelle ressource",
-                content=f"Une nouvelle ressource a été ajoutée pour le projet '{projet.nom_project}'.",
-                destination_type='group',
-                groupe=groupe
-            )
-
+        
     return redirect("projet_detail", projet_id=projet.id)
 
 def delete_ressource(request, ressource_id):
@@ -485,10 +540,12 @@ def delete_ressource(request, ressource_id):
     return redirect("projet_detail", projet_id=projet_id)
 
 def groupe_stats_view(request, projet_id, groupe_id):
+    prof_id = request.session.get('user_id')
+    if not prof_id:
+        return redirect('login')
+    prof = Professeur.objects.filter(id=prof_id).first()
     groupe = get_object_or_404(Groupe, id=groupe_id, projet__id=projet_id)
     instructions_status = InstructionStatus.objects.filter(groupe=groupe).select_related('instruction')
-    prof_id = request.session.get('user_id')
-    prof = Professeur.objects.filter(id=prof_id).first()
     projet = get_object_or_404(Project, id=projet_id)
 
     taches_du_groupe = Taches.objects.filter(groupe=groupe).select_related('etudiant')
@@ -567,7 +624,6 @@ def notifier_champ_manquant(request, projet_id, groupe_id, etudiant_id, champ):
     if request.method == 'POST':
         etudiant = get_object_or_404(Etudiant, id=etudiant_id)
         projet = get_object_or_404(Project, id=projet_id)
-        groupe = get_object_or_404(Groupe, id=groupe_id)
         
 
         champs_traduction = {
@@ -579,19 +635,25 @@ def notifier_champ_manquant(request, projet_id, groupe_id, etudiant_id, champ):
         message = champs_traduction.get(champ, "Veuillez compléter vos informations personnelles.")
 
         # Création de la notification
-        PNotification.objects.create(
+        notification = PENotification.objects.create(
             title="Information manquante",
             content=f"{message} (Projet: {projet.nom_project})",
-            destination_type='student',
-            student=etudiant
         )
 
+        # Association avec un seul étudiant
+        notification.etudiants.add(etudiant)
+
         messages.success(request, f"Notification envoyée à {etudiant.nom} {etudiant.prenom}.", extra_tags="groupe")
-        
-        return redirect(request.META.get('HTTP_REFERER', '/'))
+
+    return redirect(request.META.get('HTTP_REFERER', '/'))
 
 
 def chat_view(request):
+    prof_id = request.session.get('user_id')
+    if not prof_id:
+        return redirect('login')
+    prof = Professeur.objects.filter(id=prof_id).first()
+
     if request.method == 'POST':
         user_message = request.POST.get('message', '')
 
@@ -603,21 +665,22 @@ def chat_view(request):
         model = genai.GenerativeModel("gemini-2.0-flash")
         chat = model.start_chat()
 
-        # Demander des réponses plus courtes
         response = chat.send_message(
             f"{user_message} (Réponds courts de manière claire et précise.)",
             generation_config={
-                "max_output_tokens": 300,    # Limite la taille de la réponse
-                "temperature": 0.7,         # Contrôle la créativité (0 = précis, 1 = aléatoire)
-                "top_p": 0.9,               # Fait varier légèrement les réponses
-                "top_k": 40                 # Sélectionne les meilleurs tokens pour plus de diversité
+                "max_output_tokens": 300,
+                "temperature": 0.7,
+                "top_p": 0.9,
+                "top_k": 40
             }
         )
 
         formatted_response = markdown.markdown(response.text) 
         return JsonResponse({'response': formatted_response})
 
-    return render(request, 'prof/chat.html')
+    # 🔽 Ajout du professeur dans le contexte
+    return render(request, 'prof/chat.html', {'professeur': prof})
+
 
 def update_instruction_status(request, project_id, groupe_id):
     project = get_object_or_404(Project, id=project_id)
@@ -660,75 +723,277 @@ def update_instruction_status(request, project_id, groupe_id):
         'instructions': instructions
     })
 
-
 def prof_notification(request):
-    return render(request, 'prof/notification.html')
+    prof_id = request.session.get('user_id')
+    if not prof_id:
+        return redirect('login')
+    prof = Professeur.objects.filter(id=prof_id).first()
+    if not prof:
+        return redirect('login')
+    
+    today = timezone.now().date()
+    upcoming_date = today + timedelta(days=3)
+    projects = Project.objects.filter(
+        code_classe__professeur=prof,
+        date_fin__range=(today, upcoming_date)
+    )
+    
+    for project in projects:
+        deadline_str = project.date_fin.strftime("%d/%m/%Y")
+        exits = ProfNotification.objects.filter(
+            professeur=prof,
+            content__icontains=project.nom_project,
+            created_at__date=today
+        ).exists()
+        if not exits:
+            ProfNotification.objects.create(
+                professeur=prof,
+                title="Echeance proche de projet",
+                content=f"Le projet '{project.nom_project}' va se terminer bientôt le {deadline_str}.",
+            )
+    
+    notifications = ProfNotification.objects.filter(professeur=prof).order_by('-created_at')
+    return render(request, 'prof/notification.html', {'notifications': notifications, 'professeur': prof})
+
+def delete_notification(request, notification_id):
+    if request.method == 'POST':
+        prof_id = request.session.get('user_id')
+        if not prof_id:
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'status': 'error', 'message': 'Unauthorized'}, status=401)
+            return redirect('login')
+        
+        notification = get_object_or_404(ProfNotification, id=notification_id, professeur_id=prof_id)
+        notification.delete()
+        
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'status': 'success'})
+        messages.success(request, "Notification supprimée avec succès.")
+    return redirect('prof_notification')
+
+def mark_as_read(request, notification_id):
+    if request.method == 'POST':
+        prof_id = request.session.get('user_id')
+        if not prof_id:
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'status': 'error', 'message': 'Unauthorized'}, status=401)
+            return redirect('login')
+        
+        notification = get_object_or_404(ProfNotification, id=notification_id, professeur_id=prof_id)
+        if not notification.is_read:
+            notification.is_read = True
+            notification.save()
+        
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'status': 'success'})
+        messages.success(request, "Notification marquée comme lue.")
+    return redirect('prof_notification')
+
+def mark_all_as_read(request):
+    if request.method == 'POST':
+        prof_id = request.session.get('user_id')
+        if not prof_id:
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'status': 'error', 'message': 'Unauthorized'}, status=401)
+            return redirect('login')
+        
+        ProfNotification.objects.filter(professeur_id=prof_id, is_read=False).update(is_read=True)
+        
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'status': 'success', 'count': 0})
+        messages.success(request, "Toutes les notifications ont été marquées comme lues.")
+    return redirect('prof_notification')
 
 def prof_profile(request):
-    return render(request, 'prof/profile.html')
+    prof_id = request.session.get('user_id')
+    if not prof_id:
+        return redirect('login')
 
+    prof = Professeur.objects.filter(id=prof_id).first()
+    classe_count = Classe.objects.filter(professeur=prof).count()
+    project_count = Project.objects.filter(code_classe__professeur=prof).count()
+    student_count = Etudiant.objects.filter(classes__professeur=prof).distinct().count()
 
-def prof_settings(request):
-    return render(request, 'prof/settings.html')
+    context = {
+        'prof': prof,
+        'classe_count': classe_count,
+        'project_count': project_count,
+        'student_count': student_count,
+    }
+    return render(request, 'prof/profile.html', context)
 
-
-def prof_calender(request):
-    return render(request, 'prof/calender.html')
 
 def project_list(request):
-    search_query = request.GET.get('search', '')
-    class_filter = request.GET.get('class_filter', '')
+    prof_id = request.session.get('user_id')
+    if not prof_id:
+        return redirect('login')
 
-    projets = Project.objects.all()
-    
-    if search_query:
-        projets = projets.filter(nom_project__icontains=search_query)
+    prof = Professeur.objects.filter(id=prof_id).first()
+    if not prof:
+        return redirect('login')
+
+    # Get all classes taught by the prof
+    classes = Classe.objects.filter(professeur=prof, is_archived=False)
+
+    # Start with all projects in those classes
+    projets = Project.objects.filter(code_classe__in=classes)
+
+    # Filter by class if selected
+    class_filter = request.GET.get('class_filter')
     if class_filter:
         projets = projets.filter(code_classe__id=class_filter)
 
-    classes = Classe.objects.all()
     today = timezone.now().date()
 
     context = {
+        'professeur': prof,
         'projets': projets,
         'classes': classes,
         'today': today,
     }
     return render(request, 'prof/projets.html', context)
 
-
-
 def calendar_view(request):
-    projects = Project.objects.all()
+    prof_id = request.session.get('user_id')
+    if not prof_id:
+        return redirect('login')
+
+    prof = Professeur.objects.filter(id=prof_id).first()
+    classes = Classe.objects.filter(professeur=prof)
+    projets = Project.objects.filter(code_classe__in=classes)
     events = PEvent.objects.all()
 
     all_events = []
+    color_classes = ['event-red', 'event-blue', 'event-green', 'event-yellow', 'event-purple']
+    index = 0
 
-    for projet in projects:
+    for projet in projets:
+        class_name = color_classes[index % len(color_classes)]
+        index += 1
         all_events.append({
-            'title': f"Deadline: {projet.nom_project}",
-            'start': str(projet.date_fin),
-            'color': 'red'
+            'title': projet.nom_project,
+            'start': str(projet.date_debut),
+            'end': str(projet.date_fin),
+            'className': f'event-project {class_name}',
+            'type': 'project',
+            'project_id': projet.id
         })
 
     for event in events:
         all_events.append({
+            'id': event.id,
             'title': event.title,
-            'start': str(event.date),
-            'color': 'blue'
+            'start': str(event.start),
+            'end': str(event.end),
+            'className': event.color,
+            'type': 'personal'
         })
 
-    context = {
-        'events': json.dumps(all_events)
-    }
-    return render(request, 'prof/calendar.html', context)
+    return render(request, 'prof/calender.html', {
+        'professeur': prof,
+        'events': json.dumps(all_events),
+    })
 
 @csrf_exempt
-def add_event(request):
+def add_or_edit_event(request):
     if request.method == 'POST':
-        data = json.loads(request.body)
-        title = data.get('title')
-        date = data.get('date')
-        Event.objects.create(title=title, date=date)
-        return JsonResponse({'message': 'Événement ajouté avec succès !'})
+        try:
+            data = json.loads(request.body)
+            event_id = data.get('id')
+            title = data.get('title')
+            start = data.get('start')
+            end = data.get('end')
+            color = data.get('color')
+
+            if not all([title, start, end, color]):
+                return JsonResponse({'error': 'Champs manquants'}, status=400)
+
+            if event_id:
+                event = PEvent.objects.get(id=event_id)
+                event.title = title
+                event.start = start
+                event.end = end
+                event.color = color
+                event.save()
+                return JsonResponse({'message': 'Événement modifié !'})
+            else:
+                PEvent.objects.create(title=title, start=start, end=end, color=color)
+                return JsonResponse({'message': 'Événement ajouté !'})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
     return JsonResponse({'error': 'Méthode non autorisée'}, status=405)
+
+@csrf_exempt
+@require_http_methods(["DELETE"])
+def delete_event(request, event_id):
+    try:
+        event = PEvent.objects.get(id=event_id)
+        event.delete()
+        return JsonResponse({"message": "Événement supprimé avec succès."})
+    except PEvent.DoesNotExist:
+        return JsonResponse({"error": "Événement non trouvé."}, status=404)
+    
+
+def start_meet(request):
+    prof_id = request.session.get('user_id')
+    if not prof_id:
+        return redirect('login')
+
+    prof = Professeur.objects.filter(id=prof_id).first()
+    professeur = request.session.get('user_id')
+    if not professeur:
+        return redirect('login')
+    classes = Classe.objects.filter(professeur=professeur).prefetch_related('projets__groupe_set', 'etudiants')
+
+    return render(request, 'prof/groupe_meet.html', {
+        'professeur' : prof,
+        'classes': classes
+    })
+
+
+def launch_meet(request):
+    prof_id = request.session.get('user_id')
+    if not prof_id:
+        return redirect('login')
+
+    prof = Professeur.objects.filter(id=prof_id).first()
+    if request.method == 'POST':
+        target_type = request.POST.get('target_type')
+        target_id = request.POST.get('target_id')
+
+        if target_type == 'classe':
+            classe = get_object_or_404(Classe, id=target_id)
+            students = classe.etudiants.all()
+        elif target_type == 'groupe':
+            groupe = get_object_or_404(Groupe, id=target_id)
+            students = groupe.membres.all()
+        else:
+            return redirect('start_meet')
+
+        # Generate a unique meeting link (e.g., using UUID or timestamp)
+        meeting_link = f"https://meet.jit.si/{target_type}-{target_id}-{uuid.uuid4()}"
+        start_time = timezone.now()
+        end_time = start_time + timedelta(hours=1)  # assuming the meeting is 1 hour long
+
+        # Save the meeting details to the database
+        meeting = Meeting.objects.create(
+            target_type=target_type,
+            target_id=target_id,
+            meeting_link=meeting_link,
+            start_time=start_time,
+            end_time=end_time
+        )
+
+        # Notify students or send link temporarily (e.g., add to the notification system)
+        # For simplicity, the link is returned with the student details
+        return render(request, 'prof/meet_room.html', {
+            'professeur': prof,
+            'students': students,
+            'target_type': target_type,
+            'meeting_link': meeting_link
+        })
+
+    return redirect('start_meet')
+
+

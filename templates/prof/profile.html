@@ -1,35 +1,136 @@
-{% extends 'prof/base.html' %} 
+{% extends 'prof/base.html' %}
 {% load static %}
-{% block content %} 
-<h1>Profile</h1>
-<div class="container mt-5">
-    <div class="row">
-        <!-- Profile Card -->
-        <div class="col-md-4">
-            <div class="card shadow-lg text-center p-4">
-                <img src="" alt="Profile Picture" class="rounded-circle mx-auto d-block" width="150" height="150">
-                <h4 class="mt-3">hafsa </h4>
-                <p class="text-muted">hafsa@gamil</p>
-                <p class="text-muted">not ava</p>
 
-                <a href="{% url 'edit_professor_profile' %}" class="btn btn-primary btn-sm mt-3">Edit Profile</a>
-            </div>
+{% block content %}
+<style>
+.profile-banner {
+    position: relative;
+    height: 300px;
+    background-image: url("{% static 'img/profilebg.jpg' %}");
+    background-size: cover;
+    background-position: center;
+    border-radius: 30px;
+    color: white;
+    padding: 20px 40px 80px 40px;
+    box-sizing: border-box;
+
+    }
+
+.stats-bar {
+    position: absolute;
+    bottom: 30px;   /* adjust this value as needed */
+    left: 40px;     /* match padding left */
+    display: flex;
+    gap: 40px;
+    z-index: 1;
+}
+
+    .stat-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: 16px;
+        color: white;
+        position: relative; /* keep for possible future tweaks */
+    }
+
+    .stat-item .iconify {
+        font-size: 25px; 
+        margin-bottom: 8px;
+    }
+
+    .stat-item .nbr {
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+.profile-photo-container {
+    position: absolute;
+    bottom: -130px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    width: 130px;
+    z-index: 2;
+}
+
+    .profile-photo {
+        width: 130px;
+        height: 130px;
+        border-radius: 50%;
+        border: 4px solid white;
+        object-fit: cover;
+        box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        background-color: white;
+        display: block;
+        margin: 0 auto;
+    }
+
+    .name {
+        margin-top: 10px;
+        white-space: nowrap;
+        font-size: 22px;
+        font-weight: bold;
+        color: white;
+        text-shadow: 0 0 5px rgba(0,0,0,0.8);
+    }
+
+    .content {
+        margin-top: 100px; /* marge suffisante pour que le contenu ne soit pas caché par la photo */
+        padding: 20px;
+    }
+
+    .info-section p {
+        margin-bottom: 10px;
+        font-size: 16px;
+    }
+
+
+</style>
+
+<div class="profile-banner mb-3">
+    <div class="stats-bar">
+        <div class="stat-item">
+            <span class="iconify" data-icon="solar:notebook-minimalistic-linear"></span>
+            <div class="nbr">{{ classe_count }}</div>
         </div>
-
-        <!-- Professor Details & Courses -->
-        <div class="col-md-8">
-            <div class="card shadow-lg p-4">
-                <h5 class="mb-4">Professor Details</h5>
-                <ul class="list-group">
-                    <li class="list-group-item"><strong>Username:</strong> name</li>
-                    <li class="list-group-item"><strong>Email:</strong> main</li>
-                    <li class="list-group-item"><strong>Department:</strong> sma</li>
-                    <li class="list-group-item"><strong>Joined:</strong> year</li>
-                </ul>
-            </div>
-
-            
+        <div class="stat-item">
+            <span class="iconify" data-icon="solar:folder-outline"></span>
+            <div class="nbr">{{ project_count }}</div>
+        </div>
+        <div class="stat-item">
+            <span class="iconify" data-icon="solar:users-group-two-rounded-outline"></span>
+            <div class="nbr">{{ student_count }}</div>
         </div>
     </div>
+
+    <div class="profile-photo-container">
+        <img src="{{ prof.photo_profil.url }}" alt="Photo de profil" class="profile-photo">
+        <div class="name">{{ prof.nom }} {{ prof.prenom }}</div>
+    </div>
 </div>
-{% endblock content %}
+
+<div class="card my-2 shadow-sm raduise-for-all">
+  <div class="card-body">
+    <h2 class="card-title mb-3" style="color: #635bff; font-weight: 600;">Informations générales</h2>
+    <div class="info-section mb-3">
+      <p><strong>Email :</strong> {{ prof.email }}</p>
+      <p><strong>Département :</strong> {{ prof.departement }}</p>
+      <p><strong>Spécialité :</strong> {{ prof.specialite }}</p>
+      {% if prof.telephone %}
+        <p><strong>Téléphone :</strong> {{ prof.telephone }}</p>
+      {% endif %}
+      {% if prof.bio %}
+        <p><strong>À propos :</strong> {{ prof.bio }}</p>
+      {% endif %}
+      {% if prof.date_creation %}
+        <p><strong>Membre depuis :</strong> {{ prof.date_creation|date:"d/m/Y" }}</p>
+      {% endif %}
+    </div>
+    <div class="change-password">
+      <a href="#" class="btn btn-form-classe">Changer le mot de passe</a>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

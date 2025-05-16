@@ -167,3 +167,4 @@ function toggleTheme() {
         searchInput.style.display = "none"; // Hide input
     }
 }
+
