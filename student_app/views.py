@@ -18,312 +18,96 @@ import markdown
 from google.api_core.exceptions import ServiceUnavailable, DeadlineExceeded
 import uuid
 import os
+from django.urls import path
 import time
+from django.db.models import Q
 
-
-
-
-
-
-
-def login_view(request):
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        remember_me = request.POST.get('remember_me')
-
-        if email.endswith('@enset-media.ac.ma'):
-                professeur = Professeur.objects.authenticate(email=email, password=password)
-                if professeur is  None:
-                    return render(request, 'authentification/message.html', {'message': 'the professor is not exist'})
-                elif professeur == 'incorrect_password':
-                    return render(request, 'authentification/message.html', {'message': 'the password is incorrect'})
-                else:
-                    if professeur.is_verified:
-                            login(request, professeur)
-
-                            request.session['user_type'] = 'professeur'
-                            request.session['user_id'] = professeur.id  
-
-                            if remember_me:  
-                                request.session.set_expiry(None)  
-                            else:  
-                                request.session.set_expiry(0) 
-
-                            professeur.last_login = timezone.now()  
-                            professeur.save()
-
-                            return render(request, 'authentification/message.html', {'message': 'Login successful! Welcome to the platform'})
-                    else:
-                        return render(request, 'authentification/message.html', {'message': 'Le compte n\'est pas activé'})
-                        
-
-        elif email.endswith('-etu@etu.univh2c.ma'):
-                etudiant = Etudiant.objects.authenticate(email=email, password=password)
-
-                if etudiant is None:
-                    return render(request, 'authentification/message.html', {'message': 'the student is not exist'})
-                
-                elif etudiant == 'incorrect_password':
-                    return render(request, 'authentification/message.html', {'message': 'the password is incorrect'})
-                
-                else:
-                    if etudiant.is_verified:
-
-                        login(request, etudiant)
-
-                        request.session['user_type'] = 'etudiant'
-                        request.session['user_id'] = etudiant.id  
-
-                        if remember_me:  
-                            request.session.set_expiry(None)  
-                        else:  
-                            request.session.set_expiry(0) 
-                        
-                        etudiant.last_login = timezone.now()  
-                        etudiant.save()
-                        return render(request, 'authentification/message.html', {'message': 'Login successful! Welcome to the platform'})
-                    else:
-                       return render(request, 'authentification/message.html', {'message': 'Le compte n\'est pas activé'})
-        else:
-            return render(request, 'authentification/message.html', {'message': "Please enter a valid email. Professors should use '@enset-media.ac.ma' and students should use '-etu@etu.univh2c.ma'"})
-    return render(request, 'authentification/login.html')
-
-def signup_view(request):
-    user = None
-    id_utilisateur = request.GET.get('uid')
-    token = request.GET.get('token')
-
-    if id_utilisateur and token:
-        try:
-            id = force_str(urlsafe_base64_decode(id_utilisateur))
-            user = Professeur.objects.filter(pk=id).first() or Etudiant.objects.filter(pk=id).first()
-        except (TypeError, ValueError, OverflowError):
-            user = None
-
-        if user is not None and default_token_generator.check_token(user, token):
-            user.is_verified = True
-            user.save()
-            return render(request, 'authentification/message.html', {'message': 'Vérification réussie'})
-        else:
-            return render(request, 'authentification/message.html', {'message': 'Échec de la vérification'})
-
-    
-    if request.method == 'POST':
-        nom = request.POST.get('nom')
-        prenom = request.POST.get('prenom')
-        filiere = request.POST.get('filiere')
-        departement = request.POST.get('departement')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        confirm_password = request.POST.get('confirm_password')
-
-        # Vérifier les mots de passe
-        if password != confirm_password:
-            return render(request, 'authentification/message.html', {'message': 'the password is not the same'})
-
-        # Vérifier si l'email existe déjà
-        if Professeur.objects.filter(email=email, is_verified=True).exists() or Etudiant.objects.filter(email_etudiant=email, is_verified=True).exists():
-            return render(request, 'authentification/message.html', {'message': 'This email is already taken'})
-
-        current_site = get_current_site(request)
-
-        # Enregistrement des Professeurs
-        if email.endswith('@enset-media.ac.ma'):
-            professeur = Professeur(
-                departement=departement,
-                specialite=departement,
-                email=email,
-                password=make_password(password),
-                nom=nom,
-                prenom=prenom,
-                last_login=None,
-                is_verified=False
-            )
-            professeur.save()
-
-            uid = urlsafe_base64_encode(force_bytes(professeur.pk))
-            token = default_token_generator.make_token(professeur)
-            verification_link = f"http://{current_site.domain}/etu/signup/?uid={uid}&token={token}"
-
-            html_message = f"""
-                <html>
-                    <body>
-                        <h1>Confirmez votre e-mail</h1>
-                        <p>Pour confirmer votre compte, cliquez sur le bouton ci-dessous :</p>
-                        <a href="{verification_link}">
-                            <button style="padding: 10px 15px; font-size: 16px; color: white; background-color: #007BFF; border-radius: 5px; border: none; cursor: pointer;">
-                                Confirmer mon compte
-                            </button>
-                        </a>
-                    </body>
-                </html>
-            """
-
-            send_mail(
-                "Confirmez votre compte",
-                "",
-                "najibimane093@gmail.com",
-                [email],
-                fail_silently=False,
-                html_message=html_message,
-            )
-
-        # Enregistrement des Étudiants
-        elif email.endswith('-etu@etu.univh2c.ma'):
-            etudiant = Etudiant(
-                filiere=filiere,
-                email_etudiant=email,
-                password=make_password(password),
-                nom=nom,
-                prenom=prenom,
-                departement=departement,
-                last_login=None,
-                is_verified=False
-            )
-            etudiant.save()
-
-            uid = urlsafe_base64_encode(force_bytes(etudiant.pk))
-            token = default_token_generator.make_token(etudiant)
-            verification_link = f"http://{current_site.domain}/etu/signup/?uid={uid}&token={token}"
-
-            html_message = f"""
-                <html>
-                    <body>
-                        <h1>Confirmez votre e-mail</h1>
-                        <p>Pour confirmer votre compte, cliquez sur le bouton ci-dessous :</p>
-                        <a href="{verification_link}">
-                            <button style="padding: 10px 15px; font-size: 16px; color: white; background-color: #007BFF; border-radius: 5px; border: none; cursor: pointer;">
-                                Confirmer mon compte
-                            </button>
-                        </a>
-                    </body>
-                </html>
-            """
-
-            send_mail(
-                "Confirmez votre compte",
-                "",
-                "najibimane093@gmail.com",
-                [email],
-                fail_silently=False,
-                html_message=html_message,
-            )
-            return render(request, 'authentification/message.html', {'message': 'Your email has been sent successfully'})
-        else:
-            return render(request, 'authentification/message.html', {'message': 'Invalid email format. Use "@enset-media.ac.ma" for professors or "-etu@etu.univh2c.ma" for students'})
-
-    return render(request, 'authentification/signup.html')
-
-def forget_password(request):
-    if request.method == 'POST':
-        email = request.POST.get('email_forgot')
-        
-        request.session['reset_email'] = email
-
-        reset_link = f"http://127.0.0.1:8000/update_password/?id={uuid.uuid4()}"
-
-        if email.endswith('-etu@etu.univh2c.ma'):
-            etudiant = Etudiant.objects.filter(EMAIL_ETUDIANT=email).first()
-            if etudiant is not None:
-
-                html_message = f"""
-                                    <html>
-                                        <body>
-                                            <h1>Réinitialisation du mot de passe</h1>
-                                            <p>We received a request to reset your password. If you made this request, please click the button below to reset your password:</p>
-                                            <a href="{reset_link}">
-                                                <button type="button" style="padding: 10px 15px; font-size: 16px; color: white; background-color: #007BFF; border-radius: 5px; border: none; cursor: pointer;">
-                                                    Réinitialiser le mot de passe
-                                                </button>
-                                            </a>
-                                        </body>
-                                    </html>
-                                """
-
-                send_mail(
-                    "Update password",
-                    "",  
-                    "votre_email@gmail.com",
-                    [email],
-                    fail_silently=False,
-                    html_message=html_message,
-                )
-                return render(request, 'authentification/message.html', {'message': 'Your email has been sent successfully'})
-            else:
-                return render(request, 'authentification/message.html', {'message': 'the student is not exist'})
-
-        elif email.endswith('@enset-media.ac.ma'):
-            professeur = Professeur.objects.filter(EMAIL=email).first()
-            if professeur is not None:
-                html_message = f"""
-                        <html>
-                            <body>
-                                <h1>Réinitialisation du mot de passe</h1>
-                                <p>We received a request to reset your password. If you made this request, please click the button below to reset your password:</p>
-                                <a href="{reset_link}">
-                                    <button type="button" style="padding: 10px 15px; font-size: 16px; color: white; background-color: #007BFF; border-radius: 5px; border: none; cursor: pointer;">
-                                        Réinitialiser le mot de passe
-                                    </button>
-                                </a>
-                            </body>
-                        </html>
-                    """
-                send_mail(
-                    "Update password",
-                    "",  
-                    "votre_email@gmail.com",
-                    [email],
-                    fail_silently=False,
-                    html_message=html_message,
-                )
-                return render(request, 'authentification/message.html', {'message': 'Your email has been sent successfully'})
-            else:
-                return render(request, 'authentification/message.html', {'message': 'the professor is not exist'})
-
-        else:
-            return render(request, 'authentification/message.html', {'message': 'Invalid email format'})
-
-    return render(request, 'authentification/forget_password.html')
-
-def update_password(request):
-    email = request.session.get('reset_email')
-
-    if request.method == 'POST':
-        newpassword = request.POST.get('new_password')
-        confirmed_new_password = request.POST.get('confirmed_new_password')
-
-        if newpassword != confirmed_new_password:
-            return render(request, 'authentification/message.html', {'message': 'the two password is not the same'})
-        
-        
-        if email.endswith('-etu@etu.univh2c.ma'):
-             etudiant = Etudiant.objects.filter(EMAIL_ETUDIANT=email).first()
-             etudiant.PASSWORD = make_password(newpassword)
-             etudiant.save()
-             return render(request, 'authentification/message.html', {'message': 'Your password has been successfully updated'})
-        elif email.endswith('@enset-media.ac.ma'):
-            professeur = Professeur.objects.filter(EMAIL=email).first()
-            professeur.PASSWORD = make_password(newpassword)
-            professeur.save()
-            return render(request, 'authentification/message.html', {'message': 'Your password has been successfully updated'})
-
-
-         
-    return render(request, 'authentification/update_password.html')
 
 def logout_user(request):
-    logout(request)
-    request.session.flush()
     update_time_counter(request)
+    request.session.flush()
+    logout(request)
+    
     return redirect('login')
 
-
 def detailles(request):
-    return render(request, 'workSpace/detailles.html')
+    groupe_id = request.session.get('groupe_id', None)
+    groupe = get_object_or_404(Groupe, id=groupe_id)
+    projet = groupe.projet
+    instructions = projet.instructions.all()
+    ressources = projet.ressources.all()
+    Annonces = projet.annonces.all()
 
+
+
+    if request.method == 'POST':
+        instruction_id = request.POST.get('id_instruction')
+        instruction = get_object_or_404(Instruction, id=instruction_id)
+
+        uploaded_file = None
+        for file_key in request.FILES:
+            if file_key.startswith("file_"):
+                uploaded_file = request.FILES[file_key]
+                break
+
+        # Récupérer ou créer le statut
+        status, created = InstructionStatus.objects.get_or_create(
+            instruction=instruction,
+            groupe=groupe
+        )
+
+        if instruction.livrable_requis:
+            # Si livrable, on gère l'upload
+            if uploaded_file:
+                status.fichier_livrable = uploaded_file
+                status.est_termine = True
+        else:
+            # Sinon, on gère juste la checkbox
+            # Si la case existe dans POST, elle est cochée
+            status.est_termine = 'is_checked' in request.POST
+
+        status.save()
+        return redirect("detailles")
+
+    # Préparer les données pour le template
+    instructions_data = []
+    for instruction in instructions:
+        try:
+            status = InstructionStatus.objects.get(instruction=instruction, groupe=groupe)
+        except InstructionStatus.DoesNotExist:
+            status = None
+
+        instructions_data.append({
+            'instruction': instruction,
+            'est_termine': status.est_termine if status else False,
+            'fichier_livrable': status.fichier_livrable if status else None,
+        })
+
+    grp_avec_projet = request.session.get('grp_avec_projet', None)
+    return render(request, 'workSpace/detailles.html', {
+        'instructions_data': instructions_data,
+        'ressources': ressources,
+        'description': projet.description,
+        'Annonces':Annonces,
+        'grp_avec_projet':grp_avec_projet
+    })
+
+def detailles_sg(request):
+    if request.method == 'POST' and 'detailles' in request.POST:
+        projet = get_object_or_404(Project, id=request.POST.get('projcet_id'))
+        instructions = projet.instructions.all()
+        ressources = projet.ressources.all()
+        Annonces = projet.annonces.all()
+
+        return render(request, 'singleSections/detailles_sg.html', {
+            'instructions': instructions,
+            'ressources': ressources,
+            'description': projet.description,
+            'Annonces':Annonces,
+        })
 
 def dashBoard_ws(request):
+    grp_avec_projet = request.session.get('grp_avec_projet', None)
 
     groupe_id = request.session.get('groupe_id', None)
     groupe = get_object_or_404(Groupe, id=groupe_id)
@@ -362,9 +146,10 @@ def dashBoard_ws(request):
             'nb_tache_en_cours':nb_taches_en_cours , 
             'nb_taches_retard' : nb_taches_retard,
             'nb_tache_total':nb_tache_total,
-            'nb_tache_non_realisé' : nb_taches_en_cours + nb_taches_retard
+            'nb_tache_non_realisé' : nb_taches_en_cours + nb_taches_retard,
+            'grp_avec_projet':grp_avec_projet
             })
-    return render(request, 'workSpace/dashBoard.html')
+    return render(request, 'workSpace/dashBoard.html', {'grp_avec_projet':grp_avec_projet})
 
 def dashBoard_home(request):
     id_etudiant = request.session.get('user_id')
@@ -586,6 +371,13 @@ def todo_home(request):
     if taches_proches_data != [] or taches_depassees_data != [] : 
         nouvelle_notifications = True
 
+    # supprimer les notifications de prof qui ont depassé une durée précise
+    duree_jours = 5
+    limite = timezone.now() - timedelta(days=duree_jours)
+    anciennes_notifications = PENotification.objects.filter(created_at__lt=limite)
+    count, _ = anciennes_notifications.delete()
+
+
     # ---- ^^^ NOTIFICATIONS------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     if request.method == 'POST' :
@@ -742,13 +534,15 @@ def todo_ws(request):
 
     if request.session.get('archive') == False:   
         taches = Taches.objects.filter(groupe=groupe)
-        etudiants=Etudiant.objects.filter(groupes=groupe).exclude(id=id_etudiant)
+        etudiants=Etudiant.objects.filter(groupes=groupe)
     else:
         taches = Taches.objects.filter(groupeArchive=groupe)
-        etudiants=Etudiant.objects.filter(groupesArchive=groupe).exclude(id=id_etudiant)
+        etudiants=Etudiant.objects.filter(groupesArchive=groupe)
 
     archive = request.session.get('archive')
-    return render(request, 'workSpace/todo.html', {'taches':taches,'etudiants':etudiants, 'groupe_id':groupe_id, 'today':today.isoformat(), 'archive':archive})
+
+    grp_avec_projet = request.session.get('grp_avec_projet', None)
+    return render(request, 'workSpace/todo.html', {'taches':taches,'etudiants':etudiants, 'groupe_id':groupe_id, 'today':today.isoformat(), 'archive':archive, 'grp_avec_projet':grp_avec_projet})
 
 def ws_reception(request, groupe_id):
     est_archive = request.GET.get('archive', 'false').lower() == 'true'
@@ -777,11 +571,14 @@ def chat(request):
     if groupe_id:
         groupe = Groupe.objects.get(id=groupe_id)
         messages = Message.objects.filter(groupe=groupe).order_by("date_envoi")
-        return render(request, 'workSpace/chat.html', {'messages': messages, 'groupe': groupe})
+        
+        grp_avec_projet = request.session.get('grp_avec_projet', None)
+        return render(request, 'workSpace/chat.html', {'messages': messages, 'groupe': groupe, 'grp_avec_projet':grp_avec_projet})
     else:
         return HttpResponse('Aucun groupe choisi.')   
 
 def memberes(request):
+    grp_avec_projet = request.session.get('grp_avec_projet', None)
     # Récupérer l'ID du groupe depuis la session
     groupe_id = request.session.get('groupe_id', None)
     if request.session.get('archive') == False: 
@@ -799,7 +596,7 @@ def memberes(request):
             else:
                 etudiant.groupesArchive.remove(groupe_id) 
 
-            return render(request, 'workSpace/membres.html', {'etudiants': etudiants})
+            return render(request, 'workSpace/membres.html', {'etudiants': etudiants, 'grp_avec_projet':grp_avec_projet})
         if "btn-add" in request.POST: 
         # Récupération de l'email du formulaire
             email = request.POST.get("email") 
@@ -811,15 +608,17 @@ def memberes(request):
                 
                 return render(request, 'workSpace/membres.html', {
                     'etudiants': etudiants,
-                    'success_message': "Invitation envoyée avec succès"
+                    'success_message': "Invitation envoyée avec succès",
+                    'grp_avec_projet':grp_avec_projet
                 })
             except Etudiant.DoesNotExist:
                 return render(request, 'workSpace/membres.html', {
                     'etudiants': etudiants,
-                    'error_message': "Cet email n'existe pas dans la base de données"
+                    'error_message': "Cet email n'existe pas dans la base de données",
+                    'grp_avec_projet':grp_avec_projet
                 })
     archive = request.session.get('archive')
-    return render(request, 'workSpace/membres.html', {'etudiants': etudiants, 'archive':archive})
+    return render(request, 'workSpace/membres.html', {'etudiants': etudiants, 'archive':archive, 'grp_avec_projet':grp_avec_projet})
 
 def ouvrir_doc(request):
     if request.method == "POST":
@@ -852,34 +651,8 @@ def documents(request):
 
         return JsonResponse({"success": True, "id": document.id,"title": document.title, "file_url": document.file.url})  
 
-    return render(request, 'workSpace/documents.html', {'doc': Document.objects.filter(groupe=groupe_instance)})
-
-
-# def documents(request):
-
-#     if request.session.get('archive') == False: 
-#         groupe_instance = Groupe.objects.get(id=request.session.get('groupe_id'))
-#     else:
-#         groupe_instance = GroupeArchive.objects.get(id=request.session.get('groupe_id'))
-
-#     if request.method == "POST":
-#         file = request.FILES.get("file")
-#         if not file:
-#             return JsonResponse({"success": False, "error": "Aucun fichier sélectionné"}, status=400)
-        
-#         if request.session.get('archive') == False: 
-#             document = Document(title=os.path.splitext(file.name)[0], file=file, groupe=groupe_instance)
-#         else:
-#             document = Document(title=os.path.splitext(file.name)[0], file=file, groupeArchive=groupe_instance)
-
-#         document.save()
-#         return JsonResponse({"success": True, "file_url": document.file.url})
-
-
-#     if request.session.get('archive') == False: 
-#         return render(request, 'workSpace/documents.html', {'doc': Document.objects.filter(groupe=groupe_instance), 'archive':False})
-#     else:
-#         return render(request, 'workSpace/documents.html', {'doc': Document.objects.filter(groupeArchive=groupe_instance), 'archive':True})
+    grp_avec_projet = request.session.get('grp_avec_projet', None)
+    return render(request, 'workSpace/documents.html', {'doc': Document.objects.filter(groupe=groupe_instance), 'grp_avec_projet':grp_avec_projet})
 
 def suppDoc(request):
     if request.method == 'POST' and 'delete' in request.POST:
@@ -1000,7 +773,8 @@ def chatbot_view(request):
             return JsonResponse({'response': formatted_response})
 
         # Afficher la page avec les sujets disponibles
-        return render(request, 'WorkSpace/chatbot.html', {'sujets': sujets})
+        grp_avec_projet = request.session.get('grp_avec_projet', None)
+        return render(request, 'WorkSpace/chatbot.html', {'sujets': sujets, 'grp_avec_projet':grp_avec_projet})
 
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
@@ -1043,14 +817,27 @@ def notifications(request):
     taches_proches = request.session.get('taches_proches', [])
     taches_depassees = request.session.get('taches_depassees', [])
 
+    pNotifications = []
+    for notification in PENotification.objects.all():
+        etudiants_notifie = list(notification.etudiants.all())
+        if etudiant in etudiants_notifie:
+            pNotifications.append(notification)
+
     if request.method == 'POST' :
         # suprimer une notification
         if 'delete' in request.POST:
             id_notification = request.POST.get('id_notification')
-            notification  = get_object_or_404(Notification, id=id_notification )
-            notification .delete()
+            notification = get_object_or_404(Notification, id=id_notification )
+            notification.delete()
+            return redirect('notifications')
+        elif 'delete_pn' in request.POST:
+            id_notification = request.POST.get('id_notification')
+            notification = get_object_or_404(PENotification, id=id_notification )
+            notification.etudiants.remove(etudiant)
+            return redirect('notifications')
+
         # accepter une invitation
-        if 'accepter' in request.POST:
+        elif 'accepter' in request.POST:
             id_notification = request.POST.get('id_notification')
             notification  = get_object_or_404(Notification, id=id_notification )
             groupe=notification.groupe
@@ -1058,15 +845,16 @@ def notifications(request):
             groupe.nbr_membre += 1  
             groupe.save()  
             notification .delete()
+            return redirect('notifications')
 
 
 
-    return render(request, 'singleSections/notifications.html',  {'taches_proches':taches_proches, 'taches_depassees':taches_depassees , 'notifications':notifications})
+    return render(request, 'singleSections/notifications.html',  {'taches_proches':taches_proches, 'taches_depassees':taches_depassees , 'notifications':notifications, 'pNotifications':pNotifications})
 
 def groupes(request):
     id_etudiant = request.session.get('user_id')
     etudiant = Etudiant.objects.filter(id=id_etudiant).first()
-    groupes = etudiant.groupes.all()
+    
 
     
     if request.method == "POST" :
@@ -1133,7 +921,7 @@ def groupes(request):
             else:
                 messages.success(request, "Groupe créé avec succès !")
     
-    
+    groupes = etudiant.groupes.all()
     groupes_data = []
     for groupe in groupes:
         total_taches = groupe.taches.count()
@@ -1232,62 +1020,68 @@ def calender_home(request):
     return render(request, 'home/calender.html')
 
 def projets(request, classe_id):
-    classe= get_object_or_404(Classe, code_classe=classe_id)
+    classe = get_object_or_404(Classe, code_classe=classe_id)
     id_etudiant = request.session.get('user_id')
-    if request.method =='POST' :
-        if 'creer_groupe' in request.POST:
-            nom_groupe=request.POST.get('nom_groupe')  
-
-            selectedStudents = request.POST.get('selected-students')
-            # 1. Créer le groupe
-            student_ids = [int(id) for id in selectedStudents.split('-')]
-            selected_students = Etudiant.objects.filter(id__in=student_ids)
-            projet_id=request.POST.get('projet_id')
-            projet= get_object_or_404(Project, id= projet_id)
-            groupe=Groupe.objects.create(nom_groupe=nom_groupe, projet=projet, nbr_membre=4,)
-
-            # ajouter l'etudiant qui a créer le groupe au groupe
-            etudiant = Etudiant.objects.get(id=id_etudiant)
-            groupe.membres.add(etudiant)
-
-            # Envoyer les invitations
-            notifications = [
-                Notification(etudiant=etudiant, groupe=groupe) for etudiant in selected_students
-            ]
-            Notification.objects.bulk_create(notifications)
-
-            # creer les status des instruction:*
-
-            # Récupérer toutes les instructions liées à ce projet
-            instructions = projet.instructions.all()
-            # Créer un statut pour chaque instruction du projet
-            for instruction in instructions:
-                InstructionStatus.objects.create(
-                    instruction=instruction,
-                    groupe=groupe,  # Associe le statut avec le groupe
-                    est_termine=False,  # Par défaut, il n'est pas terminé
-                    fichier_livrable=None  # Pas de fichier pour l'instant
-                )
-
     etudiant = Etudiant.objects.filter(id=id_etudiant).first()
-         
-    etudiants = classe.etudiants.all().exclude(id=id_etudiant)
+    
+    if request.method == 'POST' and 'creer_groupe' in request.POST:
+        nom_groupe = request.POST.get('nom_groupe')  
+        selectedStudents = request.POST.get('selected-students')
+        
+        # Créer le groupe
+        student_ids = [int(id) for id in selectedStudents.split('-')]
+        selected_students = Etudiant.objects.filter(id__in=student_ids)
+        projet_id = request.POST.get('projet_id')
+        projet = get_object_or_404(Project, id=projet_id)
+        groupe = Groupe.objects.create(nom_groupe=nom_groupe, projet=projet, nbr_membre=4)
 
+        # Ajouter l'étudiant créateur du groupe
+        groupe.membres.add(etudiant)
+
+        # Invitations
+        notifications = [
+            Notification(etudiant=etud, groupe=groupe) for etud in selected_students
+        ]
+        Notification.objects.bulk_create(notifications)
+
+        # Instructions du projet
+        for instruction in projet.instructions.all():
+            InstructionStatus.objects.create(
+                instruction=instruction,
+                groupe=groupe, 
+                est_termine=False,
+                fichier_livrable=None
+            )
+
+    #  Groupes où l'étudiant est membre
+    groupes_etudiant = Groupe.objects.filter(
+        membres=etudiant,
+        projet__isnull=False
+    ).order_by('projet__date_debut')
+
+
+
+
+    #  Projets associés à l'étudiant
     projets_associés = Project.objects.filter(groupe__membres=etudiant).distinct()
 
-    # 2. Projets liés aux classes de l'étudiant mais où il n'est pas dans un groupe
+    # Projets de la classe où il n’est pas encore dans un groupe
     projets_non_associés = Project.objects.filter(
-        code_classe__etudiants=etudiant  # L'étudiant est dans la classe
+        code_classe=classe
     ).exclude(
-        id__in=projets_associés   # Exclure les projets où il est déjà dans un groupe
+        id__in=projets_associés
     ).distinct()
-        
-    return render(request, 'singleSections/projet.html',{
-        'projets_non_associés': projets_non_associés,
-        'projets_associés':projets_associés,
-        'etudiants':etudiants
-        })
 
+    # Étudiants de la classe (pour affichage dans le formulaire)
+    etudiants = classe.etudiants.all().exclude(id=etudiant.id)
+
+        
+    return render(request, 'singleSections/projet.html', {
+        'projets_non_associés': projets_non_associés,
+        "groupes_etudiant": groupes_etudiant,
+        'etudiants': etudiants
+    })
+  
 def profil(request):
     id_etudiant = request.session.get('user_id')
     etudiant = get_object_or_404(Etudiant, id=id_etudiant)

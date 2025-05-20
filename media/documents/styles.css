@@ -50673,7 +50673,7 @@ body pre[class*=language-] {
 }
 
 .chat-box .chat-box-inner {
-    height: 60vh;
+    height: 650px;
     max-height: 800px
 }
 

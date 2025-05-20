@@ -122,20 +122,15 @@
         <!-- /.modal-content -->
         </div>
     </div>
-  
-    
     <script>
         document.getElementById("upload-btn").addEventListener("click", function () {
             let fileInput = document.getElementById("imageInput");
             let file = fileInput.files[0];
-
             if (!file) {
                 return; 
             }
-
             let formData = new FormData();
             formData.append("file", file);
-
             fetch("{% url 'documents' %}", {
                 method: "POST",
                 body: formData,
@@ -146,52 +141,18 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Fermer le modal
                     let modalElement = document.querySelector('#primary-header-modal');
                     let modalInstance = bootstrap.Modal.getInstance(modalElement);
                     if (modalInstance) {
                         modalInstance.hide();
                     }
-
-                    fileInput.value = ""; 
-
-                    let docContainer = document.getElementById("documents-container");
-                    let newCard = document.createElement("div");
-                    newCard.className = "col-md-4 d-flex align-items-stretch";
-                    newCard.innerHTML = `
-                    <div class="card w-100">
-                        <div class="card-body">
-                            <div class="form-group">
-                                <div class="dropdown position-absolute top-0 end-0 m-2">
-                                    <button class="three-points-menu" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background: transparent;">
-                                        <iconify-icon icon="solar:menu-dots-bold" class="fs-6"></iconify-icon>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><button class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-id="${data.id}">Supprimer</button></li>
-                                    </ul>
-                                </div>
-                                <div class="card-photo-container">
-                                    <img src="{% static 'img/doc-photo.png' %}" class="card-photo-center" alt="rien !">
-                                </div>
-                                <h4 style="font-size: 17px;">${data.title}</h4>
-                                <form method="POST" action="{% url 'ouvrir_doc' %}">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="file_path" value="${data.file_url}">
-                                    <input type="submit" value="Consulter le document" class="btn d-block w-100 fw-medium bg-primary-subtle text-primary without-msg ouvrir_groupe">
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                    docContainer.prepend(newCard); // Ajouter en haut de la liste
+                    location.reload();
                 }
             })
             .catch(error => {
                 console.error("Erreur réseau :", error);
             });
         });
-
-        // Fonction pour récupérer le token CSRF
         function getCookie(name) {
             let cookieValue = null;
             if (document.cookie && document.cookie !== '') {

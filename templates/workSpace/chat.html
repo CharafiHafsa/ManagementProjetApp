@@ -5,17 +5,7 @@
 
   <div class="container-fluid">
     <div class="card overflow-hidden chat-application">
-      <div class="d-flex align-items-center justify-content-between gap-6 m-3 d-lg-none">
-        <button class="btn btn-primary d-flex" type="button" data-bs-toggle="offcanvas"
-          data-bs-target="#chat-sidebar" aria-controls="chat-sidebar">
-          <i class="ti ti-menu-2 fs-5"></i>
-        </button>
-        <form class="position-relative w-100">
-          <input type="text" class="form-control search-chat py-2 ps-5" id="text-srh"
-            placeholder="Search Contact">
-          <i class="ti ti-search position-absolute top-50 start-0 translate-middle-y fs-6 text-dark ms-3"></i>
-        </form>
-      </div>
+      
       <div class="d-flex">
         <div class="w-70 w-xs-100 chat-container">
           <div class="chat-box-inner-part h-100">
@@ -59,8 +49,8 @@
                       </li>
                 </ul>
               </div>
-              <div class="d-flex parent-chat-box">
-                <div class="chat-box w-xs-100">
+              <div class="parent-chat-box">
+                <div class="chat-box w-xs-100" style="width: 100%;">
                   <div class="chat-box-inner p-9" data-simplebar="init">
                     <div class="simplebar-wrapper" style="margin: -20px;">
                       <div class="simplebar-height-auto-observer-wrapper">
@@ -110,11 +100,11 @@
                       <div class="simplebar-scrollbar" style="height: 0px; display: none;"></div>
                     </div>
                   </div>
-                <div class="px-9 py-6 border-top chat-send-message-footer">
-                    <div class="d-flex align-items-center justify-content-between">
-                      <div class="d-flex align-items-center justify-content-between">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <form method="post">
+                  <div class="px-9 py-6 border-top chat-send-message-footer">
+                    <div class="align-items-center justify-content-between">
+                      <div class="align-items-center justify-content-between">
+                        <div class="align-items-center justify-content-between">
+                            <form method="post" style="display: flex;">
                                 {% csrf_token %}
                                 <input type="text" id="messageInput" class="form-control message-type-box text-muted border-0 rounded-0 p-0 ms-2" placeholder="Type a Message">
                                 <button type="button" class="btn btn-primary ms-2" onclick="sendMessage()">Envoyer</button>
@@ -122,6 +112,7 @@
                         </div>
                     </div> 
                 </div>
+                
               </div>
             </div>
           </div>
@@ -227,9 +218,21 @@
 
     // Envoyer le message lorsque l'utilisateur appuie sur la touche "Entrée"
     document.getElementById('messageInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            sendMessage();
+        // Vérifier que la connexion est ouverte
+        if (!socket || socket.readyState !== WebSocket.OPEN) {
+            console.error("La connexion WebSocket est fermée, impossible d'envoyer le message.");
+            return;
+        }
+        const messageInput = document.getElementById('messageInput');
+        const message = messageInput.value.trim();
+        if (message !== '') {
+            socket.send(JSON.stringify({
+                'action': 'send_message',
+                'message': message,
+                'etudiant_id': etudiantId,
+                'groupe_id': groupeId
+            }));
+            messageInput.value = '';  // Vide le champ après envoi
         }
     });
 

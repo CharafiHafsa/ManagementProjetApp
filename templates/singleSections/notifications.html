@@ -9,103 +9,129 @@
         <h4 class="card-title">Notifications</h4>
         </div>
         <ul class="feeds ps-0">
-        {% for notification in notifications %}
-            <div class="alert  alert-dismissible text-success text-success alert-light-success bg-success-subtle fade show remove-close-icon" style="margin-left: 20px; margin-right: 20px;">
-                <form action="" method="POST">
-                    {% csrf_token %}
-                    <input type="hidden" name="id_notification" value="{{ notification.id }}">
-                    <button type="submit" class="btn-close" data-bs-dismiss="alert" aria-label="Close" name="delete"></button>
-                </form>
-                <div class="border-start border-2 border-success d-md-flex align-items-center disp-x">
+            {% for notification in pNotifications %}
+                <div class="alert  alert-dismissible text-info text-info alert-light-info bg-info-subtle fade show remove-close-icon" style="margin-left: 20px; margin-right: 20px;">
+                    <form action="" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="id_notification" value="{{ notification.id }}">
+                        <button type="submit" class="btn-close" data-bs-dismiss="alert" aria-label="Close" name="delete_pn"></button>
+                    </form>
+                    <div class="border-start border-2 border-info d-md-flex align-items-center disp-x">
+                        <div class="d-flex align-items-center gap-6 ms-2" style="width:100%">
+                            <a href="javascript:void(0)" class=" round-40 text-info rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
+                                <iconify-icon icon="solar:bell-broken" class="fs-7"></iconify-icon>
+                            </a>
+                            <div class="text-truncate" style="width:100%">
+                            <h6>{{notification.title}}</h6>
+                            <p style="word-wrap: break-word;
+                            overflow-wrap: break-word;
+                            white-space: normal;" class="text-dark fw-medium">{{notification.content}}</p>
+                            </div>
+                            <div class="justify-content-end text-truncate ms-5 ms-md-auto ps-4 ps-md-0 ">
+                            
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+           
+            {% for notification in notifications %}
+                <div class="alert  alert-dismissible text-success text-success alert-light-success bg-success-subtle fade show remove-close-icon" style="margin-left: 20px; margin-right: 20px;">
+                    <form action="" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="id_notification" value="{{ notification.id }}">
+                        <button type="submit" class="btn-close" data-bs-dismiss="alert" aria-label="Close" name="delete"></button>
+                    </form>
+                    <div class="border-start border-2 border-success d-md-flex align-items-center disp-x">
+                        <div class="d-flex align-items-center gap-6 ms-2">
+                            <a href="javascript:void(0)" class=" round-40 bg-success-subtle text-success rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
+                                <iconify-icon icon="solar:users-group-rounded-broken" class="fs-7"></iconify-icon>
+                            </a>
+                            <div class="text-truncate">
+                            <span class="text-dark fw-medium">Invitation pour rejoindre le groupe <b>{{notification.groupe.nom_groupe}}</b>.</span>
+                            </div>
+                            <div class="justify-content-end text-truncate ms-5 ms-md-auto ps-4 ps-md-0 ">
+                            <form action="" method="POST">
+                                {% csrf_token %}   
+                                <input type="hidden" name="id_notification" value="{{ notification.id }}">
+                                <input type="hidden" name="accepter" value="1">
+                                <input type="submit" class="btn btn-success" value="Accepter">
+                                <!-- <input type="submit" class="btn btn-success" value="Accepter" name="accepter"> -->
+                            </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            {% for tache in taches_proches %}
+                <div class="alert  alert-dismissible text-warning text-warning alert-light-warning bg-warning-subtle fade show remove-close-icon" style="margin-left: 20px; margin-right: 20px;">
+                    <form action="" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="id_notification" value="{{ notification.id }}">
+                        <button type="submit" class="btn-close" data-bs-dismiss="alert" aria-label="Close" name="delete"></button>
+                    </form>
+                    <div class="border-start border-2 border-warning d-md-flex align-items-center disp-x">
                     <div class="d-flex align-items-center gap-6 ms-2">
-                        <a href="javascript:void(0)" class=" round-40 bg-success-subtle text-success rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
-                            <iconify-icon icon="solar:users-group-rounded-broken" class="fs-7"></iconify-icon>
+                        <a href="javascript:void(0)" class=" round-40 bg-warning-subtle text-warning rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
+                            <iconify-icon icon="solar:history-2-broken" class="fs-7"></iconify-icon>
                         </a>
                         <div class="text-truncate">
-                        <span class="text-dark fw-medium">Invitation pour rejoindre le groupe <b>{{notification.groupe.nom_groupe}}</b>.</span>
+                        <span class="text-dark fw-medium">Le délai pour la tâche : <b>{{tache.description_tache}}</b> dans le groupe <b>{{tache.groupe}}</b> s'approche ! </span>
                         </div>
-                        <div class="justify-content-end text-truncate ms-5 ms-md-auto ps-4 ps-md-0 ">
-                        <form action="" method="POST">
-                            {% csrf_token %}   
-                            <input type="hidden" name="id_notification" value="{{ notification.id }}">
-                            <input type="hidden" name="accepter" value="1">
-                            <input type="submit" class="btn btn-success" value="Accepter">
-                            <!-- <input type="submit" class="btn btn-success" value="Accepter" name="accepter"> -->
-                        </form>
+                    </div>
+                    <div class="
+                            justify-content-end
+                            text-truncate
+                            ms-5 ms-md-auto
+                            ps-4 ps-md-0
+                            ">
                         </div>
                     </div>
                 </div>
-            </div>
-        {% endfor %}
-        {% for tache in taches_proches %}
-            <div class="alert  alert-dismissible text-warning text-warning alert-light-warning bg-warning-subtle fade show remove-close-icon" style="margin-left: 20px; margin-right: 20px;">
+            {% endfor %}
+            {% for tache in taches_depassees %}
+                <div class="alert  alert-dismissible text-danger text-danger alert-light-danger bg-danger-subtle fade show remove-close-icon" style="margin-left: 20px; margin-right: 20px;">
+                    <form action="" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="id_notification" value="{{ notification.id }}">
+                        <button type="submit" class="btn-close" data-bs-dismiss="alert" aria-label="Close" name="delete"></button>
+                    </form>
+                    <div class="border-start border-2 border-danger d-md-flex align-items-center disp-x">
+                    <div class="d-flex align-items-center gap-6 ms-2">
+                        <a href="javascript:void(0)" class=" round-40 bg-danger-subtle text-danger rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
+                            <iconify-icon icon="solar:alarm-turn-off-outline" class="fs-7"></iconify-icon>
+                        </a>
+                        <div class="text-truncate">
+                        <span class="text-dark fw-medium">La date limite de la tâche : <b>{{tache.description_tache}}</b> dans le groupe <b>{{tache.groupe}}</b> est dépassée !!</span>
+                        </div>
+                    </div>
+                    <div class="
+                            justify-content-end
+                            text-truncate
+                            ms-5 ms-md-auto
+                            ps-4 ps-md-0
+                            ">
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            <div class="alert  alert-dismissible text-primary text-primary alert-light-primary bg-primary-subtle fade show remove-close-icon" style="margin-left: 20px; margin-right: 20px;">
                 <form action="" method="POST">
                     {% csrf_token %}
                     <input type="hidden" name="id_notification" value="{{ notification.id }}">
                     <button type="submit" class="btn-close" data-bs-dismiss="alert" aria-label="Close" name="delete"></button>
                 </form>
-                <div class="border-start border-2 border-warning d-md-flex align-items-center disp-x">
-                <div class="d-flex align-items-center gap-6 ms-2">
-                    <a href="javascript:void(0)" class=" round-40 bg-warning-subtle text-warning rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
-                        <iconify-icon icon="solar:history-2-broken" class="fs-7"></iconify-icon>
-                    </a>
-                    <div class="text-truncate">
-                    <span class="text-dark fw-medium">Le délai pour la tâche : <b>{{tache.description_tache}}</b> dans le groupe <b>{{tache.groupe}}</b> s'approche ! </span>
-                    </div>
-                </div>
-                <div class="
-                        justify-content-end
-                        text-truncate
-                        ms-5 ms-md-auto
-                        ps-4 ps-md-0
-                        ">
+                <div class="border-start border-2 border-primary d-md-flex align-items-center disp-x">
+                    <div class="d-flex align-items-center gap-6 ms-2">
+                        <a href="javascript:void(0)" class=" round-40 bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
+                            <iconify-icon icon="solar:folder-open-linear" class="fs-7"></iconify-icon>
+                        </a>
+                        <div class="text-truncate">
+                        <span class="text-dark fw-medium">Nouveau projet déposé sur la classe X.</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        {% endfor %}
-        {% for tache in taches_depassees %}
-            <div class="alert  alert-dismissible text-danger text-danger alert-light-danger bg-danger-subtle fade show remove-close-icon" style="margin-left: 20px; margin-right: 20px;">
-                <form action="" method="POST">
-                    {% csrf_token %}
-                    <input type="hidden" name="id_notification" value="{{ notification.id }}">
-                    <button type="submit" class="btn-close" data-bs-dismiss="alert" aria-label="Close" name="delete"></button>
-                </form>
-                <div class="border-start border-2 border-danger d-md-flex align-items-center disp-x">
-                <div class="d-flex align-items-center gap-6 ms-2">
-                    <a href="javascript:void(0)" class=" round-40 bg-danger-subtle text-danger rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
-                        <iconify-icon icon="solar:alarm-turn-off-outline" class="fs-7"></iconify-icon>
-                    </a>
-                    <div class="text-truncate">
-                    <span class="text-dark fw-medium">La date limite de la tâche : <b>{{tache.description_tache}}</b> dans le groupe <b>{{tache.groupe}}</b> est dépassée !!</span>
-                    </div>
-                </div>
-                <div class="
-                        justify-content-end
-                        text-truncate
-                        ms-5 ms-md-auto
-                        ps-4 ps-md-0
-                        ">
-                    </div>
-                </div>
-            </div>
-        {% endfor %}
-        <div class="alert  alert-dismissible text-primary text-primary alert-light-primary bg-primary-subtle fade show remove-close-icon" style="margin-left: 20px; margin-right: 20px;">
-            <form action="" method="POST">
-                {% csrf_token %}
-                <input type="hidden" name="id_notification" value="{{ notification.id }}">
-                <button type="submit" class="btn-close" data-bs-dismiss="alert" aria-label="Close" name="delete"></button>
-            </form>
-            <div class="border-start border-2 border-primary d-md-flex align-items-center disp-x">
-                <div class="d-flex align-items-center gap-6 ms-2">
-                    <a href="javascript:void(0)" class=" round-40 bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
-                        <iconify-icon icon="solar:folder-open-linear" class="fs-7"></iconify-icon>
-                    </a>
-                    <div class="text-truncate">
-                    <span class="text-dark fw-medium">Nouveau projet déposé sur la classe X.</span>
-                    </div>
-                </div>
-            </div>
-        </div>
         </ul>
     </div>
 </div>

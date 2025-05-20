@@ -490,10 +490,8 @@
           var mini_5 = document.getElementById("mini-5").classList.contains('selected');
           var mini_9 = document.getElementById("mini-9").classList.contains('selected');
           var mini_6 = document.getElementById("mini-6").classList.contains('selected');
-          // var mini_7 = document.getElementById("mini-7").classList.contains('selected');
-          // var mini_8 = document.getElementById("mini-8").classList.contains('selected');
           if (pageWrapper) {
-              if (mini_4 || mini_5 || mini_9 || mini_1 || mini_2 || mini_6 || window.location.href.includes('/etu/groupes/archive')) {
+              if (mini_4 || mini_5 || mini_9 || mini_1 || mini_2 || mini_6 || window.location.href.includes('/etu/groupes/archive') || window.location.href.includes('/etu/detailles')) {
                   pageWrapper.classList.add('force-margin-left'); // Imposer margin-left: 0
               } else {
                   pageWrapper.classList.remove('force-margin-left'); // Laisser le style normal
@@ -595,7 +593,6 @@
         const detaillesLink = document.getElementById('ws-detailles');
 
         if (window.location.href.includes('etu/ws/') || window.location.href.includes('etu/espaceDeTravail/')) {
-          console.log('hello', chatLink, chatbotLink)
           const url_chat = chatLink.getAttribute('data-url');
           chatLink.setAttribute('href', url_chat);
           const url_chatbot = chatbotLink.getAttribute('data-url');
@@ -611,13 +608,13 @@
           const url_detailles = detaillesLink.getAttribute('data-url');
           detaillesLink.setAttribute('href', url_detailles);
         } else {
-          console.log('no hello')
           chatLink.setAttribute('href', '#');
           chatbotLink.setAttribute('href', '#');
           todoLink.setAttribute('href', '#');
           membresLink.setAttribute('href', '#');
           docsLink.setAttribute('href', '#');
           dashboardLink.setAttribute('href', '#');
+          detaillesLink.setAttribute('href', '#');
         }
         
       })

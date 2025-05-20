@@ -3,6 +3,7 @@ from django.contrib.auth.hashers import check_password
 import datetime
 from django.utils import timezone
 from datetime import timedelta
+from django.utils.timezone import now
 
 
 # Manager personnalisé pour Professeur
@@ -184,7 +185,7 @@ class Notification(models.Model):
 
 class HistoriqueTachesEtu(models.Model):
     etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE, related_name="historique_taches")
-    date = models.DateField(default=timezone.now, unique=True)  # Un enregistrement par jour
+    date = models.DateField(default=timezone.now)  # Un enregistrement par jour
     taches_en_cours = models.IntegerField(default=0)
     taches_terminees = models.IntegerField(default=0)
     taches_en_retard = models.IntegerField(default=0)
@@ -196,7 +197,7 @@ class HistoriqueTachesEtu(models.Model):
 
 class TempsUtilisation(models.Model):
     etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE, related_name="historique_temps")
-    date = models.DateField(default=timezone.now, unique=True)  # Un enregistrement par jour
+    date = models.DateField(default=timezone.now)  # Un enregistrement par jour
     date_start_counter = models.DateTimeField(null=True, blank=True)
     temps_passe = models.DurationField(default=timedelta(seconds=0))  # Stocke le temps en hh:mm:ss
 
@@ -221,3 +222,74 @@ class ChatMessage(models.Model):
     def _str_(self):
         return self.contenu[:20]
 
+class Announce(models.Model):
+    projet = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="annonces")
+    contenu = models.TextField()
+    date_publication = models.DateTimeField(default=now)
+
+    def str(self):
+        return f"Annonce for {self.projet.nom_project} - {self.date_publication.strftime('%Y-%m-%d %H:%M')}"
+
+class Instruction(models.Model):
+    projet = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="instructions")
+    titre = models.CharField(max_length=255)  # Title of the instruction
+    date_limite = models.DateField(null=True, blank=True)  # Optional deadline
+    livrable_requis = models.BooleanField(default=False)  # If a deliverable is required
+
+    def str(self):
+        return f"Instruction: {self.titre} ({self.projet.nom_project})"
+
+class InstructionStatus(models.Model):
+    instruction = models.ForeignKey(Instruction, on_delete=models.CASCADE, related_name="statuses")
+    groupe = models.ForeignKey(Groupe, on_delete=models.CASCADE, related_name="instructions_status")
+    est_termine = models.BooleanField(default=False)  # Whether the group marked it as done
+    fichier_livrable = models.FileField(upload_to='livrables/', null=True, blank=True)  # Optional file upload
+
+    def str(self):
+        return f"{self.groupe.nom_groupe} - {self.instruction.titre} ({'Done' if self.est_termine else 'Pending'})"
+
+class P_ressources(models.Model):
+    titre = models.CharField(max_length=255)
+    file = models.FileField(upload_to='resources/', null=True, blank=True)
+    video_url = models.URLField(null=True, blank=True)
+    url = models.URLField(null=True, blank=True)
+    date_ajout = models.DateTimeField(auto_now_add=True)
+    projet = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='ressources')  
+
+    def str(self):
+        return f"Ressource: {self.titre} ({self.projet.nom_project})"
+
+# class PNotification(models.Model):
+#     DEST_TYPE_CHOICES = (
+#         ('class', 'Classe'),
+#         ('group', 'Groupe'),
+#         ('student', 'Étudiant'),
+#     )
+
+#     title = models.CharField(max_length=255)
+#     content = models.TextField()
+#     created_at = models.DateTimeField(default=timezone.now)
+#     is_read = models.BooleanField(default=False)
+
+#     # destination_type = models.CharField(max_length=10, choices=DEST_TYPE_CHOICES)
+#     # classe = models.ForeignKey('Classe', null=True, blank=True, on_delete=models.CASCADE)
+#     # groupe = models.ForeignKey('Groupe', null=True, blank=True, on_delete=models.CASCADE)
+#     # student = models.ForeignKey('Etudiant', null=True, blank=True, on_delete=models.CASCADE)
+#     etudiants = models.ManyToManyField('Etudiant', related_name="pnotifications", blank=True)
+
+
+#     def __str__(self):
+#         return self.title
+
+class PENotification(models.Model):
+    etudiants = models.ManyToManyField('Etudiant', related_name="pnotifications", blank=True)
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    created_at = models.DateTimeField(default=timezone.now)
+    is_read = models.BooleanField(default=False)
+
+    def _str_(self):
+        return self.title
+
+
+        

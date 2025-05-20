@@ -15,8 +15,8 @@
         margin-left: auto;
     }
     .bot-message {
-        background-color: #cac8ff;
-        color: #653bff;
+        background-color: #d2edf1;
+        color: #324d52;
         margin-right: auto;
     }
     .typing-indicator {
@@ -50,17 +50,7 @@
 
 <div class="container-fluid">
     <div class="card overflow-hidden chat-application">
-        <div class="d-flex align-items-center justify-content-between gap-6 m-3 d-lg-none">
-            <button class="btn btn-primary d-flex" type="button" data-bs-toggle="offcanvas"
-                data-bs-target="#chat-sidebar" aria-controls="chat-sidebar">
-                <i class="ti ti-menu-2 fs-5"></i>
-            </button>
-            <form class="position-relative w-100">
-                <input type="text" class="form-control search-chat py-2 ps-5" id="text-srh"
-                    placeholder="Search Contact">
-                <i class="ti ti-search position-absolute top-50 start-0 translate-middle-y fs-6 text-dark ms-3"></i>
-            </form>
-        </div>
+        
         <div class="d-flex">
             <div class="w-70 w-xs-100 chat-container">
                 <div class="chat-box-inner-part h-100">
@@ -86,8 +76,8 @@
                             </div>
                         </div>
                        
-                        <div class="d-flex parent-chat-box">
-                            <div class="chat-box w-xs-100">
+                        <div class="parent-chat-box">
+                            <div class="chat-box w-xs-100" style="width: 100%;">
                                 <div class="chat-box-inner p-9" data-simplebar="init">
                                     <div class="simplebar-wrapper" style="margin: -20px;">
                                         <div class="simplebar-height-auto-observer-wrapper">
@@ -105,18 +95,17 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="w-100 px-9 py-6 border-top chat-send-message-footer">
-                                    <div class="w-100 d-flex align-items-center justify-content-between">
-                                        <div class="w-100 d-flex align-items-center justify-content-between">
-                                            <div class="w-100 d-flex align-items-center justify-content-between p-2 border rounded bg-light">
-                                                <form method="post" class="d-flex w-100">
-                                                    {% csrf_token %}
-                                                    <input type="text" id="messageInput" class="form-control flex-grow-1 border rounded-pill px-3" placeholder="Type a Message">
-                                                    <button type="button" class="btn btn-primary ms-2 px-3 rounded-pill" onclick="sendMessage()">Envoyer</button>
-                                                </form>
-                                            </div> 
-                                        </div> 
-                                    </div>
+                                <div class="px-9 py-6 border-top chat-send-message-footer">
+                                    <div class="align-items-center justify-content-between">
+                                      <div class="align-items-center justify-content-between">
+                                        <div class="align-items-center justify-content-between">
+                                            <form method="post" style="display: flex;">
+                                                {% csrf_token %}
+                                                <input type="text" id="message_Input" class="form-control message-type-box text-muted border-0 rounded-0 p-0 ms-2" placeholder="Type a Message">
+                                                <button type="button" class="btn btn-primary ms-2" onclick="sendMessage()">Envoyer</button>
+                                            </form>
+                                        </div>
+                                    </div> 
                                 </div>
                             </div>
                         </div>
@@ -155,7 +144,7 @@
     }
 
     function sendMessage() {
-    let userInput = document.getElementById("messageInput").value;
+    let userInput = document.getElementById("message_Input").value;
     let chatBox = document.getElementById("chatMessages");
 
     if (userInput.trim() === "") return;
@@ -198,8 +187,10 @@
         
     })
     .catch(error => console.error("Erreur d'envoi:", error));
-    document.getElementById("messageInput").value = "";
+    document.getElementById("message_Input").value = "";
 }
+
+document.getElementById('message_Input').addEventListener('keypress', sendMessage());
 
 </script>
 {% endblock %}

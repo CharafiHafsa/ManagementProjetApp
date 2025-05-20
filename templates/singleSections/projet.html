@@ -21,14 +21,16 @@
         </div>
         <div class="card-body">
             <p class="card-text">{{projet.description }}</p>
-            <button type="button" class="btn mb-1 bg-primary-subtle text-primary px-4 fs-4 btn_creer_grp " data-bs-toggle="modal" data-bs-target="#primary-header-modal">
-              Créer votre groupe
-            </button>
-            <a class="btn mb-1 bg-primary-subtle text-primary px-4 fs-4 btn_creer_grp " href="{% url 'detailles' %}">
-              Détailles
-            </a>
+            
+            <form method="POST" action="{% url 'detailles_sg' %}">
+              {% csrf_token %}
+              <button type="button" class="btn mb-1 bg-primary-subtle text-primary px-4 fs-4 btn_creer_grp " data-bs-toggle="modal" data-bs-target="#primary-header-modal">
+                Créer votre groupe
+              </button>
+              <input type="hidden" value="{{projet.id}}" name="projcet_id" id="projet-id">
+              <input type="submit" name="detailles" value="Détailles" class="btn mb-1 bg-primary-subtle text-primary px-4 fs-4 btn_creer_grp " >  
+            </form>
         </div>
-        <input type="hidden" value="{{projet.id}}"  id="projet-id">
         </div>
     </div>
     {% empty %}
@@ -44,46 +46,40 @@
 </div>
 
 <div class="row">
+{% for groupe in groupes_etudiant %}
+<div class="col-lg-3 col-md-6">
+    <div class="card">
+        <div class="card-header text-bg-primary">
+            <h4 class="mb-0 text-white card-title">{{ groupe.projet.nom_project }}</h4>
+        </div>
 
-{% for projet in projets_associés %}
-    <div class="col-lg-3 col-md-6">
-            <div class="card">              
+        <!-- Menu 3 points -->
+        <div class="dropdown position-absolute top-0 end-0 m-2">
+            <button class="three-points-menu" type="button" id="dropdownMenu3Button{{ groupe.id }}" data-bs-toggle="dropdown" aria-expanded="false" style="background: transparent;">
+                <iconify-icon icon="solar:menu-dots-bold" class="fs-6"></iconify-icon>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenu3Button{{ groupe.id }}">
+                <li><a class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" id="btn-delete">Quitter</a></li>
+                <li><a class="dropdown-item text-primary btn_modifier_grp" data-bs-toggle="modal" data-bs-target="#primary-header-modal-modifier">Modifier</a></li>
+            </ul>
+        </div>
 
-            <div class="card-header text-bg-primary">
-                <h4 class="mb-0 text-white card-title">{{ projet.nom_project }}</h4>
-            </div>
-
-            <!-- Bouton Menu 3 points -->
-            <div class="dropdown position-absolute top-0 end-0 m-2">
-              <button class="three-points-menu" type="button" id="dropdownMenuButton{{ groupe.id }}" data-bs-toggle="dropdown" aria-expanded="false" style="background: transparent;">
-                  <iconify-icon icon="solar:menu-dots-bold" class="fs-6"></iconify-icon>
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ groupe.id }}">
-                <li><button class="dropdown-item text-danger btn-delete btn-delete"  data-bs-toggle="modal" data-bs-target="#confirmDeleteModal"  data-id="{{ projet.groupe_set.first.id  }}">Quitter</button></li>
-                <li><button class="dropdown-item text-primary btn_modifier_grp"  data-bs-toggle="modal" data-bs-target="#primary-header-modal-modifier"   data-id="{{  projet.groupe_set.first.id }}" >Modifier</button></li>
-              </ul>
-            </div>
-
-
-            <!-- contenu de groupe -->
-
-            <div class="card-body">
-                <div class="row">
-                    <!-- Column -->
-                    <div class="col d-flex align-items-center">
-                        <div>
-                           <h4>{{ projet.groupe_set.first.nom_groupe }}</h4>
-                        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col d-flex align-items-center">
+                    <div>
+                        <h4>{{ groupe.nom_groupe }}</h4>
+                        <a href="{% url 'ws_reception' groupe_id=groupe.id %}" class="btn btn-primary" style="margin-top: 20px;">Ouvrir</a>
                     </div>
-                    <!-- Ring -->
-                    <a href="{% url 'ws_reception' groupe_id=projet.groupe_set.first.id  %}" class="btn btn-primary" style="margin-top: 20px;">Ouvrir</a>
                 </div>
             </div>
         </div>
     </div>
+</div>
 {% empty %}
-    <p>Aucun projet disponible.</p>
+    <p>Aucun groupe trouvé.</p>
 {% endfor %}
+
 
   
     
