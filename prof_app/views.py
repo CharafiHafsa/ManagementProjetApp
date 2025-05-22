@@ -516,7 +516,7 @@ def add_ressource(request, projet_id):
             video_url=video_url if video_url else None,
             url=url if url else None
         )
-        classe = project.code_classe
+        classe = projet.code_classe
         etudiants = classe.etudiants.all()
         notif = PENotification.objects.create(
             title="Nouvelle Ressource",

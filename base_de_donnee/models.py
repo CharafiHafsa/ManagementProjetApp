@@ -137,6 +137,7 @@ class Groupe(models.Model):
     def str(self):
         return self.nom_groupe
 
+
 class GroupeArchive(models.Model):
     nom_groupe = models.CharField(max_length=255)
     nbr_membre = models.PositiveIntegerField()
@@ -222,22 +223,12 @@ class HistoriqueTachesEtu(models.Model):
     taches_en_cours = models.IntegerField(default=0)
     taches_terminees = models.IntegerField(default=0)
     taches_en_retard = models.IntegerField(default=0)
-class InstructionStatus(models.Model):
-    instruction = models.ForeignKey(Instruction, on_delete=models.CASCADE, related_name="statuses")
-    groupe = models.ForeignKey(Groupe, on_delete=models.CASCADE, related_name="instructions_status")
-    est_termine = models.BooleanField(default=False)  # Whether the group marked it as done
-    fichier_livrable = models.FileField(upload_to='livrables/', null=True, blank=True)  # Optional file upload
 
-    def __str__(self):
-        return f"{self.groupe.nom_groupe} - {self.instruction.titre} ({'Done' if self.est_termine else 'Pending'})"
+    class Meta:
+        verbose_name = "Historique des Tâches"
+        verbose_name_plural = "Historiques des Tâches"
+        ordering = ['-date']  # Trie par date décroissante
 
-class Announce(models.Model):
-    projet = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="annonces")
-    contenu = models.TextField()
-    date_publication = models.DateTimeField(default=now)
-
-    def __str__(self):
-        return f"Annonce for {self.projet.nom_project} - {self.date_publication.strftime('%Y-%m-%d %H:%M')}"
 
 class P_ressources(models.Model):
     titre = models.CharField(max_length=255)
@@ -251,22 +242,6 @@ class P_ressources(models.Model):
         return f"Ressource: {self.titre} ({self.projet.nom_project})"
   
 
-
-class Taches(models.Model):
-    groupe = models.ForeignKey(Groupe, on_delete=models.CASCADE, related_name="taches")
-    etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE, related_name="taches")
-    description_tache = models.TextField()
-    status_choices = [
-        ('En cours', 'En cours'),
-        ('Terminé', 'Terminé'),
-    ]
-    status = models.CharField(max_length=25, choices=status_choices, default='En cours')
-    deadline = models.DateField(null=False, blank=False)
-
-    class Meta:
-        verbose_name = "Historique des Tâches"
-        verbose_name_plural = "Historiques des Tâches"
-        ordering = ['-date']  # Trie par date décroissante
 
 class TempsUtilisation(models.Model):
     etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE, related_name="historique_temps")
@@ -332,28 +307,6 @@ class P_ressources(models.Model):
     def str(self):
         return f"Ressource: {self.titre} ({self.projet.nom_project})"
 
-# class PNotification(models.Model):
-#     DEST_TYPE_CHOICES = (
-#         ('class', 'Classe'),
-#         ('group', 'Groupe'),
-#         ('student', 'Étudiant'),
-#     )
-
-#     title = models.CharField(max_length=255)
-#     content = models.TextField()
-#     created_at = models.DateTimeField(default=timezone.now)
-#     is_read = models.BooleanField(default=False)
-
-#     # destination_type = models.CharField(max_length=10, choices=DEST_TYPE_CHOICES)
-#     # classe = models.ForeignKey('Classe', null=True, blank=True, on_delete=models.CASCADE)
-#     # groupe = models.ForeignKey('Groupe', null=True, blank=True, on_delete=models.CASCADE)
-#     # student = models.ForeignKey('Etudiant', null=True, blank=True, on_delete=models.CASCADE)
-#     etudiants = models.ManyToManyField('Etudiant', related_name="pnotifications", blank=True)
-
-
-#     def __str__(self):
-#         return self.title
-
 class PENotification(models.Model):
     etudiants = models.ManyToManyField('Etudiant', related_name="pnotifications", blank=True)
     title = models.CharField(max_length=255)
@@ -365,4 +318,33 @@ class PENotification(models.Model):
         return self.title
 
 
-        
+
+class ProfNotification(models.Model):
+    professeur = models.ForeignKey(Professeur, on_delete=models.CASCADE, related_name="pnotifications")
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return f"{self.professeur.nom} - {self.title}"
+
+class PEvent(models.Model):
+    title = models.CharField(max_length=200)
+    start = models.DateField(default=datetime.date.today)
+    end = models.DateField()
+    color = models.CharField(max_length=50)  # Default FullCalendar color
+
+    def __str__(self):
+        return self.title
+    
+
+class Meeting(models.Model):
+    target_type = models.CharField(max_length=255)
+    target_id = models.PositiveIntegerField()
+    meeting_link = models.URLField()
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"Meeting for {self.target_type} {self.target_id} at {self.start_time}"

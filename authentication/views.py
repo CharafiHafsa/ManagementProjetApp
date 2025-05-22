@@ -74,10 +74,9 @@ def login_view(request):
                     etudiant.last_login = timezone.now()  
                     etudiant.save()
 
-                    messages.success(request, 'Login successful! Welcome to the platform.')
-                    return redirect('dashboard')
+                    return render(request, 'authentification/message.html', {'message': 'Login successful! Welcome to the platform'})
                 else:
-                    messages.warning(request, 'Your account is not activated.')
+                    return render(request, 'authentification/message.html', {'message': 'Le compte n\'est pas activé'})
         else:
             messages.error(request, "Please enter a valid email.")
 
