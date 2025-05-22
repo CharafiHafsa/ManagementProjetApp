@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+{% load static %}
+
+
+
+<div class="widget-content searchable-container list">
+
+    <div class="card card-body" style="margin-bottom: 20px;">
+        <div class="row">
+          <div class="col-md-4 col-xl-3">
+            <h4>Membres de groupe</h4>
+          </div>
+          <div class="col-md-8 col-xl-9 text-end d-flex justify-content-md-end justify-content-center mt-3 mt-md-0">
+            
+            <a {% if archive %} style="pointer-events: none; opacity: 0.5;" {% endif %} href="javascript:void(0)" id="btn-add-contact" class="btn btn-primary d-flex align-items-center">
+                <iconify-icon icon="solar:user-plus-broken" class="fs-7"></iconify-icon>
+                <span style="padding: 5px;"></span>
+                Ajouter un membre
+            </a>
+          </div>
+        </div>
+      </div>
+ 
+      <div class="modal-body">
+        {% if success_message %}
+            <div class="alert alert-success" role="alert">
+                {{ success_message }}
+            </div>
+        {% endif %}
+    
+        {% if error_message %}
+            <div class="alert alert-danger" role="alert">
+                {{ error_message }}
+            </div>
+        {% endif %}
+        
+        <div class="add-contact-box">
+    
+
+    <!-- Modal -->
+    <div class="modal fade" id="addContactModal" tabindex="-1" aria-labelledby="addContactModalTitle" aria-hidden="true" style="display: none;">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header d-flex align-items-center">
+            <h5 class="modal-title">Inviter un étudiant au groupe</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="add-contact-box">
+              <div class="add-contact-content">
+                <form id="addContactModalTitle" method="post">
+                  {% csrf_token %}
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="mb-3 contact-email">
+                        <input type="text" name="email" id="c-email" class="form-control" placeholder="Email">
+                        <span class="validation-text text-danger" style="display: none;">Invalid Email</span>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <div class="d-flex gap-6 m-0">
+              <input type="submit"  name="btn-add" id="btn-add" value="inviter" class="btn btn-success">
+              <!-- <button id="btn-edit" class="btn btn-success" style="display: none;">Enregistrer</button> -->
+              <button class="btn bg-danger-subtle text-danger" data-bs-dismiss="modal"> Annuler
+              </button>
+            </div>
+          </div>
+        </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="card card-body">
+      <div class="table-responsive">
+        <table class="table search-table align-middle text-nowrap">
+          <thead class="header-item">
+            <th>Nom et Prénom</th>
+            <th>Email</th>
+            <th>Action</th>
+          </tr></thead>
+          <tbody>
+            <!-- start row -->
+            
+          {% for etudiant in etudiants %}
+            <tr class="search-items">
+              <td>
+                <div class="d-flex align-items-center">
+                  <img src="{{ etudiant.photo_profil.url }}" alt="avatar" class="rounded-circle" width="35">
+                  <div class="ms-3">
+                    <div class="user-meta-info">
+                      <h6 class="user-name mb-0">{{etudiant.nom}} {{etudiant.prenom}}</h6>
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span class="usr-email-addr">{{etudiant.email_etudiant}}</span>
+              </td>
+              <td>
+                <div style="display: flex; align-items: center">
+                    <input type="hidden" value="{{ etudiant.id }}" id="id_etu_tab">
+                    <button {% if archive %} disabled {% endif %} style="border: none; background-color: transparent;" class="fs-6 text-muted delete-task"  data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" id="btn-delete">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                          <path fill="currentColor" d="M9.878 4.25a2.251 2.251 0 0 1 4.244 0a.75.75 0 1 0 1.415-.5a3.751 3.751 0 0 0-7.073 0a.75.75 0 1 0 1.414.5M2.75 6a.75.75 0 0 1 .75-.75h17a.75.75 0 0 1 0 1.5h-17A.75.75 0 0 1 2.75 6m2.367 1.752a.75.75 0 0 1 .798.698l.46 6.9c.09 1.347.154 2.285.294 2.99c.137.685.327 1.047.6 1.303c.274.256.648.422 1.34.512c.714.093 1.654.095 3.004.095h.774c1.35 0 2.29-.002 3.004-.095c.692-.09 1.066-.256 1.34-.512c.273-.256.463-.618.6-1.303c.14-.705.204-1.643.294-2.99l.46-6.9a.75.75 0 1 1 1.497.1l-.464 6.952c-.085 1.282-.154 2.318-.316 3.132c-.169.845-.455 1.551-1.047 2.104s-1.315.793-2.17.904c-.822.108-1.86.108-3.145.108h-.88c-1.285 0-2.323 0-3.145-.108c-.855-.111-1.579-.35-2.17-.904c-.592-.553-.878-1.26-1.047-2.104c-.162-.814-.23-1.85-.316-3.132L4.418 8.55a.75.75 0 0 1 .699-.798"/>
+                      </svg>
+                    </button>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+            
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+</div>
+
+
+<!-- MODAL -->
+
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">Confirmation</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+          </div>
+          <div class="modal-body">
+              Êtes-vous sûr de vouloir supprimer ce membre ?
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+              <form method="POST" action="{% url 'membres' %}"> 
+                {% csrf_token %}
+                <input type="hidden" name="id_etudiant" id="id_etu_mod">
+                <input type="submit" class="btn btn-danger" id="confirmDeleteBtn"  name="delete" value="Supprimer">
+              </form>
+          </div>
+      </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById("btn-delete").addEventListener("click", function() {
+      id_etu = document.getElementById('id_etu_tab').value
+      document.getElementById('id_etu_mod').value = id_etu
+  });
+  document.getElementById("confirmDeleteBtn").addEventListener("click", function() {
+      var modal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+      modal.hide();
+  });
+</script>
+  
+{% endblock content %}

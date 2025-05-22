@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+
+{% block style %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+{% endblock style %}
+
+{% block content %}
+{% load static %}
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
+
+<div class="row">
+    <div class="col-lg-6 col-md-6">
+        <div class="card">
+          <div class="card-body">
+            <div class="row">
+              <!-- Column -->
+              <div class="col d-flex align-items-center">
+                <div>
+                  <h3>Date limite</h3>
+                  {% if jours_restants >= 0 %}
+                  <p class="mb-0">
+                    il vous reste {{jours_restants}} jour(s)
+                  </p>
+                  {% else %}
+                  <p class="mb-0">
+                    La date est dépassé par {{jours_restants}} jour(s)
+                  </p>
+                  {% endif %}
+                </div>
+              </div>
+              <!-- Ring -->
+              <div class="col d-flex align-items-center justify-content-center">
+                <div class="progress-ring danger" style="background: conic-gradient(#ff6692 0%, #e9ecef 0%);" data-progress="{{pourcentage}}%"  id="ring-{{ forloop.counter }}"> </div>
+              </div>
+              <!-- ---- -->
+            </div>
+          </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+              <div class="row">
+                <!-- Column -->
+                <div class="col d-flex align-items-center">
+                  <div>
+                    <h3>Taches</h3>
+                    <p class="mb-0">
+                      il vous reste {{nb_tache_non_realisé }} taches parmi {{nb_tache_total}}
+                    </p>
+                  </div>
+                </div>
+                <!-- Ring -->
+                  <div class="col d-flex align-items-center justify-content-center">
+                    <div class="progress-ring" data-progress="90%"  id="ring-{{ forloop.counter }}"> </div>
+                  </div>
+                <!-- ---- -->
+              </div>
+            </div>
+          </div> 
+    </div>
+    
+    <div class="col-lg-3 col-md-6">
+        <div class="card text-bg-danger text-white">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="ms-0">
+                <h4 class="card-title mb-0 text-white d-flex justify-content-center">
+                <iconify-icon class="text-white fs-10 me-2" icon="solar:alarm-turn-off-bold-duotone"></iconify-icon>
+                Taches en retard
+                </h4>
+                <h3 class="fw-bolder fs-10 m-1 text-white d-flex justify-content-center"> {{nb_taches_retard}} </h3>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card text-bg-secondary text-white">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="ms-0">
+                <h4 class="card-title mb-0 text-white d-flex justify-content-center">
+                <iconify-icon class="text-white fs-10 me-2" icon="solar:check-square-bold-duotone"></iconify-icon>
+                  Taches términées
+                </h4>
+                <h3 class="fw-bolder fs-10 m-1 text-white d-flex justify-content-center">{{nb_tache_termine}}</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card text-bg-primary text-white">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="ms-0">
+                <h4 class="card-title mb-0 text-white d-flex justify-content-center">
+                <iconify-icon class="text-white fs-10 me-2" icon="solar:hourglass-line-bold-duotone"></iconify-icon>
+                  Taches à venir
+                </h4>
+                <h3 class="fw-bolder fs-10 m-1 text-white d-flex justify-content-center">{{nb_tache_en_cours}}</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card text-bg-warning text-white">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="ms-0">
+                <h4 class="card-title mb-0 text-white d-flex justify-content-center">
+                    <iconify-icon class="text-white fs-10 me-2" icon="solar:users-group-rounded-bold-duotone"></iconify-icon>
+                    Membres de groupe
+                </h4>
+                <h3 class="fw-bolder fs-10 m-1 text-white d-flex justify-content-center">{{groupe.nbr_membre}}</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script>
+    AOS.init({
+        duration: 1500, // Durée de l'animation en ms
+        once: true // Animation une seule fois
+    });
+</script>
+
+<!-- ring of progress -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+      // Sélectionne tous les éléments progress-ring
+      let rings = document.querySelectorAll(".progress-ring");
+
+      // Parcours chaque élément individuellement
+      rings.forEach(function (ring) {
+          // Récupère le pourcentage depuis l'attribut 'data-progress'
+          let progress = ring.getAttribute("data-progress").replace("%", "");
+
+          // Applique le style spécifique à chaque ring
+          if (ring.classList.contains("danger")){
+            ring.style.background = `conic-gradient(#ff6692 ${progress}%, #e9ecef ${progress}%)`;
+          }else{
+            ring.style.background = `conic-gradient(#635BFF ${progress}%, #e9ecef ${progress}%)`;
+          }
+          
+      });
+  });
+</script>
+
+{% endblock content %}

@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+{% load static %}
+
+
+<!-- INSTRUCTIONS -->
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title mb-3">Instructions de projets</h4>
+  
+          <ul class="list-group">
+            {% for instruction in instructions %}
+                <li class="list-group-item">
+                  <div class="form-check d-flex justify-content-between align-items-center">
+                    <div>
+                      {% if instruction.livrable_requis %}
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          disabled
+                        >
+                        <label class="form-check-label-Detailles" for="list{{ forloop.counter }}">
+                          {{ instruction.titre }}
+                        </label>
+                      {% else %}
+                        <form method="POST" class="d-inline">
+                          {% csrf_token %}
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            disabled
+                          >
+                          <label class="form-check-label-Detailles" for="list{{ forloop.counter }}">
+                            {{ instruction.titre }}
+                          </label>
+                        </form>
+                      {% endif %}
+                    </div>
+  
+                    {% if instruction.livrable_requis %}
+                      <button type="button" class="btn btn-primary"
+                              data-bs-toggle="modal"
+                              data-bs-target="#primary-header-modal"
+                              disabled>
+                        Rendre le devoir
+                      </button>
+                    {% endif %}
+                  </div>
+                </li>
+              
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  <!-- Modal rendre le devoir -->
+<div id="primary-header-modal" class="modal fade" tabindex="-1" aria-labelledby="primary-header-modalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg">
+    <div class="modal-content">
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="modal-header modal-colored-header bg-primary text-white">
+          <h4 class="modal-title text-white" id="primary-header-modalLabel">
+              Ajouter un fichier
+          </h4>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+              aria-label="Close" onclick="resetForm()"></button>
+        </div>
+        <div class="modal-body">
+          <input type="file" class="form-control" name="" id="file-input-dynamique">
+
+
+            <!-- Ajouter l'instruction id actuelle -->
+            <input type="hidden" name="instruction_id" id="instruction-id-input">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal" onclick="resetForm()">
+              Fermer
+          </button>
+          <button type="submit" class="btn bg-primary-subtle text-primary">
+              Ajouter
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+    
+
+<div class="row">
+
+    <!-- DESCRIPTION -->
+
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title mb-3">Déscription</h4>
+
+                <p>{{description}}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- RESOURCES -->
+
+    <div class="col-lg-6">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title mb-3">Resources</h5>
+
+            <div class="row">
+                
+             
+              <div class="col-12">
+                  <div class="list-group" id="list-tab" role="tablist">
+                  {% for ressource in ressources %}
+                    {% if ressource.file %}
+                      {% with ressource.file.name|lower as filename %}
+                        {% if ".pdf" in filename %}
+                          <!-- Ouvrir les PDF dans un nouvel onglet -->
+                          <a class="list-group-item list-group-item-action"
+                          
+                             href="{{ ressource.file.url }}"
+                             target="_blank">
+                            {{ ressource.titre }}
+                          </a>
+                        {% else %}
+                          <!-- Télécharger les autres fichiers -->
+                          <a class="list-group-item list-group-item-action"
+                             href="{{ ressource.file.url }}"
+                             download
+                             target="_blank">
+                            {{ ressource.titre }}
+                          </a>
+                        {% endif %}
+                      {% endwith %}
+                    {% elif ressource.url %}
+                      <!-- URL externe normale -->
+                      <a class="list-group-item list-group-item-action"
+                         href="{{ ressource.url }}"
+                         target="_blank">
+                        {{ ressource.titre }}
+                      </a>
+                    {% elif ressource.video_url %}
+                      <!-- Vidéo -->
+                      <a class="list-group-item list-group-item-action"
+                         href="{{ ressource.video_url }}"
+                         target="_blank">
+                        {{ ressource.titre }}
+                      </a>
+                    {% else %}
+                      <!-- Aucune ressource disponible -->
+                      <span class="list-group-item disabled">
+                        {{ ressource.titre }} (Pas de ressource)
+                      </span>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+             
+            </div>
+          </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ANNONCES -->
+<div class="row">
+
+  <div class="col-lg-12">
+      <div class="card">
+          <div class="card-body">
+              <h4 class="card-title mb-3">Annonces</h4>
+
+              
+              <ul class="list-group">
+                {% for annonce in Annonces %}
+                  <li class="list-group-item">
+                    <div class="d-flex justify-content-between">
+                      <div>
+                        <label class="form-check-label-Detailles" for="list2">
+                          {{ annonce.contenu }}
+                        </label>
+                      </div>
+                      <div>
+                        <small class="text-muted">
+                          {{ annonce.date_publication|date:"d F Y à  H:i" }}
+                        </small>
+                      </div>
+                    </div>
+                  </li>
+                {% endfor %}
+              </ul>
+              
+              
+          </div>
+      </div>
+  </div> 
+  
+
+
+
+
+    <script>
+  function setInstructionId(instructionId) {
+    // Mettre l'instruction_id dans le champ hidden
+    document.getElementById('instruction-id-input').value = instructionId;
+
+    // Mettre le bon nom dynamique dans le champ file
+    const fileInput = document.getElementById('file-input-dynamique');
+    fileInput.name = "file_" + instructionId;
+  }
+
+  function resetForm() {
+    // Nettoyer le nom du champ file quand on ferme
+    const fileInput = document.getElementById('file-input-dynamique');
+    fileInput.name = "";
+    fileInput.value = "";
+    document.getElementById('instruction-id-input').value = "";
+  }
+
+
+</script>
+
+
+  
+  
+
+{% endblock content %}

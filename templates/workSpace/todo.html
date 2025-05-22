@@ -1,0 +1,554 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+{% load static %}
+
+  
+  <div class="table-responsive border rounded todo-btns">
+    <table class="table align-middle text-nowrap mb-0">
+      <div class="table-responsive">
+          <ul class="nav nav-tabs theme-tab gap-3 flex-nowrap" role="tablist" style="padding: 20px;">
+              <li class="nav-item" role="presentation">
+              <a id="filter-btn-tous" class="nav-link" data-bs-toggle="tab" href="https://bootstrapdemos.adminmart.com/matdash/dist/main/index3.html#app" role="tab" aria-selected="false" tabindex="-1">
+                  <div class="hstack gap-2">
+                  <iconify-icon icon="solar:widget-linear" class="fs-4"><template shadowrootmode="open"><style data-style="data-style">:host{display:inline-block;vertical-align:0}span,svg{display:block}</style><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.5" d="M2.5 6.5c0-1.886 0-2.828.586-3.414S4.614 2.5 6.5 2.5s2.828 0 3.414.586s.586 1.528.586 3.414s0 2.828-.586 3.414s-1.528.586-3.414.586s-2.828 0-3.414-.586S2.5 8.386 2.5 6.5Zm11 11c0-1.886 0-2.828.586-3.414s1.528-.586 3.414-.586s2.828 0 3.414.586s.586 1.528.586 3.414s0 2.828-.586 3.414s-1.528.586-3.414.586s-2.828 0-3.414-.586s-.586-1.528-.586-3.414Zm-11 0c0-1.886 0-2.828.586-3.414S4.614 13.5 6.5 13.5s2.828 0 3.414.586s.586 1.528.586 3.414s0 2.828-.586 3.414s-1.528.586-3.414.586s-2.828 0-3.414-.586S2.5 19.386 2.5 17.5Zm11-11c0-1.886 0-2.828.586-3.414S15.614 2.5 17.5 2.5s2.828 0 3.414.586s.586 1.528.586 3.414s0 2.828-.586 3.414s-1.528.586-3.414.586s-2.828 0-3.414-.586S13.5 8.386 13.5 6.5Z"></path></svg></template></iconify-icon>
+                  <span>Tous</span>
+                  </div>
+
+              </a>
+              </li>
+              <li class="nav-item" role="presentation">
+              <a id="filter-btn-enCours" class="nav-link active" data-bs-toggle="tab" href="https://bootstrapdemos.adminmart.com/matdash/dist/main/index3.html#mobile" role="tab" aria-selected="true">
+                  <div class="hstack gap-2">
+                  <iconify-icon icon="solar:history-2-outline" class="fs-4"><template shadowrootmode="open"><style data-style="data-style">:host{display:inline-block;vertical-align:0}span,svg{display:block}</style><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 10c0-3.771 0-5.657 1.172-6.828S8.229 2 12 2s5.657 0 6.828 1.172S20 6.229 20 10v4c0 3.771 0 5.657-1.172 6.828S15.771 22 12 22s-5.657 0-6.828-1.172S4 17.771 4 14z"></path><path stroke-linecap="round" d="M15 19H9" opacity=".5"></path></g></svg></template></iconify-icon>
+                  <span>En cours</span>
+                  </div>
+              </a>
+              </li>
+              <li class="nav-item" role="presentation">
+              <a id="filter-btn-terminer" class="nav-link" data-bs-toggle="tab" href="https://bootstrapdemos.adminmart.com/matdash/dist/main/index3.html#other" role="tab" aria-selected="false" tabindex="-1">
+                  <div class="hstack gap-2">
+                  <iconify-icon icon="solar:check-square-outline" class="fs-4"><template shadowrootmode="open"><style data-style="data-style">:host{display:inline-block;vertical-align:0}span,svg{display:block}</style><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M16.03 10.03a.75.75 0 1 0-1.06-1.06l-4.47 4.47l-1.47-1.47a.75.75 0 0 0-1.06 1.06l2 2a.75.75 0 0 0 1.06 0z"/><path fill="currentColor" fill-rule="evenodd" d="M12.057 1.25h-.114c-2.309 0-4.118 0-5.53.19c-1.444.194-2.584.6-3.479 1.494c-.895.895-1.3 2.035-1.494 3.48c-.19 1.411-.19 3.22-.19 5.529v.114c0 2.309 0 4.118.19 5.53c.194 1.444.6 2.584 1.494 3.479c.895.895 2.035 1.3 3.48 1.494c1.411.19 3.22.19 5.529.19h.114c2.309 0 4.118 0 5.53-.19c1.444-.194 2.584-.6 3.479-1.494c.895-.895 1.3-2.035 1.494-3.48c.19-1.411.19-3.22.19-5.529v-.114c0-2.309 0-4.118-.19-5.53c-.194-1.444-.6-2.584-1.494-3.479c-.895-.895-2.035-1.3-3.48-1.494c-1.411-.19-3.22-.19-5.529-.19M3.995 3.995c.57-.57 1.34-.897 2.619-1.069c1.3-.174 3.008-.176 5.386-.176s4.086.002 5.386.176c1.279.172 2.05.5 2.62 1.069c.569.57.896 1.34 1.068 2.619c.174 1.3.176 3.008.176 5.386s-.002 4.086-.176 5.386c-.172 1.279-.5 2.05-1.069 2.62c-.57.569-1.34.896-2.619 1.068c-1.3.174-3.008.176-5.386.176s-4.086-.002-5.386-.176c-1.279-.172-2.05-.5-2.62-1.069c-.569-.57-.896-1.34-1.068-2.619c-.174-1.3-.176-3.008-.176-5.386s.002-4.086.176-5.386c.172-1.279.5-2.05 1.069-2.62" clip-rule="evenodd"/></svg></template></iconify-icon>
+                  <span>Terminée</span>
+                  </div>
+              </a>
+              </li>
+              <li class="nav-item" role="presentation">
+                  <div class="card-body calender-sidebar app-calendar">
+                      <div id="calendar" class="fc fc-media-screen fc-direction-ltr fc-theme-standard">
+                          <div class="fc-header-toolbar fc-toolbar fc-toolbar-ltr">
+                            <button {% if archive %} disabled {% endif %} type="button" aria-pressed="false" class="fc-addEventButton-button fc-button fc-button-primary">Ajouter une tache</button>
+                          </div>
+                      </div>
+                  </div>
+              </li>
+          </ul>
+      </div>
+      <thead>
+        <tr>
+          <th scope="col">
+            
+          </th>
+          <th scope="col">L'étudiant chargé</th>
+          <th scope="col">Date limite</th>
+          <th class="status-column" scope="col">Status</th>
+          <th scope="col">Déscription</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for tache in taches %}
+          <tr>
+              <td>
+                <form id="check-form" method="POST" action="{% url 'todo_ws' %}">
+                  {% csrf_token %}
+                  <input type="hidden" name="id_tache" value="{{ tache.id }}">
+                  <div class="form-check mb-0">
+                      <input name="status" class="form-check-input task-checkbox" type="checkbox" value="" id="task-{{ tache.id }}" {% if archive %} disabled {% endif %}>
+                  </div>
+                </form>
+              </td>
+              <td>
+                  <div class="d-flex align-items-center">
+                      <img src="{{ tache.etudiant.photo_profil.url }}" class="rounded-circle" alt="photo" width="40" height="40">
+                      <div class="ms-3">
+                          <p class="mb-0">{{ tache.etudiant.nom }} {{ tache.etudiant.prenom }}</p>
+                      </div>
+                  </div>
+              </td>
+              <td>
+                  <p class="mb-0">{{ tache.deadline|date:"Y-m-d" }}</p>
+              </td>
+              <td class="status-column">
+                <div style="display: flex; justify-content: start;">
+                  <div class="d-flex status_date align-items-center">
+                    {% if tache.deadline|date:"Y-m-d" == today %}
+                      <span class="text-bg-warning p-1 rounded-circle" style="width: 3px; height: 3px;"></span>
+                      <p class="mb-0 ms-2">Aujourd'hui</p>
+                    {% elif tache.deadline|date:"Y-m-d" > today  %}
+                      <span class="text-bg-success p-1 rounded-circle" style="width: 3px; height: 3px;"></span>
+                      <p class="mb-0 ms-2">À venir</p>
+                    {% else %}
+                      <span class="text-bg-danger p-1 rounded-circle" style="width: 3px; height: 3px;"></span>
+                      <p class="mb-0 ms-2">Dépassée</p>
+                    {% endif %}
+                  </div>
+                  <span class="status" style="visibility: hidden; display: none;">
+                    <p >{{ tache.status }}</p>
+                  </span>
+                </div>
+                
+              </td>
+              <td>
+                  {{ tache.description_tache }}
+              </td>
+              <td>
+                
+
+                <div style="display: flex; align-items: center">
+                  <input type="hidden" id="id_tache" value="{{ tache.id }}">
+                  <button {% if archive %} disabled {% endif %} style="border: none; background-color: transparent;" class="fs-6 text-muted delete-task"  data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" id="btn-delete">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                      <path fill="currentColor" d="M9.878 4.25a2.251 2.251 0 0 1 4.244 0a.75.75 0 1 0 1.415-.5a3.751 3.751 0 0 0-7.073 0a.75.75 0 1 0 1.414.5M2.75 6a.75.75 0 0 1 .75-.75h17a.75.75 0 0 1 0 1.5h-17A.75.75 0 0 1 2.75 6m2.367 1.752a.75.75 0 0 1 .798.698l.46 6.9c.09 1.347.154 2.285.294 2.99c.137.685.327 1.047.6 1.303c.274.256.648.422 1.34.512c.714.093 1.654.095 3.004.095h.774c1.35 0 2.29-.002 3.004-.095c.692-.09 1.066-.256 1.34-.512c.273-.256.463-.618.6-1.303c.14-.705.204-1.643.294-2.99l.46-6.9a.75.75 0 1 1 1.497.1l-.464 6.952c-.085 1.282-.154 2.318-.316 3.132c-.169.845-.455 1.551-1.047 2.104s-1.315.793-2.17.904c-.822.108-1.86.108-3.145.108h-.88c-1.285 0-2.323 0-3.145-.108c-.855-.111-1.579-.35-2.17-.904c-.592-.553-.878-1.26-1.047-2.104c-.162-.814-.23-1.85-.316-3.132L4.418 8.55a.75.75 0 0 1 .699-.798"/>
+                    </svg>
+                  </button>
+                  <input type="hidden" id="id-hidd" name="id_tache" value="{{ tache.id }}">
+                  <a {% if archive %} style="pointer-events: none; opacity: 0.5;" {% endif %} class="fs-6 text-muted edit-task" href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Editer">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M7 12a2 2 0 1 1-4 0a2 2 0 0 1 4 0m7 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0m7 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0"/></svg>
+                  </a>
+                </div>
+              </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    
+  </div>
+
+
+<!-- MODAL SUPPRIMER -->
+
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">Confirmation</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+          </div>
+          <div class="modal-body">
+              Êtes-vous sûr de vouloir supprimer cette tache ?
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+              <form method="POST" action="{% url 'todo_home' %}">
+                {% csrf_token %}
+                <input type="hidden" name="id_tache" id="id_tache_mod">
+                <input type="submit" class="btn btn-danger" id="confirmDeleteBtn"  name="delete" value="Supprimer">
+              </form>
+          </div>
+      </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById("btn-delete").addEventListener("click", function() {
+      id_etu = document.getElementById('id_tache').value
+      document.getElementById('id_tache_mod').value = id_etu
+  });
+  document.getElementById("confirmDeleteBtn").addEventListener("click", function() {
+      var modal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+      modal.hide();
+  });
+</script>
+
+
+<!-- MODAL EDIT -->
+
+<div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="taskModalLabel">Ajouter une tâche</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="taskForm" method="POST" action="{% url 'todo_ws' %}">
+          {% csrf_token %}
+          <div class="">
+            <div class="dropdown" style="margin-bottom: 30px;">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown">
+                    Sélectionner un étudiant
+                </button>
+                <ul class="dropdown-menu" id="studentsList">
+                  {% for etudiant in etudiants %}
+                    <li class="dropdown-item d-flex align-items-center student-item" data-name="Nom Étudiant 1">
+                        <img src="{{etudiant.photo_profil.url }}" class="rounded-circle me-2" width="40" height="40" alt="Photo">
+                        <div>
+                            <input type="hidden" class="student-input" value="{{etudiant.id }}">
+                            <strong>{{etudiant.nom }}{{etudiant.prenom }}</strong><br>
+                            <small>{{etudiant.email_etudiant }}</small>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="taskDate" class="form-label">Date limite</label>
+            <input type="date" class="form-control" id="taskDate" name="Date" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="taskDescription" class="form-label">Description</label>
+            <textarea class="form-control" id="taskDescription" rows="3" name="description" required></textarea>
+          </div>
+        
+          <input type="hidden" id="editIndex" name="toModifie">
+          <input type="hidden" id="etu-choisi">
+          <input type="hidden" name="id-tache" id="inp-hidd-id" >
+
+          <button name="modifier-ajouter" class="btn btn-primary">Enregistrer</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+
+  document.addEventListener("DOMContentLoaded", function () {
+
+    document.querySelector("#taskForm").addEventListener("submit", function (event) {
+        event.preventDefault(); // Empêche le rechargement en GET
+        let form = this;
+        let modifierInput = document.createElement("input");
+        modifierInput.type = "hidden";
+        modifierInput.name = "modifier-ajouter";
+        modifierInput.value = "1";
+        form.appendChild(modifierInput);
+        fetch(form.action, {
+            method: "POST",
+            body: new FormData(form)
+        }).then(response => response.text()).then(data => {
+            location.reload(); // Recharge la page après soumission
+        }).catch(error => console.error("Erreur :", error));
+    });
+
+    var checkboxes = document.querySelectorAll(".task-checkbox");
+    checkboxes.forEach(function (checkbox) {
+        checkbox.addEventListener("change", function () {
+            // Récupérer le formulaire parent de la case cochée
+            let form = this.closest("form");
+
+            // Vérifier si le formulaire est bien récupéré
+            if (form) {
+              var status;
+              if(this.checked) status="Terminé";
+              else status = "En cours";
+
+              const formData = new FormData(form);
+
+              // Ajouter le statut dans le FormData
+              formData.append('status_check', status);  // Ajout du statut
+
+              // Vous pouvez maintenant envoyer ces données avec fetch ou un autre moyen
+              fetch(form.action, {
+                  method: 'POST',
+                  body: formData
+              })
+              .then(response => response.text()).then(data => {
+                  location.reload(); // Recharge la page après soumission
+              }).catch(error => console.error("Erreur :", error));
+            }
+        });
+    });
+
+
+    var taskModal = new bootstrap.Modal(document.getElementById("taskModal"));
+    var addButton = document.querySelector(".fc-addEventButton-button");
+    var form = document.getElementById("taskForm");
+    var editIndex = document.getElementById("editIndex");
+    var deleteButtons = document.querySelectorAll('.delete-task');
+    var editButtons = document.querySelectorAll('.edit-task');
+    var checkboxes = document.querySelectorAll('.form-check-input');
+
+    // cocher les taches tériminés ------------------------------------------------------
+
+    document.querySelectorAll("tr").forEach(row => {
+      let statusText = row.querySelector(".status p")?.textContent.trim();
+      let checkbox = row.querySelector(".task-checkbox");
+      
+      if (statusText === "Terminé" && checkbox) {
+        checkbox.checked = true; // Coche la case si la tâche est terminée
+      }else if(statusText === "En cours" && checkbox){
+        checkbox.checked = false;
+      }
+    });
+
+    
+    addButton.addEventListener("click", function () {
+        form.reset();
+        editIndex.value = "";
+        document.getElementById("taskModalLabel").textContent = "Ajouter une tâche";
+        taskModal.show();
+    });
+
+    form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        
+        // var name = document.getElementById("taskName").value;
+        var date = document.getElementById("taskDate").value;
+        // var status = document.getElementById("taskStatus").value;
+        var description = document.getElementById("taskDescription").value;
+        
+        if (editIndex.value === "") {
+            if (document.getElementById("etu-choisi").value == "choisi"){
+              addTask(name, date, description);
+            }else{
+              alert("il faut choisir un étudiant");
+            }
+            
+        } else {
+            updateTask(editIndex.value, name, date, description);
+        }
+
+        taskModal.hide();
+    });
+
+    function addTask(name, date, description) {
+        var tbody = document.querySelector("table tbody");
+        var row = tbody.insertRow();
+        row.innerHTML = `
+          <td>
+            <div class="form-check mb-0">
+              <input class="form-check-input task-checkbox" type="checkbox" value="" id="flexCheckDefault1">
+            </div>
+          </td>
+          <td>
+            <div class="d-flex align-items-center">
+              <img src="{% static 'MatDash Bootstrap Admin_files/user-2.jpg' %}" class="rounded-circle" alt="matdash-img" width="40" height="40">
+              <div class="ms-3">
+                <p class="mb-0">Fatima CHAKIR</p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <p class="mb-0">${date}</p>
+          </td>
+          <td>
+            <div style="display: flex; justify-content: start;">
+              <div class="d-flex status_date align-items-center">
+                <span class="text-bg-${dws} p-1 rounded-circle" style="width: 3px; height: 3px;"></span>
+                <p class="mb-0 ms-2">${date_status}</p>
+              </div>
+              <span class="status" style="visibility: hidden; display: none;">
+                  <p >En cours</p>
+              </span>
+            </div>
+          </td>
+          <td>
+            ${description}
+          </td>
+          <td>
+              <a class="fs-6 text-muted delete-task" href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Supprimer">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M9.878 4.25a2.251 2.251 0 0 1 4.244 0a.75.75 0 1 0 1.415-.5a3.751 3.751 0 0 0-7.073 0a.75.75 0 1 0 1.414.5M2.75 6a.75.75 0 0 1 .75-.75h17a.75.75 0 0 1 0 1.5h-17A.75.75 0 0 1 2.75 6m2.367 1.752a.75.75 0 0 1 .798.698l.46 6.9c.09 1.347.154 2.285.294 2.99c.137.685.327 1.047.6 1.303c.274.256.648.422 1.34.512c.714.093 1.654.095 3.004.095h.774c1.35 0 2.29-.002 3.004-.095c.692-.09 1.066-.256 1.34-.512c.273-.256.463-.618.6-1.303c.14-.705.204-1.643.294-2.99l.46-6.9a.75.75 0 1 1 1.497.1l-.464 6.952c-.085 1.282-.154 2.318-.316 3.132c-.169.845-.455 1.551-1.047 2.104s-1.315.793-2.17.904c-.822.108-1.86.108-3.145.108h-.88c-1.285 0-2.323 0-3.145-.108c-.855-.111-1.579-.35-2.17-.904c-.592-.553-.878-1.26-1.047-2.104c-.162-.814-.23-1.85-.316-3.132L4.418 8.55a.75.75 0 0 1 .699-.798"/></svg>
+              </a>
+              <a class="fs-6 text-muted edit-task" href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Editer">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M7 12a2 2 0 1 1-4 0a2 2 0 0 1 4 0m7 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0m7 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0"/></svg>
+              </a>
+          </td>
+        `;
+
+        
+     deleteButtons = document.querySelectorAll('.delete-task');
+     editButtons = document.querySelectorAll('.edit-task');
+     checkboxes = document.querySelectorAll('.form-check-input');
+
+     deleteButtons.forEach(button => {
+      button.addEventListener('click', function() {
+          // Trouver la ligne parente (le <tr>)
+          var row = this.closest('tr');
+          row.remove();
+        });
+      });
+     editButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        // Trouver la ligne parente (le <tr>)
+        var row = this.closest('tr');
+        document.getElementById("taskName").value = row.cells[1].textContent.trim();
+        let dateText = row.cells[2].textContent.trim(); // Récupère et nettoie le texte
+        let parts = dateText.split("/"); // Sépare jj/mm/aaaa
+
+        if (parts.length === 3) {
+          let formattedDate = parts[2] + "-" + parts[1] + "-" + parts[0]; // Convertit en aaaa-mm-jj
+            document.getElementById("taskDate").value = formattedDate;
+        }
+
+        // document.getElementById("taskStatus").value = row.cells[3].textContent.trim();
+        document.getElementById("taskDescription").value = row.cells[4].textContent.trim();
+
+        editIndex.value = row.rowIndex;
+        document.getElementById("taskModalLabel").textContent = "Modifier la tâche";
+        taskModal.show();
+      });
+    });
+    
+    }
+
+    editButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        // Trouver la ligne parente (le <tr>)
+        var row = this.closest('tr');
+        document.getElementById("taskDate").value = row.cells[2].textContent.trim();
+        document.getElementById("taskDescription").value = row.cells[4].textContent.trim();
+        document.getElementById("inp-hidd-id").value = row.querySelector("#id-hidd").value;
+
+        editIndex.value = row.rowIndex;
+        document.getElementById("taskModalLabel").textContent = "Modifier la tâche";
+        taskModal.show();
+      });
+    });
+
+    function updateTask(index, name, date, description) {
+        var row = document.querySelector("table tbody").rows[index - 1];
+        row.cells[1].textContent = name;
+        row.cells[2].textContent = date;
+        // row.cells[3].innerHTML = <span class="text-bg-success p-1 rounded-circle" style="width: 3px; height: 3px;"></span> <span>${status}</span>;
+        row.cells[4].textContent = description;
+    }
+
+    // Ajouter un événement de changement pour chaque checkbox ------------------------
+    checkboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', function() {
+        // Trouver la ligne parente <tr> et le statut
+        const row = this.closest('tr');
+        const statusText = row.querySelector('.status p');
+        const statusSpan = row.querySelector('.status span');
+
+        // Si la case est cochée, mettre à jour le statut
+        if (this.checked) {
+          statusText.textContent = 'Terminé';
+          statusSpan.classList.remove('text-bg-danger'); // Si la tâche était en "En cours"
+          statusSpan.classList.add('text-bg-success'); // Mettre le statut en "Terminé"
+        } else {
+          // Sinon remettre le statut initial (ou tout autre logique que tu souhaites)
+          statusText.textContent = 'En cours';
+          statusSpan.classList.remove('text-bg-success');
+          statusSpan.classList.add('text-bg-danger');
+        }
+      });
+    });
+
+    // Filtrer selon le status ----------------------------------------------------------
+
+    document.getElementById("filter-btn-terminer").addEventListener("click", function() {
+        var rows = document.querySelectorAll("tbody tr");
+        var status_columns = document.querySelectorAll(".status-column");
+        
+        rows.forEach(row => {
+          // afficher les tache terminées dans 'terminé'
+            var status = row.querySelector(".status p").textContent.trim();
+            if (status !== "Terminé") {
+                row.style.display = "none";  // Cache la ligne
+            } else {
+                row.style.display = "";  // Affiche la ligne
+            }            
+        });
+
+        // cacher le status
+        status_columns.forEach(status_column => {
+            status_column.style.display = "none";
+        });
+    });
+    
+    document.getElementById("filter-btn-enCours").addEventListener("click", function() {
+        var rows = document.querySelectorAll("tbody tr");
+        var status_columns = document.querySelectorAll(".status-column");
+        
+        rows.forEach(row => {
+            var status = row.querySelector(".status p").textContent.trim();
+
+            if (status !== "En cours") {
+                row.style.display = "none";  // Cache la ligne
+            } else {
+                row.style.display = "";  // Affiche la ligne
+            }
+        });
+
+        // cacher le status
+        status_columns.forEach(status_column => {
+            status_column.style.display = "table-cell";
+        });
+    });
+    
+    document.getElementById("filter-btn-tous").addEventListener("click", function() {
+        var rows = document.querySelectorAll("tbody tr");
+        var status_columns = document.querySelectorAll(".status-column");
+        
+        rows.forEach(row => {
+            row.style.display = "";  // Affiche tous les lignes
+        });
+
+        // afficher le status
+        status_columns.forEach(status_column => {
+            status_column.style.display = "none";
+        });
+        
+    });
+
+    
+    // Auto click sur btn en cours
+    document.getElementById("filter-btn-enCours").click();
+
+});
+
+
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let dropdownButton = document.getElementById("dropdownMenuButton");
+        let studentItems = document.querySelectorAll(".student-item");
+
+        studentItems.forEach(item => {
+            item.addEventListener("click", function () {
+                let studentName = this.getAttribute("data-name");
+                let etu_choisi =  document.getElementById("etu-choisi")
+                etu_choisi.value = "choisi"
+                // Mettre à jour le bouton avec le nom de l'étudiant sélectionné
+                dropdownButton.textContent = "Sélectionné : " + studentName;
+            });
+        });
+    });
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      const studentItems = document.querySelectorAll(".student-item");
+  
+      studentItems.forEach(item => {
+          item.addEventListener("click", function() {
+              // Supprimer l'attribut name="etu" de tous les inputs
+              document.querySelectorAll(".student-input").forEach(input => {
+                  input.removeAttribute("name");
+              });
+  
+              // Ajouter name="etu" à l'input hidden du choix sélectionné
+              const hiddenInput = this.querySelector(".student-input");
+              if (hiddenInput) {
+                  hiddenInput.setAttribute("name", "etu");
+              }
+  
+              // Mettre à jour le texte du bouton avec le nom sélectionné
+              document.getElementById("dropdownMenuButton").textContent = this.dataset.name;
+          });
+      });
+  });
+</script>
+  
+
+
+{% endblock content %}

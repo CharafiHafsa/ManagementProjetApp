@@ -1,0 +1,464 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+{% load static %}
+
+
+  <div class="table-responsive border rounded todo-btns">
+    <table class="table align-middle text-nowrap mb-0">
+      <div class="table-responsive">
+          <ul class="nav nav-tabs theme-tab gap-3 flex-nowrap" role="tablist" style="padding: 20px;">
+              <li class="nav-item" role="presentation">
+              <a id="filter-btn-tous" class="nav-link" data-bs-toggle="tab" href="https://bootstrapdemos.adminmart.com/matdash/dist/main/index3.html#app" role="tab" aria-selected="false" tabindex="-1">
+                  <div class="hstack gap-2">
+                  <iconify-icon icon="solar:widget-linear" class="fs-4"></iconify-icon>
+                  <span>Tous</span>
+                  </div>
+
+              </a>
+              </li>
+              <li class="nav-item" role="presentation">
+              <a id="filter-btn-enCours" class="nav-link active" data-bs-toggle="tab" href="https://bootstrapdemos.adminmart.com/matdash/dist/main/index3.html#mobile" role="tab" aria-selected="true">
+                  <div class="hstack gap-2">
+                  <iconify-icon icon="solar:history-2-outline" class="fs-4"></iconify-icon>
+                  <span>En cours</span>
+                  </div>
+              </a>
+              </li>
+              <li class="nav-item" role="presentation">
+              <a id="filter-btn-terminer" class="nav-link" data-bs-toggle="tab" href="https://bootstrapdemos.adminmart.com/matdash/dist/main/index3.html#other" role="tab" aria-selected="false" tabindex="-1">
+                  <div class="hstack gap-2">
+                  <iconify-icon icon="solar:check-square-outline" class="fs-4"></iconify-icon>
+                  <span>Terminée</span>
+                  </div>
+              </a>
+              </li>
+          </ul>
+      </div>
+      <thead>
+        <tr>
+          <th scope="col">
+            
+          </th>
+          <th scope="col">Projet</th>
+          <th scope="col">Date limite</th>
+          <th class="status-column" scope="col">Status</th>
+          <th scope="col">Déscription</th>
+          <th scope="col">Actions</th>
+          
+        </tr>
+      </thead>
+      <tbody>
+       
+        {% for tache in taches %}
+        <tr>
+            <td>
+              <form id="check-form" method="POST" action="{% url 'todo_home'  %}">
+                {% csrf_token %}
+                <input type="hidden" name="id_tache" value="{{ tache.id }}">
+                <div class="form-check mb-0">
+                    <input name="status" class="form-check-input task-checkbox" type="checkbox" value="" id="task-{{ tache.id }}">
+                </div>
+              </form>
+            </td>
+            <td>
+                <div class="d-flex align-items-center">
+                    <p class="mb-0">{{ tache.groupe.projet.nom_project }}</p>
+                </div>
+            </td>
+            <td>
+                <p class="mb-0">{{ tache.deadline|date:"Y-m-d" }}</p>
+            </td>
+            <td class="status-column">
+              <div style="display: flex; justify-content: start;">
+                <div class="d-flex status_date align-items-center">
+                  {% if tache.deadline|date:"Y-m-d" == today %}
+                    <span class="text-bg-warning p-1 rounded-circle" style="width: 3px; height: 3px;"></span>
+                    <p class="mb-0 ms-2">Aujourd'hui</p>
+                  {% elif tache.deadline|date:"Y-m-d" > today  %}
+                    <span class="text-bg-success p-1 rounded-circle" style="width: 3px; height: 3px;"></span>
+                    <p class="mb-0 ms-2">À venir</p>
+                  {% else %}
+                    <span class="text-bg-danger p-1 rounded-circle" style="width: 3px; height: 3px;"></span>
+                    <p class="mb-0 ms-2">Dépassée</p>
+                  {% endif %}
+                </div>
+                <span class="status" style="visibility: hidden; display: none;">
+                  <p >{{ tache.status }}</p>
+                </span>
+              </div>
+              
+            </td>
+            <td>
+                {{ tache.description_tache }}
+            </td>
+            <td>
+             
+              <div style="display: flex; align-items: center">
+                <input type="hidden" id="id_tache" value="{{ tache.id }}">
+                <button  style="border: none; background-color: transparent;" class="fs-6 text-muted delete-task"  data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" id="btn-delete">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M9.878 4.25a2.251 2.251 0 0 1 4.244 0a.75.75 0 1 0 1.415-.5a3.751 3.751 0 0 0-7.073 0a.75.75 0 1 0 1.414.5M2.75 6a.75.75 0 0 1 .75-.75h17a.75.75 0 0 1 0 1.5h-17A.75.75 0 0 1 2.75 6m2.367 1.752a.75.75 0 0 1 .798.698l.46 6.9c.09 1.347.154 2.285.294 2.99c.137.685.327 1.047.6 1.303c.274.256.648.422 1.34.512c.714.093 1.654.095 3.004.095h.774c1.35 0 2.29-.002 3.004-.095c.692-.09 1.066-.256 1.34-.512c.273-.256.463-.618.6-1.303c.14-.705.204-1.643.294-2.99l.46-6.9a.75.75 0 1 1 1.497.1l-.464 6.952c-.085 1.282-.154 2.318-.316 3.132c-.169.845-.455 1.551-1.047 2.104s-1.315.793-2.17.904c-.822.108-1.86.108-3.145.108h-.88c-1.285 0-2.323 0-3.145-.108c-.855-.111-1.579-.35-2.17-.904c-.592-.553-.878-1.26-1.047-2.104c-.162-.814-.23-1.85-.316-3.132L4.418 8.55a.75.75 0 0 1 .699-.798"/>
+                  </svg>
+                </button>
+                <input type="hidden" id="id-hidd" name="id_tache" value="{{ tache.id }}">
+                <a class="fs-6 text-muted edit-task" href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Editer">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M7 12a2 2 0 1 1-4 0a2 2 0 0 1 4 0m7 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0m7 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0"/></svg>
+                </a>
+              </div>
+             
+               
+            </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    
+  </div>
+
+<!-- MODAL SUPPRIMER -->
+
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">Confirmation</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+          </div>
+          <div class="modal-body">
+              Êtes-vous sûr de vouloir supprimer cette tache ?
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+              <form method="POST" action="{% url 'todo_home' %}">
+                {% csrf_token %}
+                <input type="hidden" name="id_tache" id="id_tache_mod">
+                <input type="submit" class="btn btn-danger" id="confirmDeleteBtn"  name="delete" value="Supprimer">
+              </form>
+          </div>
+      </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById("btn-delete").addEventListener("click", function() {
+      id_etu = document.getElementById('id_tache').value
+      document.getElementById('id_tache_mod').value = id_etu
+  });
+  document.getElementById("confirmDeleteBtn").addEventListener("click", function() {
+      var modal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+      modal.hide();
+  });
+</script>
+  
+
+
+
+<!-- MODAL EDITER -->
+
+<div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="taskModalLabel">Ajouter une tâche</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="taskForm" method="POST" action="{% url 'todo_home' %}">
+          {% csrf_token %}
+
+          <div class="mb-3">
+            <label for="taskDate" class="form-label">Date limite</label>
+            <input type="date" class="form-control" id="taskDate" name="Date" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="taskDescription" class="form-label">Description</label>
+            <textarea class="form-control" id="taskDescription" rows="3" name="description"></textarea>
+          </div>
+
+          <input type="hidden" id="editIndex">
+          <input type="hidden" name="id-tache" id="inp-hidd-id" >
+          
+          <button name="modifier" class="btn btn-primary">Enregistrer</button>
+          <!-- <button id="btn-edit-add" name="edit" style="display: none;"></button> -->
+          
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+      document.querySelector("#taskForm").addEventListener("submit", function (event) {
+        event.preventDefault(); // Empêche le rechargement en GET
+        let form = this;
+        let modifierInput = document.createElement("input");
+        modifierInput.type = "hidden";
+        modifierInput.name = "modifier";
+        modifierInput.value = "1";
+        form.appendChild(modifierInput);
+        fetch(form.action, {
+            method: "POST",
+            body: new FormData(form)
+        }).then(response => response.text()).then(data => {
+            location.reload(); // Recharge la page après soumission
+        }).catch(error => console.error("Erreur :", error));
+    });
+
+    var checkboxes = document.querySelectorAll(".task-checkbox");
+
+    checkboxes.forEach(function (checkbox) {
+        checkbox.addEventListener("change", function () {
+            // Récupérer le formulaire parent de la case cochée
+            let form = this.closest("form");
+
+            // Vérifier si le formulaire est bien récupéré
+            if (form) {
+              var status;
+              if(this.checked) status="Terminé";
+              else status = "En cours";
+
+              const formData = new FormData(form);
+
+              // Ajouter le statut dans le FormData
+              formData.append('status_check', status);  // Ajout du statut
+
+              // Vous pouvez maintenant envoyer ces données avec fetch ou un autre moyen
+              fetch(form.action, {
+                  method: 'POST',
+                  body: formData
+              })
+              .then(response => response.text()).then(data => {
+                  location.reload(); // Recharge la page après soumission
+              }).catch(error => console.error("Erreur :", error));
+            }
+        });
+    });
+
+
+
+
+    var taskModal = new bootstrap.Modal(document.getElementById("taskModal"));
+    var addButton = document.querySelector(".fc-addEventButton-button");
+    var form = document.getElementById("taskForm");
+    var editIndex = document.getElementById("editIndex");
+    var deleteButtons = document.querySelectorAll('.delete-task');
+    var editButtons = document.querySelectorAll('.edit-task');
+    var checkboxes = document.querySelectorAll('.form-check-input');
+
+    // cocher les taches tériminés ------------------------------------------------------
+
+    document.querySelectorAll("tr").forEach(row => {
+      let statusText = row.querySelector(".status p")?.textContent.trim();
+      let checkbox = row.querySelector(".task-checkbox");
+      
+      if (statusText === "Terminé" && checkbox) {
+        checkbox.checked = true; // Coche la case si la tâche est terminée
+      }else if(statusText === "En cours" && checkbox){
+        checkbox.checked = false;
+      }
+    });
+
+    
+
+    function addTask(name, date, description) {
+        var tbody = document.querySelector("table tbody");
+        var row = tbody.insertRow();
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if (dateTache < today) {
+            date_status = 'Dépassé';
+            dws = 'danger'
+        } else if (dateTache.getTime() === today.getTime()) {
+            date_status = 'Aujourd\'huit';
+            dws = 'warning'
+        } else {
+            date_status = 'À venir';
+            dws = 'success'
+        }
+
+        
+        row.innerHTML = `
+          <td>
+            <div class="form-check mb-0">
+              <input class="form-check-input task-checkbox" type="checkbox" value="" id="flexCheckDefault1">
+            </div>
+          </td>
+          <td>
+            <div class="d-flex align-items-center">
+              <p class="mb-0">${name}</p>
+            </div>
+          </td>
+          <td>
+            <p class="mb-0">${date}</p>
+          </td>
+          
+          <td>
+            <div style="display: flex; justify-content: start;">
+              <div class="d-flex status_date align-items-center">
+                <span class="text-bg-${dws} p-1 rounded-circle"  style="width: 3px; height: 3px;"></span>
+                <p class="mb-0 ms-2">${date_status}</p>
+              </div>
+              <span class="status" style="visibility: hidden; display: none;">
+                  <p >En cours</p>
+              </span>
+            </div>
+          </td>
+          <td>
+            ${description}
+          </td>
+          <td>
+              <a class="fs-6 text-muted delete-task" href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Supprimer">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M9.878 4.25a2.251 2.251 0 0 1 4.244 0a.75.75 0 1 0 1.415-.5a3.751 3.751 0 0 0-7.073 0a.75.75 0 1 0 1.414.5M2.75 6a.75.75 0 0 1 .75-.75h17a.75.75 0 0 1 0 1.5h-17A.75.75 0 0 1 2.75 6m2.367 1.752a.75.75 0 0 1 .798.698l.46 6.9c.09 1.347.154 2.285.294 2.99c.137.685.327 1.047.6 1.303c.274.256.648.422 1.34.512c.714.093 1.654.095 3.004.095h.774c1.35 0 2.29-.002 3.004-.095c.692-.09 1.066-.256 1.34-.512c.273-.256.463-.618.6-1.303c.14-.705.204-1.643.294-2.99l.46-6.9a.75.75 0 1 1 1.497.1l-.464 6.952c-.085 1.282-.154 2.318-.316 3.132c-.169.845-.455 1.551-1.047 2.104s-1.315.793-2.17.904c-.822.108-1.86.108-3.145.108h-.88c-1.285 0-2.323 0-3.145-.108c-.855-.111-1.579-.35-2.17-.904c-.592-.553-.878-1.26-1.047-2.104c-.162-.814-.23-1.85-.316-3.132L4.418 8.55a.75.75 0 0 1 .699-.798"/></svg>
+              </a>
+              <a class="fs-6 text-muted edit-task" href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Editer">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M7 12a2 2 0 1 1-4 0a2 2 0 0 1 4 0m7 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0m7 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0"/></svg>
+              </a>
+          </td>
+        `;
+
+        
+     deleteButtons = document.querySelectorAll('.delete-task');
+     editButtons = document.querySelectorAll('.edit-task');
+     checkboxes = document.querySelectorAll('.form-check-input');
+    
+    }
+
+    editButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        // Trouver la ligne parente (le <tr>)
+        var row = this.closest('tr');
+        document.getElementById("taskDate").value = row.cells[2].textContent.trim();
+        document.getElementById("taskDescription").value = row.cells[4].textContent.trim();
+        document.getElementById("inp-hidd-id").value = row.querySelector("#id-hidd").value;
+        
+
+        editIndex.value = row.rowIndex;
+        document.getElementById("taskModalLabel").textContent = "Modifier la tâche";
+        taskModal.show();
+      });
+    });
+
+    function updateTask(index, name, date, description) {
+        var row = document.querySelector("table tbody").rows[index - 1];
+        row.cells[1].textContent = name;
+        row.cells[2].textContent = date;
+        // row.cells[3].innerHTML = <span class="text-bg-success p-1 rounded-circle"  style="width: 3px; height: 3px;"></span> <span>${status}</span>;
+        row.cells[4].textContent = description;
+    }
+
+    // Ajouter un événement de changement pour chaque checkbox ------------------------
+    checkboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', function() {
+        // Trouver la ligne parente <tr> et le statut
+        const row = this.closest('tr');
+        const statusText = row.querySelector('.status p');
+        const statusSpan = row.querySelector('.status span');
+
+        // Si la case est cochée, mettre à jour le statut
+        if (this.checked) {
+          statusText.textContent = 'Terminé';
+          statusSpan.classList.remove('text-bg-danger'); // Si la tâche était en "En cours"
+          statusSpan.classList.add('text-bg-success'); // Mettre le statut en "Terminé"
+        } else {
+          // Sinon remettre le statut initial (ou tout autre logique que tu souhaites)
+          statusText.textContent = 'En cours';
+          statusSpan.classList.remove('text-bg-success');
+          statusSpan.classList.add('text-bg-danger');
+        }
+      });
+    });
+
+    // Filtrer selon le status ----------------------------------------------------------
+
+    document.getElementById("filter-btn-terminer").addEventListener("click", function() {
+        var rows = document.querySelectorAll("tbody tr");
+        var status_columns = document.querySelectorAll(".status-column");
+        
+        rows.forEach(row => {
+          // afficher les tache terminées dans 'terminé'
+            var status = row.querySelector(".status p").textContent.trim();
+            if (status !== "Terminé") {
+                row.style.display = "none";  // Cache la ligne
+            } else {
+                row.style.display = "";  // Affiche la ligne
+            }            
+        });
+
+        // cacher le status
+        status_columns.forEach(status_column => {
+            status_column.style.display = "none";
+        });
+    });
+    
+    document.getElementById("filter-btn-enCours").addEventListener("click", function() {
+        var rows = document.querySelectorAll("tbody tr");
+        var status_columns = document.querySelectorAll(".status-column");
+        
+        rows.forEach(row => {
+            var status = row.querySelector(".status p").textContent.trim();
+
+            if (status !== "En cours") {
+                row.style.display = "none";  // Cache la ligne
+            } else {
+                row.style.display = "";  // Affiche la ligne
+            }
+        });
+
+        // cacher le status
+        status_columns.forEach(status_column => {
+            status_column.style.display = "table-cell";
+        });
+    });
+    
+    document.getElementById("filter-btn-tous").addEventListener("click", function() {
+        var rows = document.querySelectorAll("tbody tr");
+        var status_columns = document.querySelectorAll(".status-column");
+        
+        rows.forEach(row => {
+            row.style.display = "";  // Affiche tous les lignes
+        });
+
+        // afficher le status
+        status_columns.forEach(status_column => {
+            status_column.style.display = "none";
+        });
+        
+    });
+
+    
+    // Auto click sur btn en cours
+    document.getElementById("filter-btn-enCours").click();
+
+});
+
+
+</script>
+
+
+<script>
+  function incon_notification_red(){
+    document.getElementById('icon_notification').classList.add("make_it_red");
+    // document.getElementById('icon_notification').style.color = 'red';
+  }
+  function icon_notification_normal(){
+    document.getElementById('icon_notification').classList.remove("make_it_red");
+  }
+</script>
+{% if nouvelle_notifications %}
+  <script>
+    document.addEventListener("DOMContentLoaded", incon_notification_red())
+  </script>
+{% else %}
+  <script>
+    document.addEventListener("DOMContentLoaded", icon_notification_normal())
+  </script>
+{% endif %}
+
+{% endblock content %}

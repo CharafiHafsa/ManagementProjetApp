@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<style>
+    .user-message, .bot-message {
+        padding: 8px;
+        margin: 5px 0;
+        border-radius: 10px;
+        color: white;
+        width: fit-content;
+        max-width: 70%;
+    }
+    .user-message {
+        background-color: #653bff;
+        margin-left: auto;
+    }
+    .bot-message {
+        background-color: #d2edf1;
+        color: #324d52;
+        margin-right: auto;
+    }
+    .typing-indicator {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin: 5px 0;
+        padding: 8px;
+        background-color: #cac8ff;
+        color: #653bff;
+        border-radius: 10px;
+        width: fit-content;
+        max-width: 70%;
+        text-align: left;
+        border-top-left-radius: 0;
+    }
+    .typing-indicator span {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background-color: #653bff;
+        border-radius: 50%;
+        animation: typing 1.5s infinite ease-in-out;
+    }
+    @keyframes typing {
+        0% { opacity: 0.3; transform: translateY(0px); }
+        50% { opacity: 1; transform: translateY(-3px); }
+        100% { opacity: 0.3; transform: translateY(0px); }
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="card overflow-hidden chat-application">
+        
+        <div class="d-flex">
+            <div class="w-70 w-xs-100 chat-container">
+                <div class="chat-box-inner-part h-100">
+                    <div class="chat-not-selected h-100 d-none">
+                        <div class="d-flex align-items-center justify-content-center h-100 p-5">
+                            <div class="text-center">
+                                <span class="text-primary">
+                                    <i class="ti ti-message-dots fs-10"></i>
+                                </span>
+                                <h6 class="mt-2">Open chat from the list</h6>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chatting-box d-block">
+                        <div class="p-9 border-bottom chat-meta-user d-flex align-items-center justify-content-between">
+                            <div class="hstack gap-3 current-chat-user-name">
+                                
+                                <div>
+                                    <h6 class="mb-1 name fw-semibold"></h6>
+                                    <p class="mb-0">ChatBot</p>
+                                </div>
+                            </div>
+                        </div>
+                       
+                        <div class="parent-chat-box">
+                            <div class="chat-box w-xs-100" style="width: 100%;">
+                                <div class="chat-box-inner p-9" data-simplebar="init">
+                                    <div class="simplebar-wrapper" style="margin: -20px;">
+                                        <div class="simplebar-height-auto-observer-wrapper">
+                                            <div class="simplebar-height-auto-observer"></div>
+                                        </div>
+                                        <div class="simplebar-mask">
+                                            <div class="simplebar-offset" style="right: 0px; bottom: 0px;">
+                                                <div class="simplebar-content-wrapper" tabindex="0" role="region"
+                                                    aria-label="scrollable content" id="chat_messages_scroller" style="height: 100%; overflow: scroll;">
+                                                    <div class="simplebar-content" style="padding: 20px;">
+                                                        <div class="chat-list chat active-chat" data-user-id="1" id="chatMessages"></div> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="px-9 py-6 border-top chat-send-message-footer">
+                                    <div class="align-items-center justify-content-between">
+                                      <div class="align-items-center justify-content-between">
+                                        <div class="align-items-center justify-content-between">
+                                            <form method="post" style="display: flex;">
+                                                {% csrf_token %}
+                                                <input type="text" id="message_Input" class="form-control message-type-box text-muted border-0 rounded-0 p-0 ms-2" placeholder="Type a Message">
+                                                <button type="button" class="btn btn-primary ms-2" onclick="sendMessage()">Envoyer</button>
+                                            </form>
+                                        </div>
+                                    </div> 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let subjectId = null;
+    function loadConversation(sujetIdParam) {
+        let chatBox = document.getElementById("chatMessages");
+        chatBox.innerHTML = "";
+        subjectId = sujetIdParam;
+        const url = "{% url 'get_conversation' 0 %}".replace('0', subjectId);
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                // let chatBox = document.getElementById("chatMessages");
+                // chatBox.innerHTML = "";
+                data.messages.forEach(message => {
+                    let messageElement = document.createElement("div");
+                    if (message.etudiant === 'Chatbot') {
+                        messageElement.className = "bot-message";
+                    } else {
+                        messageElement.className = "user-message";
+                    }
+                    messageElement.textContent = message.contenu;
+                    chatBox.appendChild(messageElement);
+                });
+                chatBox.scrollTop = chatBox.scrollHeight;
+            })
+            .catch(error => console.error("Erreur dans la requête fetch:", error));
+    }
+
+    function sendMessage() {
+    let userInput = document.getElementById("message_Input").value;
+    let chatBox = document.getElementById("chatMessages");
+
+    if (userInput.trim() === "") return;
+
+    // Ajouter le message de l'utilisateur
+    let userMessage = document.createElement("div");
+    userMessage.className = "user-message";
+    userMessage.textContent = userInput;
+    chatBox.appendChild(userMessage);
+
+    // Ajouter l'indicateur de saisie
+    let typingIndicator = document.createElement("div");
+    typingIndicator.className = "typing-indicator";
+    typingIndicator.innerHTML = "<span></span><span></span><span></span>";
+    chatBox.appendChild(typingIndicator);
+
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    // Envoyer le message au serveur
+    fetch("{% url 'chatbot' %}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-CSRFToken": "{{ csrf_token }}"
+        },
+        body: "message=" + encodeURIComponent(userInput) + (subjectId ? "&subject_id=" + subjectId : "")
+    })
+    .then(response => response.json())
+    .then(data => {
+        typingIndicator.remove();
+        if (data.error) {
+            alert(data.error);
+        } else {
+            let botMessage = document.createElement("div");
+            botMessage.className = "bot-message";
+            botMessage.innerHTML  = data.response;
+            chatBox.appendChild(botMessage);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+        
+    })
+    .catch(error => console.error("Erreur d'envoi:", error));
+    document.getElementById("message_Input").value = "";
+}
+
+document.getElementById('message_Input').addEventListener('keypress', sendMessage());
+
+</script>
+{% endblock %}

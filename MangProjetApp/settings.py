@@ -41,7 +41,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'base_de_donnee',
     'authentication',
-    'prof_app',  
+    'student_app.apps.StudentAppConfig',
+    'channels',  
+    'prof_app',
 ]
 
 
@@ -154,5 +156,3 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'najibimane093@gmail.com'
 EMAIL_HOST_PASSWORD = 'rynq ynkq auhu qurq'
-
-

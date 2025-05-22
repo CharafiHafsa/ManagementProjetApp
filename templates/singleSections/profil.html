@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+{% load static %}
+
+<div class="card overflow-hidden">
+    <div class="card-body p-0">
+      <img src="{% static 'MatDash Bootstrap Admin_files/profilebg.jpg' %}" alt="matdash-img" class="img-fluid">
+      <div class="row align-items-center">
+        <div class="col-lg-4 order-lg-1 order-2">
+          <div class="d-flex align-items-center justify-content-around m-4">
+            <div class="text-center">
+              <iconify-icon icon="solar:notes-bold-duotone" class="fs-7"></iconify-icon>
+              <h4 class="mb-0 fw-semibold lh-1">{{ nombre_classes }}</h4>
+              <p class="mb-0 ">Classes</p>
+            </div>
+            <div class="text-center">
+              <iconify-icon icon="solar:folder-check-bold-duotone" class="fs-7"></iconify-icon>
+              <h4 class="mb-0 fw-semibold lh-1">1</h4>
+              <p class="mb-0 ">Projets terminés</p>
+            </div>
+            <div class="text-center">
+              <iconify-icon icon="solar:folder-open-bold-duotone" class="fs-7"></iconify-icon>
+              <h4 class="mb-0 fw-semibold lh-1">1</h4>
+              <p class="mb-0 ">Projets en cours</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 mt-n3 order-lg-2 order-1">
+          <div class="mt-n5">
+            <div class="d-flex align-items-center justify-content-center mb-2">
+              <div class="d-flex align-items-center justify-content-center round-110">
+                <div class="border border-4 border-white d-flex align-items-center justify-content-center rounded-circle overflow-hidden round-100">
+                  <img src="{{ etudiant.photo_profil.url }}" alt="matdash-img" class="w-100 h-100">
+                </div>
+              </div>
+            </div>
+            <div class="text-center">
+              <h5 class="mb-0">{{etudiant.nom}} {{etudiant.prenom}}</h5>
+              <p class="mb-0">{{etudiant.email_etudiant}}</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 order-last">
+         
+          <button style="display: flex; justify-content: center; align-items: center;" type="button" class="btn mb-1 bg-primary-subtle text-primary px-4 fs-4 " data-bs-toggle="modal" data-bs-target="#primary-header-modal">
+            Modifier vos informations personnelles
+          </button>
+        </div>
+      </div>
+      
+    </div>
+</div>
+
+<div id="primary-header-modal" class="modal fade" tabindex="-1"
+    aria-labelledby="primary-header-modalLabel" style="display: none;" aria-hidden="true" style="z-index: 200;">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg" style="z-index: 200;">
+      <div class="modal-content">
+        <div class="modal-header modal-colored-header bg-primary text-white">
+          <h4 class="modal-title text-white" id="primary-header-modalLabel">
+            Modifier les informations personnelles
+          </h4>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+            aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+         
+
+       
+          
+        
+        <form id="taskForm" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="border border-4 border-white d-flex align-items-center justify-content-center rounded-circle overflow-hidden round-100">
+              <img id="profilePreview" src="{{ etudiant.photo_profil.url }}" alt="matdash-img" class="w-100 h-100">
+          </div>
+          <div class="mb-3">
+              <label for="imageInput" class="form-label">Photo de profil</label>
+              <input type="file" class="form-control" id="imageInput" name="photo_profil" accept="image/*" onchange="previewImage(event)">
+      
+              <label for="nomInput" class="form-label">Nom</label>
+              <input type="text" class="form-control" id="nomInput" name="nom" value="{{ etudiant.nom }}" required>
+              
+              <label for="prenomInput" class="form-label">Prénom</label>
+              <input type="text" class="form-control" id="prenomInput" name="prenom" value="{{ etudiant.prenom }}" required>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-light" data-bs-dismiss="modal">Fermer</button>
+              <button type="submit" class="btn bg-primary-subtle text-primary">Valider</button>
+          </div>
+      </form>
+      
+        
+
+
+        </div>
+        
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    // Sélectionner le bouton de modification et vérifier qu'il existe
+    const editButton = document.querySelector("[data-bs-target='#primary-header-modal']");
+    if (!editButton) return;
+
+    // Sélectionner les champs de saisie par leurs IDs
+    const nomInput = document.getElementById("nomInput");
+    const prenomInput = document.getElementById("prenomInput");
+
+    // Vérifier si les champs existent
+    if (!nomInput || !prenomInput) return;
+
+    // Utiliser les valeurs de Django (assurez-vous qu'elles sont échappées correctement)
+    const nom = "{{ etudiant.nom|escapejs }}";
+    const prenom = "{{ etudiant.prenom|escapejs }}";
+
+    // Ajouter un événement au bouton pour remplir les champs avec les valeurs
+    editButton.addEventListener("click", function () {
+        // Remplir les champs avec les valeurs récupérées
+        nomInput.value = nom;
+        prenomInput.value = prenom;
+    });
+});
+
+</script> 
+
+<script>
+  function previewImage(event) {
+      var reader = new FileReader();
+      reader.onload = function () {
+          var output = document.getElementById('profilePreview');
+          output.src = reader.result;
+      };
+      reader.readAsDataURL(event.target.files[0]);
+  }
+</script>
+
+
+
+
+
+
+{% endblock content %}

@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+
+
+
+{% block content %}
+{% load static %}
+    
+  <div class="card">
+    <div class="card-body calender-sidebar app-calendar">
+      <div id="calendar" class="fc fc-media-screen fc-direction-ltr fc-theme-standard" style="height: 1052px;">
+        <div class="fc-header-toolbar fc-toolbar fc-toolbar-ltr">
+          <div class="fc-toolbar-chunk"><button type="button" title="Previous month" aria-pressed="false"
+              class="fc-prev-button fc-button fc-button-primary"><span
+                class="fc-icon fc-icon-chevron-left"></span></button><button type="button" title="Next month"
+              aria-pressed="false" class="fc-next-button fc-button fc-button-primary"><span
+                class="fc-icon fc-icon-chevron-right"></span></button><button type="button" title="Ajouter un événement"
+              aria-pressed="false" class="fc-addEventButton-button fc-button fc-button-primary">Ajouter un événement</button></div>
+          <div class="fc-toolbar-chunk">
+            <h2 class="fc-toolbar-title" id="fc-dom-1">January 2025</h2>
+          </div>
+          <div class="fc-toolbar-chunk">
+            <div class="fc-button-group"><button type="button" title="month view" aria-pressed="true"
+                class="fc-dayGridMonth-button fc-button fc-button-primary fc-button-active">mois</button><button
+                type="button" title="week view" aria-pressed="false"
+                class="fc-timeGridWeek-button fc-button fc-button-primary">semaine</button><button type="button" title="day view"
+                aria-pressed="false" class="fc-timeGridDay-button fc-button fc-button-primary">jour</button></div>
+          </div>
+        </div>
+        <div aria-labelledby="fc-dom-1" class="fc-view-harness fc-view-harness-active">
+          <div class="fc-dayGridMonth-view fc-view fc-daygrid">
+            <table role="grid" class="fc-scrollgrid  fc-scrollgrid-liquid">
+              <thead role="rowgroup">
+                <tr role="presentation" class="fc-scrollgrid-section fc-scrollgrid-section-header ">
+                  <th role="presentation">
+                    <div class="fc-scroller-harness">
+                      <div class="fc-scroller" style="overflow: hidden;">
+                        <table role="presentation" class="fc-col-header " style="width: 894px;">
+                          <colgroup></colgroup>
+                          <thead role="presentation">
+                            <tr role="row">
+                              <th role="columnheader" class="fc-col-header-cell fc-day fc-day-sun">
+                                <div class="fc-scrollgrid-sync-inner"><a aria-label="Sunday"
+                                    class="fc-col-header-cell-cushion">Dim</a></div>
+                              </th>
+                              <th role="columnheader" class="fc-col-header-cell fc-day fc-day-mon">
+                                <div class="fc-scrollgrid-sync-inner"><a aria-label="Monday"
+                                    class="fc-col-header-cell-cushion">Lun</a></div>
+                              </th>
+                              <th role="columnheader" class="fc-col-header-cell fc-day fc-day-tue">
+                                <div class="fc-scrollgrid-sync-inner"><a aria-label="Tuesday"
+                                    class="fc-col-header-cell-cushion">Mar</a></div>
+                              </th>
+                              <th role="columnheader" class="fc-col-header-cell fc-day fc-day-wed">
+                                <div class="fc-scrollgrid-sync-inner"><a aria-label="Wednesday"
+                                    class="fc-col-header-cell-cushion">Mer</a></div>
+                              </th>
+                              <th role="columnheader" class="fc-col-header-cell fc-day fc-day-thu">
+                                <div class="fc-scrollgrid-sync-inner"><a aria-label="Thursday"
+                                    class="fc-col-header-cell-cushion">Jeu</a></div>
+                              </th>
+                              <th role="columnheader" class="fc-col-header-cell fc-day fc-day-fri">
+                                <div class="fc-scrollgrid-sync-inner"><a aria-label="Friday"
+                                    class="fc-col-header-cell-cushion">Ven</a></div>
+                              </th>
+                              <th role="columnheader" class="fc-col-header-cell fc-day fc-day-sat">
+                                <div class="fc-scrollgrid-sync-inner"><a aria-label="Saturday"
+                                    class="fc-col-header-cell-cushion">Sam</a></div>
+                              </th>
+                            </tr>
+                          </thead>
+                        </table>
+                      </div>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody role="rowgroup">
+                <tr role="presentation"
+                  class="fc-scrollgrid-section fc-scrollgrid-section-body  fc-scrollgrid-section-liquid">
+                  <td role="presentation">
+                    <div class="fc-scroller-harness fc-scroller-harness-liquid">
+                      <div class="fc-scroller fc-scroller-liquid-absolute" style="overflow: hidden auto;">
+                        <div class="fc-daygrid-body fc-daygrid-body-unbalanced " style="width: 892px;">
+                          <table role="presentation" class="fc-scrollgrid-sync-table" style="width: 892px; height: 934px;">
+                            <colgroup></colgroup>
+                            <tbody role="presentation">
+                              
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BEGIN MODAL -->
+  <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+      <form method="post">
+        {% csrf_token %}
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="eventModalLabel">
+              Ajouter / Modifier événement
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-12">
+                <div>
+                  <label class="form-label">Titre d'événement</label>
+                  <input id="event-title" type="text" class="form-control" name="title">
+                </div>
+              </div>
+              <div class="col-md-12 mt-6">
+                <div>
+                  <label class="form-label">Couleur d'événement</label>
+                </div>
+                <div class="d-flex">
+                  <div class="n-chk">
+                    <div class="form-check form-check-primary form-check-inline">
+                      <input class="form-check-input" type="radio" name="event-level" value="Danger" id="modalDanger">
+                      <label class="form-check-label" for="modalDanger"><Data></Data>Dangereux</label>
+                    </div>
+                  </div>
+                  <div class="n-chk">
+                    <div class="form-check form-check-warning form-check-inline">
+                      <input class="form-check-input" type="radio" name="event-level" value="Success" id="modalSuccess">
+                      <label class="form-check-label" for="modalSuccess">Succès</label>
+                    </div>
+                  </div>
+                  <div class="n-chk">
+                    <div class="form-check form-check-success form-check-inline">
+                      <input class="form-check-input" type="radio" name="event-level" value="Primary" id="modalPrimary">
+                      <label class="form-check-label" for="modalPrimary">Primaire</label>
+                    </div>
+                  </div>
+                  <div class="n-chk">
+                    <div class="form-check form-check-danger form-check-inline">
+                      <input class="form-check-input" type="radio" name="event-level" value="Warning" id="modalWarning">
+                      <label class="form-check-label" for="modalWarning">Avertissement</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-12 mt-6">
+                <div>
+                  <label class="form-label">Entrez la date de début</label>
+                  <input id="event-start-date" type="date" class="form-control" name="start_date">
+                </div>
+              </div>
+              <div class="col-md-12 mt-6">
+                <div>
+                  <label class="form-label">Entrez la date de fin</label>
+                  <input id="event-end-date" type="date" class="form-control" name="end_date">
+                </div>
+              </div>
+              <input type="hidden" name="event_id" value="{{ valeur_cachee }}">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn bg-danger-subtle text-danger" data-bs-dismiss="modal">
+              Fermer
+            </button>
+            <input type="submit" value="Mettre à jour les modifications" name="modifier" class="btn btn-success btn-update-event" data-fc-event-public-id="" style="display: none;">
+            <input type="submit" value="Ajouter un événement" name="ajouter" class="btn btn-primary btn-add-event" style="display: block;">
+              
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+    
+{% endblock content %}

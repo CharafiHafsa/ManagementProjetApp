@@ -1,16 +1,12 @@
 from django.contrib import admin
-from .models import Classe
-from .models import Etudiant
-from .models import Groupe
-from .models import Professeur
-from .models import Project
-from .models import Taches
-from .models import Calendrier
+from django.apps import apps
+from django.contrib.admin.sites import AlreadyRegistered
+from .models import *
 
-admin.site.register(Classe)
-admin.site.register(Etudiant)
-admin.site.register(Groupe)
-admin.site.register(Professeur)
-admin.site.register(Project)
-admin.site.register(Taches)
-admin.site.register(Calendrier)
+app_models = apps.get_app_config('base_de_donnee').get_models()
+
+for model in app_models:
+    try:
+        admin.site.register(model)
+    except AlreadyRegistered:
+        pass 

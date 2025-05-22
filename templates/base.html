@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<!-- saved from url=(0068)https://bootstrapdemos.adminmart.com/matdash/dist/main/app-chat.html -->
+<html lang="en" dir="ltr" data-bs-theme="light" data-color-theme="Blue_Theme" data-layout="vertical"
+  data-boxed-layout="boxed" data-card="shadow">
+{% load static %}
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <!-- Required meta tags -->
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Favicon icon-->
+  <link rel="shortcut icon" type="image/png" href="{% static 'MatDash Bootstrap Admin_files/favicon.png' %}">
+
+  <!-- Core Css -->
+  <link rel="stylesheet" href="{% static 'MatDash Bootstrap Admin_files/styles.css' %}">
+  
+  <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const emailInput = document.getElementById("emailInput");
+            const emailList = document.getElementById("emailList");
+            const emailsHidden = document.getElementById("emailsHidden"); // Champ caché
+            //   mettre à jour le champ caché emailsHidden avec la liste des emails ajoutés.
+            function updateHiddenInput() {
+                let emails = [];
+                document.querySelectorAll("#emailList .badge").forEach(span => {
+                    emails.push(span.textContent.trim());
+                });
+                emailsHidden.value = emails.join(",");
+            }
+
+
+            function addEmail() {
+                const email = emailInput.value.trim();
+                if (email && validateEmail(email)) {
+                    const emailItem = document.createElement("span");
+                    emailItem.className = "badge bg-primary m-1 p-2";
+                    emailItem.innerHTML = `${email} <button type="button" class="btn-close btn-close-white ms-2" onclick="this.parentElement.remove()"></button>`;
+                    emailList.appendChild(emailItem);
+                    updateHiddenInput();  // Mettre à jour le champ caché
+                    emailInput.value = "";
+                } else {
+                    alert("Veuillez entrer un email valide.");
+                }
+            }
+
+            function validateEmail(email) {
+                const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return regex.test(email);
+            }
+
+            document.getElementById("addEmailBtn").addEventListener("click", addEmail);
+            emailInput.addEventListener("keypress", function (event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    addEmail();
+                }
+            });
+        });
+    </script>
+
+  <title>MatDash Bootstrap Admin</title>
+
+  {% block style %}
+  {% endblock style %}
+
+</head>
+
+<body data-sidebartype="full">
+  
+  <!-- Preloader -->
+  <div class="preloader" style="display: none;">
+    <img src="{% static 'MatDash Bootstrap Admin_files/favicon.png' %}" alt="loader" class="lds-ripple img-fluid">
+  </div>
+  <div id="main-wrapper">
+    <header class="topbar">
+      <div class="with-vertical">
+        <nav class="navbar navbar-expand-lg p-0">
+          <ul class="navbar-nav">
+            <li class="nav-item d-flex d-xl-none">
+              <a class="nav-link nav-icon-hover-bg rounded-circle  sidebartoggler " id="headerCollapse" href="javascript:void(0)">
+                <iconify-icon icon="solar:hamburger-menu-line-duotone" class="fs-6"></iconify-icon>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <!-- Sidebar Start -->
+    <aside class="side-mini-panel with-vertical">
+      <div><!-- ---------------------------------- -->
+        <!-- Start Vertical Layout Sidebar -->
+        <!-- ---------------------------------- -->
+        <div class="iconbar">
+          <div>
+            <div class="mini-nav">
+              <div class="brand-logo d-flex align-items-center justify-content-center">
+                <a class="nav-link sidebartoggler" id="headerCollapse" href="javascript:void(0)">
+                  <iconify-icon icon="solar:hamburger-menu-line-duotone" class="fs-7"><template shadowrootmode="open">
+                      <style data-style="data-style">
+                        :host {
+                          display: inline-block;
+                          vertical-align: 0
+                        }
+
+                        span,
+                        svg {
+                          display: block
+                        }
+                      </style><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5">
+                          <path d="M20 7H4"></path>
+                          <path d="M20 12H4" opacity=".5"></path>
+                          <path d="M20 17H4"></path>
+                        </g>
+                      </svg>
+                    </template></iconify-icon>
+                </a>
+              </div>
+              <ul class="mini-nav-ul" data-simplebar="init">
+                <div class="simplebar-wrapper" style="margin: 0px;">
+                  <div class="simplebar-height-auto-observer-wrapper">
+                    <div class="simplebar-height-auto-observer"></div>
+                  </div>
+                  <div class="simplebar-mask">
+                    <div class="simplebar-offset" style="right: 0px; bottom: 0px;">
+                      <div class="simplebar-content-wrapper" tabindex="0" role="region" aria-label="scrollable content"
+                        style="height: 100%; overflow: hidden;">
+                        <div class="simplebar-content" style="padding: 0px;">
+
+                          <!-- --------------------------------------------------------------------------------------------------------- -->
+                          <!-- Accueil -->
+                          <!-- --------------------------------------------------------------------------------------------------------- -->
+
+                          <li class="mini-nav-item" id="mini-1">
+                            <a href="{% url 'todo_home' %}" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
+                              data-bs-placement="right" data-bs-title="To-Do">
+                              <iconify-icon icon="solar:checklist-minimalistic-line-duotone" class="fs-7"></iconify-icon>
+                            </a>
+                          </li>
+                          <li class="mini-nav-item" id="mini-2">
+                            <a href="{% url 'calender_home' %}" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
+                              data-bs-placement="right" data-bs-title="Calendrier">
+                              <iconify-icon icon="solar:calendar-mark-line-duotone" class="fs-7"></iconify-icon>
+                            </a>
+                          </li>
+
+                          
+
+                          <!-- --------------------------------------------------------------------------------------------------------- -->
+                          <!-- Groupes -->
+                          <!-- --------------------------------------------------------------------------------------------------------- -->
+                          <li class="mini-nav-item" id="mini-3">
+                            <a href="{% url 'groupes' %}" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
+                              data-bs-placement="right" data-bs-title="Groupes" class="mySidebartoggler">
+                              <iconify-icon icon="solar:users-group-rounded-linear" class="fs-7"></iconify-icon>
+                            </a>
+                          </li>
+
+                          <!-- --------------------------------------------------------------------------------------------------------- -->
+                          <!-- Classes  -->
+                          <!-- --------------------------------------------------------------------------------------------------------- -->
+                          <li class="mini-nav-item" id="mini-4">
+                            <a href="{% url 'classes' %}" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
+                              data-bs-placement="right" data-bs-title="Classes">
+                              <iconify-icon icon="solar:notes-linear" class="fs-7"></iconify-icon>
+                            </a>
+                          </li>
+
+                          <li>
+                            <span class="sidebar-divider lg"></span>
+                          </li>
+                          <!-- --------------------------------------------------------------------------------------------------------- -->
+                          <!-- Notifications -->
+                          <!-- --------------------------------------------------------------------------------------------------------- -->
+                          <li class="mini-nav-item" id="mini-5">
+                            <a href="{% url 'notifications' %}" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
+                              data-bs-placement="right" data-bs-title="Notifications">
+                              <iconify-icon icon="solar:bell-line-duotone" class="fs-7" id="icon_notification" style=""></iconify-icon>
+                            </a>
+                          </li>
+                          <!-- --------------------------------------------------------------------------------------------------------- -->
+                          <!-- Charts -->
+                          <!-- --------------------------------------------------------------------------------------------------------- -->
+                          <li class="mini-nav-item" id="mini-6">
+                            <a href="{% url 'dashBoard_home' %}" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
+                              data-bs-placement="right" data-bs-title="Statistiques">
+                              <iconify-icon icon="solar:chart-line-duotone" class="fs-7"></iconify-icon>
+                            </a>
+                          </li>
+                          <!-- --------------------------------------------------------------------------------------------------------- -->
+                          <!-- Créer un projet -->
+                          <!-- --------------------------------------------------------------------------------------------------------- -->
+                          <!-- <li class="mini-nav-item" id="mini-8">
+                            <a href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
+                              data-bs-placement="right" data-bs-title="Créer un projets">
+                              <iconify-icon icon="solar:add-folder-linear" class="fs-7"></iconify-icon>
+                            </a>
+                          </li> -->
+
+                          <li>
+                            <span class="sidebar-divider lg"></span>
+                          </li>
+                          <!-- --------------------------------------------------------------------------------------------------------- -->
+                          <!-- Profile -->
+                          <!-- --------------------------------------------------------------------------------------------------------- -->
+                          <li class="mini-nav-item" id="mini-9">
+                            <a href="{% url 'profil' %}" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
+                              data-bs-placement="right" data-bs-title="Profile">
+                              <iconify-icon icon="solar:user-broken" class="fs-7"></iconify-icon>
+                            </a>
+                          </li>
+
+                          <!-- --------------------------------------------------------------------------------------------------------- -->
+                          <!-- Logout -->
+                          <!-- --------------------------------------------------------------------------------------------------------- -->
+                          <li class="mini-nav-item" id="mini-10">
+                            <a href="{% url 'logout' %}" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
+                               data-bs-placement="right" data-bs-title="Se déconnecter">
+                              <iconify-icon icon="solar:logout-2-outline" class="fs-7"></iconify-icon>
+                            </a>
+                          </li>
+
+                          <!-- --------------------------------------------------------------------------------------------------------- -->
+                          <!-- Change Mode -->
+                          <!-- --------------------------------------------------------------------------------------------------------- -->
+                          <li class="nav-item" style="display: flex; justify-content: center; align-items: center;">
+                            <a class="nav-link moon dark-layout nav-icon-hover-bg rounded-circle" href="javascript:void(0)" style="display: flex;">
+                              <iconify-icon icon="solar:moon-line-duotone" class="moon fs-6" style="display: flex;"></iconify-icon>
+                            </a>
+                            <a class="nav-link sun light-layout nav-icon-hover-bg rounded-circle" href="javascript:void(0)" style="display: none">
+                              <iconify-icon icon="solar:sun-2-line-duotone" class="sun fs-6" style="display: none;"></iconify-icon>
+                            </a>
+                          </li>
+
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="simplebar-placeholder" style="width: 80px; height: 537px;"></div>
+                </div>
+                <div class="simplebar-track simplebar-horizontal" style="visibility: hidden;">
+                  <div class="simplebar-scrollbar" style="width: 0px; display: none;"></div>
+                </div>
+                <div class="simplebar-track simplebar-vertical" style="visibility: hidden;">
+                  <div class="simplebar-scrollbar" style="height: 0px; display: none;"></div>
+                </div>
+              </ul>
+
+            </div>
+            <div class="sidebarmenu">
+
+              <!-- ---------------------------------- -->
+              <!-- Groupes -->
+              <!-- ---------------------------------- -->
+              <nav class="sidebar-nav scroll-sidebar" id="menu-right-mini-3" data-simplebar="init">
+                <div class="simplebar-wrapper" style="margin: 0px -20px -24px;">
+                  <div class="simplebar-height-auto-observer-wrapper">
+                    <div class="simplebar-height-auto-observer"></div>
+                  </div>
+                  <div class="simplebar-mask">
+                    <div class="simplebar-offset" style="right: 0px; bottom: 0px;">
+                      <div class="simplebar-content-wrapper" tabindex="0" role="region" aria-label="scrollable content"
+                      style="height: 100%; overflow: hidden scroll;">
+                        <div class="simplebar-content" style="padding: 0px 20px 24px;">
+                          <ul class="sidebar-menu" id="sidebarnav">
+                            <!-- ---------------------------------- -->
+                            <!-- Home -->
+                            <!-- ---------------------------------- -->
+                            <li class="nav-small-cap">
+                              <span class="hide-menu">Groupes</span>
+                            </li>
+                            <li class="sidebar-item">
+                              <a href="{% url 'groupes' %}"
+                                class="sidebar-link 7">
+                                <iconify-icon icon="solar:users-group-rounded-linear"></iconify-icon>
+                                <span class="hide-menu">Mes Groupes</span>
+                              </a>
+                            </li>
+
+                            <li>
+                              <span class="sidebar-divider"></span>
+                            </li>
+
+                            <li class="nav-small-cap">
+                              <span class="hide-menu ws-link">Éspace de Travaille</span>
+                            </li>
+                            
+                            <li class="sidebar-item">
+                              <a href="#"
+                                class="sidebar-link ws-link" id="ws-chat" data-url="{% url 'chat' %}">
+                                <iconify-icon class="ws-link" icon="solar:chat-round-line-linear"></iconify-icon>
+                                <span class="hide-menu">Chat</span>
+                              </a>
+                            </li>
+
+                            <li class="sidebar-item">
+                              <a href="#"
+                                class="sidebar-link ws-link" id="ws-todo" data-url="{% url 'todo_ws' %}">
+                                <iconify-icon class="ws-link" icon="solar:checklist-minimalistic-line-duotone"></iconify-icon>
+                                <span class="hide-menu">To-Do liste</span>
+                              </a>
+                            </li>
+                            {% if grp_avec_projet %}
+                            <li class="sidebar-item">
+                              <a href="#"
+                                class="sidebar-link ws-link" id="ws-detailles" data-url="{% url 'detailles' %}">
+                                <iconify-icon class="ws-link" icon="solar:library-linear"></iconify-icon>
+                                <span class="hide-menu">Détailles de projet</span>
+                              </a>
+                            </li>
+                            {% endif %}
+
+                            <li class="sidebar-item">
+                              <a href="#"
+                                class="sidebar-link ws-link" id="ws-dashboard" data-url="{% url 'dashBoard_ws' %}">
+                                <iconify-icon class="ws-link" icon="solar:chart-line-duotone"></iconify-icon>
+                                <span class="hide-menu">Statistiques</span>
+                              </a>
+                            </li>
+                            
+                            <li class="sidebar-item">
+                              <a href="#"
+                                class="sidebar-link ws-link" id="ws-membres" data-url="{% url 'membres' %}">
+                                <iconify-icon class="ws-link" icon="solar:users-group-two-rounded-broken"></iconify-icon>
+                                <span class="hide-menu">Membres</span>
+                              </a>
+                            </li>
+
+                            <li class="sidebar-item">
+                              <a href="#"
+                                class="sidebar-link ws-link" id="ws-documents" data-url="{% url 'documents' %}">
+                                <iconify-icon class="ws-link" icon="solar:folder-with-files-linear"></iconify-icon>
+                                <span class="hide-menu">Documents</span>
+                              </a>
+                            </li>
+                            
+                            <li class="sidebar-item">
+                              <a href="#"
+                                class="sidebar-link ws-link" id="ws-chatBot" data-url="{% url 'chatbot' %}">
+                                <iconify-icon class="ws-link" icon="solar:chat-square-call-line-duotone"></iconify-icon>
+                                <span class="hide-menu">Chat Bot</span>
+                              </a>
+                            </li>
+
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="simplebar-placeholder" style="width: 240px; height: 864px;"></div>
+                </div>
+                <div class="simplebar-track simplebar-horizontal" style="visibility: hidden;">
+                  <div class="simplebar-scrollbar" style="width: 0px; display: none;"></div>
+                </div>
+                <div class="simplebar-track simplebar-vertical" style="visibility: visible;">
+                  <div class="simplebar-scrollbar" style="height: 0px; display: none;"></div>
+                </div>
+              </nav>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    
+    <div class="page-wrapper" style="overflow: hidden;">
+      <div class="body-wrapper" style="padding: 20px;">
+        {% block content %}
+        {% endblock content %}
+      </div>
+    </div>
+  
+  <div class="dark-transparent sidebartoggler"></div>
+  <script src="{% static 'MatDash Bootstrap Admin_files/vendor.min.js.téléchargement' %}"></script>
+  <!-- Import Js Files -->
+  <script src="{% static 'MatDash Bootstrap Admin_files/bootstrap.bundle.min.js.téléchargement' %}"></script>
+  <script src="{% static 'MatDash Bootstrap Admin_files/simplebar.min.js.téléchargement' %}"></script>
+  <script src="{% static 'MatDash Bootstrap Admin_files/app.init.js.téléchargement' %}"></script>
+  <script src="{% static 'MatDash Bootstrap Admin_files/theme.js.téléchargement' %}"></script>
+  <script src="{% static 'MatDash Bootstrap Admin_files/app.min.js.téléchargement' %}"></script>
+  <script src="{% static 'MatDash Bootstrap Admin_files/sidebarmenu.js' %}"></script>
+  <script src="{% static 'MatDash Bootstrap Admin_files/index.global.min.js.téléchargement' %}"></script>
+  <script src="{% static 'MatDash Bootstrap Admin_files/calendar-init.js' %}"></script>
+  <script src="{% static 'MatDash Bootstrap Admin_files/contact.js.téléchargement' %}"></script>
+
+  
+  <!-- solar icons -->
+  <script src="{% static 'MatDash Bootstrap Admin_files/iconify-icon.min.js.téléchargement' %}"></script>
+  <script src="{% static 'MatDash Bootstrap Admin_files/chat.js.téléchargement' %}"></script>
+
+
+
+
+  <!-- Select item in the sidebar -->
+  <script>
+    // Sélectionner tous les éléments <li> contenant les liens (<a>)
+    const listItems = document.querySelectorAll('li.mini-nav-item');
+  
+    // Récupérer l'URL actuelle
+    const currentURL = window.location.href;
+
+    
+    // cette fonction elimine le margine pour la pages des projets
+    function selectionnerClasse() {
+        // Ajouter la classe 'selected' à l'élément avec l'ID 'mini-4'
+        document.getElementById("mini-4").classList.add('selected');
+
+        // Appeler la fonction imposerMarginLeftZero
+        imposerMarginLeftZero();
+    }
+  
+    // Fonction pour marquer l'élément actif
+    function markActiveLink() {
+      // Réinitialiser tous les éléments <li> (retirer la classe 'selected')
+      listItems.forEach((item) => {
+        item.classList.remove('selected');
+      });
+  
+      // Trouver et marquer l'élément actif
+      listItems.forEach((item) => {
+        const link = item.querySelector('a'); // Récupérer le <a> dans chaque <li>
+        if (link && currentURL === link.href) {
+          item.classList.add('selected'); // Ajouter la classe 'selected' au parent <li>
+        }
+      });
+
+      if (window.location.href.includes('etu/projets/')){
+        selectionnerClasse()
+      }
+
+      imposerMarginLeftZero();
+    
+    }
+
+  
+    // Exécuter la fonction après que la page a été chargée
+    window.addEventListener('DOMContentLoaded', markActiveLink);
+  </script>
+  
+  <!-- Select item in menu -->
+  <script>
+    const sidebarItems = document.querySelectorAll('.sidebar-link');
+  
+    // Ajouter une classe 'active' au clic
+    sidebarItems.forEach(item => {
+      item.addEventListener('click', () => {
+        sidebarItems.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+      });
+    });
+  
+    // Comparer l'URL actuelle pour définir l'élément actif
+    document.addEventListener('DOMContentLoaded', () => {
+      const currentUrl = window.location.pathname;
+      sidebarItems.forEach(item => {
+        if (item.getAttribute('href') === currentUrl) {
+          item.classList.add('active');
+        }
+      });
+    });
+  </script>
+  
+  <!-- supprimer notification -->
+  <script>
+    document.querySelectorAll('.btn-notif-x').forEach((btn) => {
+      btn.addEventListener('click', function () {
+        // Trouver le parent supérieur (parent de parent)
+        const parentDiv = this.closest('.feed-item');
+        
+        // Supprimer le parent supérieur s'il existe
+        if (parentDiv) {
+          parentDiv.remove();
+        }
+      });
+    });
+  </script>
+
+  <!-- open close menu -->
+  <script>
+
+      function imposerMarginLeftZero(force) {
+          const pageWrapper = document.querySelector('.page-wrapper');
+          var mini_1 = document.getElementById("mini-1").classList.contains('selected');
+          var mini_2 = document.getElementById("mini-2").classList.contains('selected');
+          var mini_4 = document.getElementById("mini-4").classList.contains('selected');
+          var mini_5 = document.getElementById("mini-5").classList.contains('selected');
+          var mini_9 = document.getElementById("mini-9").classList.contains('selected');
+          var mini_6 = document.getElementById("mini-6").classList.contains('selected');
+          if (pageWrapper) {
+              if (mini_4 || mini_5 || mini_9 || mini_1 || mini_2 || mini_6 || window.location.href.includes('/etu/groupes/archive') || window.location.href.includes('/etu/detailles')) {
+                  pageWrapper.classList.add('force-margin-left'); // Imposer margin-left: 0
+              } else {
+                  pageWrapper.classList.remove('force-margin-left'); // Laisser le style normal
+              }
+          }
+      }
+
+   </script>
+
+  <!-- liste des etudiants -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let selectedStudents = [];
+  
+        document.querySelectorAll(".student-item").forEach(item => {
+            item.addEventListener("click", function () {
+                const studentId = this.getAttribute("data-id");
+                const studentNom = this.getAttribute("data-nom");
+                const studentPrenom = this.getAttribute("data-prenom");
+                const studentEmail = this.getAttribute("data-email");
+                const studentImg = this.getAttribute("data-img");
+  
+                // Vérifier si l'étudiant est déjà sélectionné
+                console.log(selectedStudents)
+                const existingIndex = selectedStudents.findIndex(s => s.id === studentId);
+  
+                if (existingIndex === -1) {
+                    // Ajouter l'étudiant
+                    selectedStudents.push({ id: studentId, nom: studentNom, prenom: studentPrenom, email: studentEmail, img: studentImg });
+                } else {
+                    // Retirer l'étudiant s'il est déjà sélectionné
+                    selectedStudents.splice(existingIndex, 1);
+                }
+  
+                updateSelectedStudents();
+                document.getElementById('inp-hidd-sel-stu').value = getStudentIdsString(selectedStudents)
+            });
+        });
+  
+        function updateSelectedStudents() {
+            const selectedContainer = document.getElementById("selectedStudents");
+            selectedContainer.innerHTML = selectedStudents.map(student => `
+                <span class="selected-badge" style="margin-right: 20px">
+                    <img src="${student.img}" alt="Photo" class="rounded-circle me-2" width="40" height="40"> ${student.nom} ${student.prenom}
+                </span>
+            `).join("");
+  
+            // Mettre à jour le texte du bouton
+            const dropdownButton = document.getElementById("dropdownMenuButton");
+            dropdownButton.textContent = selectedStudents.length > 0 
+                ? `Sélectionné(s) : ${selectedStudents.length}`
+                : "Sélectionner des étudiants";
+        }
+        function getStudentIdsString(selectedStudents) {
+            return selectedStudents.map(s => s.id).join("-");
+        }
+    });
+  </script>  
+
+  <!-- sous-menu de WorkSpace -->
+   <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      if (window.location.href.includes('etu/ws/') || window.location.href.includes('etu/espaceDeTravail/')) {
+        document
+          .getElementById("menu-right-mini-3")
+          .classList.add("d-block");
+        document.getElementById("mini-3").classList.add("selected");
+
+        // liens non grisé
+        let liens = document.querySelectorAll(".ws-link");
+        liens.forEach(lien => {
+            lien.classList.remove("disabled-link");
+        });
+      }
+      // liens grisé
+      else{
+        let liens = document.querySelectorAll(".ws-link");
+        liens.forEach(lien => {
+            lien.classList.add("disabled-link");
+        });
+      }
+
+    });
+   </script>
+
+  <!-- adapter le WorkSpace au groupe choisi -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // const currentUrl = window.location.href;
+        // const hasId = /\/\d+\//.test(currentUrl);
+
+        // Récupère les liens de WorkSpace
+        const chatLink = document.getElementById('ws-chat');
+        const chatbotLink = document.getElementById('ws-chatBot');
+        const todoLink = document.getElementById('ws-todo');
+        const membresLink = document.getElementById('ws-membres');
+        const docsLink = document.getElementById('ws-documents');
+        const dashboardLink = document.getElementById('ws-dashboard');
+        const detaillesLink = document.getElementById('ws-detailles');
+
+        if (window.location.href.includes('etu/ws/') || window.location.href.includes('etu/espaceDeTravail/')) {
+          const url_chat = chatLink.getAttribute('data-url');
+          chatLink.setAttribute('href', url_chat);
+          const url_chatbot = chatbotLink.getAttribute('data-url');
+          chatbotLink.setAttribute('href', url_chatbot);
+          const url_todo = todoLink.getAttribute('data-url');
+          todoLink.setAttribute('href', url_todo);
+          const url_membres = membresLink.getAttribute('data-url');
+          membresLink.setAttribute('href', url_membres);
+          const url_docs = docsLink.getAttribute('data-url');
+          docsLink.setAttribute('href', url_docs);
+          const url_dashboard = dashboardLink.getAttribute('data-url');
+          dashboardLink.setAttribute('href', url_dashboard);
+          const url_detailles = detaillesLink.getAttribute('data-url');
+          detaillesLink.setAttribute('href', url_detailles);
+        } else {
+          chatLink.setAttribute('href', '#');
+          chatbotLink.setAttribute('href', '#');
+          todoLink.setAttribute('href', '#');
+          membresLink.setAttribute('href', '#');
+          docsLink.setAttribute('href', '#');
+          dashboardLink.setAttribute('href', '#');
+          detaillesLink.setAttribute('href', '#');
+        }
+        
+      })
+    </script>
+
+
+
+<!-- capturé la date de sortie pour les statistiques -->
+<script>
+  window.addEventListener("beforeunload", function () {
+      navigator.sendBeacon("/etu/update_time_counter/");
+  });
+
+  // navigator.sendBeacon() est une méthode efficace qui envoie des requêtes HTTP 
+  // même si l'utilisateur quitte immédiatement.
+</script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+{% load static %}
+
+<div class="card card-body py-3" style="margin-bottom: 20px; background: transparent; box-shadow: none;">
+  <div class="row align-items-center">
+    {% load static %}  <!-- Charger les fichiers statiques -->
+
+  <div class="card card-body py-3" style="margin-bottom: 20px;">
+      <div class="row align-items-center">
+        <div class="col-12">
+          <div class="d-sm-flex align-items-center justify-space-between">
+            <h4 class="mb-4 mb-sm-0 card-title">Mes Classes</h4>
+            <nav aria-label="breadcrumb" class="ms-auto">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item d-flex align-items-center">
+                  <button style="display: flex; justify-content: center; align-items: center;" type="button" class="btn mb-1 bg-primary-subtle text-primary px-4 fs-4 " data-bs-toggle="modal" data-bs-target="#primary-header-modal">
+                      <iconify-icon icon="solar:add-square-outline" class="fs-7"></iconify-icon>
+                      <span style="padding: 5px;"></span>
+                      Rejoindre une classe
+                  </button>
+                </li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+      </div>
+  </div>
+
+      <!-- MODAL MODIFIER -->
+              
+      <div id="primary-header-modal-modifier" class="modal fade" tabindex="-1" aria-labelledby="primary-header-modalLabel" style="display: none;" aria-hidden="true" style="z-index: 200;">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg" style="z-index: 200;">
+            <div class="modal-content">
+            <div class="modal-header modal-colored-header bg-primary text-white">
+                <h4 class="modal-title text-white" id="primary-header-modalLabel">
+                  Rejoindre une classes
+                </h4>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+    
+                <form id="taskForm" method="post" >
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="taskName" class="form-label">Code de classe</label>
+                    <input type="text" class="form-control" id="code" name="code_classes" required>
+                </div>
+    
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+                Fermer
+                </button>
+                <input type="submit"  name="creer_groupe" value="Modifier" class="btn bg-primary-subtle text-primary ">
+                <input type="hidden" name="projet_id" id="projet-id-modal">
+            </div>
+            </form>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+      </div>
+
+<div class="row">
+    {% for classe in classes %}
+    <div class="col-md-4">
+        <div class="card">
+            <div class="position-relative">
+                <a href="javascript:void(0)">
+                    <img src="{% static 'MatDash Bootstrap Admin_files/blog-img1.jpg' %}" class="card-img-top" alt="matdash-img">
+                </a>
+                <span class="badge text-bg-light text-dark fs-2 lh-sm mb-9 me-9 py-1 px-2 fw-semibold position-absolute bottom-0 end-0" style="visibility: hidden;">Nouveau projet</span>
+             
+                <img src="{{ classe.professeur.photo_profil.url }}"
+                     style="height: 60px; width: 60px;" 
+                     alt="matdash-img" 
+                     class="img-pofile-class img-fluid rounded-circle position-absolute bottom-0 start-0 mb-n9 ms-9" 
+                     width="40" height="40" 
+                     data-bs-toggle="tooltip" 
+                     data-bs-placement="top" 
+                     data-bs-title="{{ classe.professeur.nom}} {{ classe.professeur.prenom}}">
+            </div>
+            <div class="card-body p-4">
+              
+                <span class="badge text-bg-light fs-2 py-1 px-2 lh-sm mt-3">
+                    {{ classe.professeur.nom }} {{ classe.professeur.prenom}}
+                </span>
+                
+               
+                <a id="classe_link" class="d-block my-4 fs-5 text-dark fw-semibold link-primary" href="{% url 'projets' classe.code_classe %}">
+                    {{ classe.nom_classe }}
+                </a>
+                
+                <div class="d-flex align-items-center gap-4">
+                 
+                    <div class="d-flex align-items-center gap-2">
+                        <iconify-icon icon="solar:users-group-rounded-bold-duotone" class="fs-7"></iconify-icon>
+                        {{ classe.etudiants.count }} étudiants
+                    </div>
+
+                    
+                    <div class="d-flex align-items-center gap-2">
+                        <iconify-icon icon="solar:folder-open-bold-duotone" class="fs-7"></iconify-icon>
+                        {{ classe.projets.count }} projets
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Modal -->
+
+<div id="primary-header-modal" class="modal fade" tabindex="-1"
+    aria-labelledby="primary-header-modalLabel" style="display: none;" aria-hidden="true" style="z-index: 200;">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg" style="z-index: 200;">
+      <div class="modal-content">
+        <div class="modal-header modal-colored-header bg-primary text-white">
+          <h4 class="modal-title text-white" id="primary-header-modalLabel">
+            Rejoindre une classe
+          </h4>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+            aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="taskForm" method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="taskName" class="form-label" >Code de Classe</label>
+              <input type="text" class="form-control" id="code_classe" name="code_classe"  required>
+            </div>
+    <!-- ------------------------------------------ -->
+           <!-- Message temporaire d'erreur -->
+           {% if error_message %}
+           <div class="alert alert-danger" id="error-message">
+               {{ error_message }}
+           </div>
+           {% endif %}
+    <!-- -------------------------------------------------- -->
+          
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+            Fermer
+          </button>
+          <button type="submit" class="btn bg-primary-subtle text-primary ">
+            Rejoindre
+          </button>
+        </form>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+<!-- Script pour gérer l'affichage du modal et cacher l'erreur après 3 secondes -->
+{% if error_message %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var modalElement = document.getElementById('primary-header-modal');
+        var myModal = new bootstrap.Modal(modalElement);
+        
+        // Ouvre le modal si ce n'est pas déjà ouvert
+        if (!modalElement.classList.contains('show')) {
+            myModal.show();
+        }
+
+        // Disparition du message d'erreur après 3 secondes
+        setTimeout(function() {
+            var errorMsg = document.getElementById("error-message");
+            if (errorMsg) {
+                errorMsg.style.transition = "opacity 0.5s";
+                errorMsg.style.opacity = "0";
+                setTimeout(() => errorMsg.style.display = "none", 500);
+            }
+        }, 3000);
+
+        // Lorsque le modal est fermé, vider le champ "Code de Classe"
+        $(modalElement).on('hidden.bs.modal', function () {
+            document.getElementById('code_classe').value = '';  // Vider le champ
+        });
+    });
+</script>
+{% endif %}
+
+{% endblock content %}
