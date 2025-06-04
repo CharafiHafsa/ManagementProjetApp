@@ -92,7 +92,7 @@ WSGI_APPLICATION = 'MangProjetApp.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'ProjetMang',
+        'NAME': 'teamstudy',
         'USER': 'postgres',
         'PASSWORD': 'P@$$w0rd',
         'HOST': 'localhost',  # Or the IP address of your DB server
@@ -154,5 +154,6 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'  
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'najibimane093@gmail.com'
-EMAIL_HOST_PASSWORD = 'rynq ynkq auhu qurq'
+EMAIL_HOST_USER = 'teamstudy576@gmail.com'
+EMAIL_HOST_PASSWORD = 'nkhb uook itrn wawx'
+EMAIL_TIMEOUT = 10

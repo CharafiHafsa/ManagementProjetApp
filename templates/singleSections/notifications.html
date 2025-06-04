@@ -115,23 +115,7 @@
                     </div>
                 </div>
             {% endfor %}
-            <div class="alert  alert-dismissible text-primary text-primary alert-light-primary bg-primary-subtle fade show remove-close-icon" style="margin-left: 20px; margin-right: 20px;">
-                <form action="" method="POST">
-                    {% csrf_token %}
-                    <input type="hidden" name="id_notification" value="{{ notification.id }}">
-                    <button type="submit" class="btn-close" data-bs-dismiss="alert" aria-label="Close" name="delete"></button>
-                </form>
-                <div class="border-start border-2 border-primary d-md-flex align-items-center disp-x">
-                    <div class="d-flex align-items-center gap-6 ms-2">
-                        <a href="javascript:void(0)" class=" round-40 bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
-                            <iconify-icon icon="solar:folder-open-linear" class="fs-7"></iconify-icon>
-                        </a>
-                        <div class="text-truncate">
-                        <span class="text-dark fw-medium">Nouveau projet déposé sur la classe X.</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            
         </ul>
     </div>
 </div>

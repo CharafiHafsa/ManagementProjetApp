@@ -41,7 +41,7 @@ def detailles(request):
 
 
     if request.method == 'POST':
-        instruction_id = request.POST.get('id_instruction')
+        instruction_id = request.POST.get('id_instruction') or request.POST.get('instruction_id')
         instruction = get_object_or_404(Instruction, id=instruction_id)
 
         uploaded_file = None
@@ -803,13 +803,24 @@ def classes(request):
     id_etudiant = request.session.get('user_id')
     etudiant = Etudiant.objects.filter(id=id_etudiant).first()
     classes_data = etudiant.classes.all()
-
-    context = {
-        'classes': classes_data
-    }
-
-    return render(request, 'singleSections/classes.html', context)
-
+    # rejoindre classe
+    if request.method == "POST":
+      code_class=request.POST.get('code_classe')
+      classe = Classe.objects.filter(code_classe=code_class).first()
+      if classe:
+           if classe not in etudiant.classes.all():
+                etudiant.classes.add(classe)
+                etudiant.save()
+                return redirect("classes")  # Rafraîchir la page après l'ajout
+      else:
+            return render(request, "singleSections/classes.html", {
+                "classes": etudiant.classes.all(),
+                "error_message": "Ce code de classe est invalide.",
+                
+            })
+          # 
+    return render(request, 'singleSections/classes.html',{'classes': classes_data})
+                                                          
 def notifications(request):
     id_etudiant = request.session.get('user_id')
     etudiant = Etudiant.objects.filter(id=id_etudiant).first()
@@ -1026,11 +1037,21 @@ def projets(request, classe_id):
     
     if request.method == 'POST' and 'creer_groupe' in request.POST:
         nom_groupe = request.POST.get('nom_groupe')  
-        selectedStudents = request.POST.get('selected-students')
+        selectedStudents = request.POST.get('selected-students', '')
+
+        if selectedStudents.strip():  # Si la chaîne n’est pas vide ou espace
+            try:
+                student_ids = [int(id) for id in selectedStudents.split('-') if id.strip().isdigit()]
+                selected_students = Etudiant.objects.filter(id__in=student_ids)
+            except ValueError:
+                # Gérer le cas d'une valeur incorrecte
+                return HttpResponse("Liste d'étudiants invalide.", status=400)
+        else:
+            student_ids = []
+            selected_students = []
+
         
-        # Créer le groupe
-        student_ids = [int(id) for id in selectedStudents.split('-')]
-        selected_students = Etudiant.objects.filter(id__in=student_ids)
+
         projet_id = request.POST.get('projet_id')
         projet = get_object_or_404(Project, id=projet_id)
         groupe = Groupe.objects.create(nom_groupe=nom_groupe, projet=projet, nbr_membre=4)

@@ -154,7 +154,7 @@ def signup_view(request):
             send_mail(
                 "Confirmez votre compte",
                 "",
-                "najibimane093@gmail.com",
+                "teamstudy576@gmail.com",
                 [email],
                 fail_silently=False,
                 html_message=html_message,
@@ -181,25 +181,28 @@ def signup_view(request):
                 <html>
                     <body>
                         <h1>Confirmez votre e-mail</h1>
-                        <p>Pour confirmer votre compte, cliquez sur le bouton ci-dessous :</p>
-                        <a href="{verification_link}">
-                            <button style="padding: 10px 15px; font-size: 16px; color: white; background-color: #007BFF; border-radius: 5px; border: none; cursor: pointer;">
-                                Confirmer mon compte
-                            </button>
+                        <p>Pour confirmer votre compte, cliquez sur le lien ci-dessous :</p>
+                        <a href="{verification_link}" style="display: inline-block; padding: 10px 15px; font-size: 16px; color: white; background-color: #007BFF; border-radius: 5px; text-decoration: none;">
+                            Confirmer mon compte
                         </a>
                     </body>
                 </html>
             """
 
-            send_mail(
-                "Confirmez votre compte",
-                "",
-                "najibimane093@gmail.com",
-                [email],
-                fail_silently=False,
-                html_message=html_message,
-            )
-            return render(request, 'authentification/message.html', {'message': 'Your email has been sent successfully'})
+
+            try:
+                send_mail(
+                    "Confirmez votre compte",
+                    "",
+                    "teamstudy576@gmail.com",
+                    [email],
+                    fail_silently=False,
+                    html_message=html_message,
+                )
+                return render(request, 'authentification/message.html', {'message': 'Your email has been sent successfully'})
+            except Exception as e:
+                return render(request, 'authentification/message.html', {'message': f'Failed to send email: {str(e)}'})
+
         
         else:
             return render(request, 'authentification/message.html', {'message': 'Invalid email format.'})
@@ -215,7 +218,7 @@ def forget_password(request):
         reset_link = f"http://127.0.0.1:8000/update_password/?id={uuid.uuid4()}"
 
         if email.endswith('-etu@etu.univh2c.ma'):
-            etudiant = Etudiant.objects.filter(EMAIL_ETUDIANT=email).first()
+            etudiant = Etudiant.objects.filter(email_etudiant=email).first()
             if etudiant is not None:
 
                 html_message = f"""
@@ -235,7 +238,7 @@ def forget_password(request):
                 send_mail(
                     "Update password",
                     "",  
-                    "votre_email@gmail.com",
+                    "teamstudy576@gmail.com",
                     [email],
                     fail_silently=False,
                     html_message=html_message,
@@ -289,7 +292,7 @@ def update_password(request):
         
         
         if email.endswith('-etu@etu.univh2c.ma'):
-             etudiant = Etudiant.objects.filter(EMAIL_ETUDIANT=email).first()
+             etudiant = Etudiant.objects.filter(email_etudiant=email).first()
              etudiant.PASSWORD = make_password(newpassword)
              etudiant.save()
              return render(request, 'authentification/message.html', {'message': 'Your password has been successfully updated'})
