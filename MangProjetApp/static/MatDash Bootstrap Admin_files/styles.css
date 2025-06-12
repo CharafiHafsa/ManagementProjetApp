@@ -51930,3 +51930,7 @@ h6 {
     font-weight: bold;
     color: #000;
   }
+
+  .btn-tobe-top{
+    z-index: 100;
+  }

@@ -13,7 +13,7 @@
           <nav aria-label="breadcrumb" class="ms-auto">
             <ol class="breadcrumb">
               <li class="breadcrumb-item d-flex align-items-center">
-                <button style="display: flex; justify-content: center; align-items: center;" type="button" class="btn mb-1 bg-primary-subtle text-primary px-4 fs-4 " data-bs-toggle="modal" data-bs-target="#primary-header-modal">
+                <button {% if archive %} disabled {% endif %} style="display: flex; justify-content: center; align-items: center;" type="button" class="btn mb-1 bg-primary-subtle text-primary px-4 fs-4 " data-bs-toggle="modal" data-bs-target="#primary-header-modal">
                     <iconify-icon icon="solar:add-square-outline" class="fs-7"></iconify-icon>
                     <span style="padding: 5px;"></span>
                     Ajouter un document

@@ -17,7 +17,7 @@ from datetime import date
 import json
 import uuid
 import os
-
+from .utils import encrypt_password, decrypt_password
 
 
 def login_view(request):
@@ -40,16 +40,22 @@ def login_view(request):
                     request.session['user_id'] = professeur.id  
                     request.session['email'] = professeur.email
 
-                    if remember_me:  
-                        request.session.set_expiry(None)  
-                    else:  
-                        request.session.set_expiry(0) 
+                    # Crée la réponse de redirection
+                    response = redirect('prof_accueil')
 
+                    # Gestion du remember_me
+                    if remember_me:
+                        request.session.set_expiry(None)
+                        response.set_cookie('remember_email', email, max_age=30*24*60*60)
+                        response.set_cookie('remember_password', encrypt_password(password), max_age=30*24*60*60)
+                    
+
+                    # Met à jour la dernière connexion
                     professeur.last_login = timezone.now()  
                     professeur.save()
 
                     messages.success(request, 'Login successful! Welcome Professeur.')
-                    return redirect('prof_accueil')
+                    return response
                 else:
                     messages.warning(request, 'Your account is not activated.')
 
@@ -64,25 +70,40 @@ def login_view(request):
                 if etudiant.is_verified:
                     login(request, etudiant)
                     request.session['user_type'] = 'etudiant'
-                    request.session['user_id'] = etudiant.id  
+                    request.session['user_id'] = etudiant.id 
 
-                    if remember_me:  
-                        request.session.set_expiry(None)  
-                    else:  
-                        request.session.set_expiry(0) 
+                    response = render(request, 'authentification/message.html', {
+                        'message': 'Login successful! Welcome to the platform'
+                    })
+
+                    if remember_me:
+                        request.session.set_expiry(None)
+                        response.set_cookie('remember_email', email, max_age=30*24*60*60)
+                        response.set_cookie('remember_password', encrypt_password(password), max_age=30*24*60*60)
                     
+
                     etudiant.last_login = timezone.now()  
                     etudiant.save()
 
-                    return render(request, 'authentification/message.html', {'message': 'Login successful! Welcome to the platform'})
+                    return response
                 else:
-                    return render(request, 'authentification/message.html', {'message': 'Le compte n\'est pas activé'})
+                    return render(request, 'authentification/message.html', {
+                        'message': 'Le compte n\'est pas activé'
+                    })
         else:
             messages.error(request, "Please enter a valid email.")
 
-        return redirect('login')  # Redirect back to login page
+        return redirect('login')
 
-    return render(request, 'authentification/login.html')
+    # Préremplir le formulaire si les cookies existent
+    email = request.COOKIES.get('remember_email', '')
+    encrypted_pwd = request.COOKIES.get('remember_password', '')
+    password = decrypt_password(encrypted_pwd) if encrypted_pwd else ''
+
+    return render(request, 'authentification/login.html', {
+        'email': email,
+        'password': password
+    })
 
 
 def signup_view(request):
@@ -307,9 +328,7 @@ def update_password(request):
     return render(request, 'authentification/update_password.html')
 
 
-def logout_user(request):
-    logout(request)
-    return redirect('login') 
+
 
 
 

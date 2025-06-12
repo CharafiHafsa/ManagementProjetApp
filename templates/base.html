@@ -17,59 +17,105 @@
   <link rel="stylesheet" href="{% static 'MatDash Bootstrap Admin_files/styles.css' %}">
   
   <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+
+    
+
+
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const emailInput = document.getElementById("emailInput");
-            const emailList = document.getElementById("emailList");
-            const emailsHidden = document.getElementById("emailsHidden"); // Champ caché
-            //   mettre à jour le champ caché emailsHidden avec la liste des emails ajoutés.
-            function updateHiddenInput() {
-                let emails = [];
-                document.querySelectorAll("#emailList .badge").forEach(span => {
-                    emails.push(span.textContent.trim());
-                });
-                emailsHidden.value = emails.join(",");
-            }
+    document.addEventListener("DOMContentLoaded", function () {
+        const rawEmailString = document.getElementById("known-emails").textContent.trim();
+        const knownEmails = rawEmailString.split(",").map(email => email.trim());
+        const emailInput = document.getElementById("emailInput");
+        const emailList = document.getElementById("emailList");
+        const emailsHidden = document.getElementById("emailsHidden");
+        const errorDiv = document.getElementById("emailErrorMsg"); // 🛠️ manquait dans ton script
 
-
-            function addEmail() {
-                const email = emailInput.value.trim();
-                if (email && validateEmail(email)) {
-                    const emailItem = document.createElement("span");
-                    emailItem.className = "badge bg-primary m-1 p-2";
-                    emailItem.innerHTML = `${email} <button type="button" class="btn-close btn-close-white ms-2" onclick="this.parentElement.remove()"></button>`;
-                    emailList.appendChild(emailItem);
-                    updateHiddenInput();  // Mettre à jour le champ caché
-                    emailInput.value = "";
-                } else {
-                    alert("Veuillez entrer un email valide.");
-                }
-            }
-
-            function validateEmail(email) {
-                const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                return regex.test(email);
-            }
-
-            document.getElementById("addEmailBtn").addEventListener("click", addEmail);
-            emailInput.addEventListener("keypress", function (event) {
-                if (event.key === "Enter") {
-                    event.preventDefault();
-                    addEmail();
-                }
+        function updateHiddenInput() {
+            let emails = [];
+            document.querySelectorAll("#emailList .badge").forEach(span => {
+                emails.push(span.textContent.trim());
             });
+            emailsHidden.value = emails.join(",");
+        }
+
+        function validateEmail(email) {
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return regex.test(email);
+        }
+
+        function showEmailError(message) {
+            errorDiv.textContent = message;
+            errorDiv.style.display = "block";
+            setTimeout(() => {
+                errorDiv.style.display = "none";
+                errorDiv.textContent = "";
+            }, 3000);
+        }
+
+        function addEmail() {
+            const email = emailInput.value.trim();
+            if (email && validateEmail(email)) {
+                const emailItem = document.createElement("span");
+                emailItem.className = "badge bg-primary m-1 p-2";
+                emailItem.innerHTML = `${email} <button type="button" class="btn-close btn-close-white ms-2" onclick="this.parentElement.remove(); updateHiddenInput();"></button>`;
+                emailList.appendChild(emailItem);
+                updateHiddenInput();
+                emailInput.value = "";
+            } else {
+                showEmailError("Veuillez entrer un email valide.");
+            }
+        }
+
+      function handleEmailCheck() {
+    const email = emailInput.value.trim();
+
+    if (!email) {
+        showEmailError("Veuillez entrer un email.");
+        return;
+    }
+
+    if (!validateEmail(email)) {
+        showEmailError("Veuillez entrer un email valide.");
+        return;
+    }
+
+    if (knownEmails.includes(email)) {
+        addEmail();
+    } else {
+        showEmailError("Cet email n'existe pas dans la base de données.");
+    }
+}
+
+
+        // Ajout du listener sur la touche Entrée
+        emailInput.addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                handleEmailCheck();
+            }
         });
-    </script>
+
+        // Si tu as un bouton "Ajouter", connecte-le aussi
+        const addEmailBtn = document.getElementById("addEmailBtn");
+        if (addEmailBtn) {
+            addEmailBtn.addEventListener("click", handleEmailCheck);
+        }
+    });
+</script>
+
 
   <title>MatDash Bootstrap Admin</title>
 
   {% block style %}
   {% endblock style %}
+  
 
 </head>
 
 <body data-sidebartype="full">
-  
+  <div id="known-emails" style="display: none;">
+    {{ emails|join:"," }}
+  </div>
   <!-- Preloader -->
   <div class="preloader" style="display: none;">
     <img src="{% static 'MatDash Bootstrap Admin_files/favicon.png' %}" alt="loader" class="lds-ripple img-fluid">
@@ -491,7 +537,7 @@
           var mini_9 = document.getElementById("mini-9").classList.contains('selected');
           var mini_6 = document.getElementById("mini-6").classList.contains('selected');
           if (pageWrapper) {
-              if (mini_4 || mini_5 || mini_9 || mini_1 || mini_2 || mini_6 || window.location.href.includes('/etu/groupes/archive') || window.location.href.includes('/etu/detailles')) {
+              if (mini_4 || mini_5 || mini_9 || mini_1 || mini_2 || mini_6 || window.location.href.includes('/etu/classes_archives/')  || window.location.href.includes('/etu/groupes/archive') || window.location.href.includes('/etu/detailles')) {
                   pageWrapper.classList.add('force-margin-left'); // Imposer margin-left: 0
               } else {
                   pageWrapper.classList.remove('force-margin-left'); // Laisser le style normal

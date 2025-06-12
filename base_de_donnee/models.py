@@ -9,6 +9,8 @@ from django.conf import settings
 import os
 from django.utils import timezone
 from datetime import timedelta
+from django.core.exceptions import ValidationError
+
 
 # Manager personnalisé pour Professeur
 class ProfesseurManager(models.Manager):
@@ -21,7 +23,6 @@ class ProfesseurManager(models.Manager):
                 return 'incorrect_password'
         except Professeur.DoesNotExist:
             return None
-
 # Manager personnalisé pour Etudiant
 class EtudiantManager(models.Manager):
     def authenticate(self, email, password):
@@ -46,7 +47,12 @@ class Etudiant(models.Model):
     is_verified = models.BooleanField(default=False)
     objects = EtudiantManager()
     projets = models.ManyToManyField('Project', related_name="etudiants", blank=True)
-    classes = models.ManyToManyField('Classe', related_name="etudiants",  blank=True)
+    classes = models.ManyToManyField(
+        'Classe',
+        through='EtudiantClasse',
+        related_name='etudiants',
+        blank=True
+    )
     groupes = models.ManyToManyField('Groupe', related_name="membres",  blank=True)
     groupesArchive = models.ManyToManyField('GroupeArchive', related_name="membres",  blank=True)
     
@@ -54,6 +60,17 @@ class Etudiant(models.Model):
         return f"{self.nom} {self.prenom}"
     def get_email_field_name(self):
         return 'email_etudiant'
+    
+class EtudiantClasse(models.Model):
+    etudiant = models.ForeignKey('Etudiant', on_delete=models.CASCADE)
+    classe = models.ForeignKey('Classe', on_delete=models.CASCADE)
+    is_archived = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ('etudiant', 'classe')  # empêche les doublons
+
+    def __str__(self):
+        return f"{self.etudiant.nom} - {self.classe.nom_classe} (Archivé: {self.is_archived})"
 
 class Professeur(models.Model):
     departement = models.CharField(max_length=255, null=True)
@@ -133,12 +150,21 @@ class Groupe(models.Model):
         null=True,   # Autorise NULL dans la base de données
         blank=True   # Autorise un formulaire vide en Django admin
     )
+    meet_link = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def str(self):
         return self.nom_groupe
 
-
 class GroupeArchive(models.Model):
+    groupe = models.OneToOneField(
+        Groupe,
+        on_delete=models.CASCADE,
+        related_name='archive',
+        null=True,  # <-- Ajoute ceci
+        blank=True  # <-- Optionnel si tu veux permettre un champ vide dans les formulaires
+    )
     nom_groupe = models.CharField(max_length=255)
     nbr_membre = models.PositiveIntegerField()
     projet = models.ForeignKey(
@@ -200,6 +226,7 @@ class Event(models.Model):
 
 class Message(models.Model):
     groupe = models.ForeignKey(Groupe, on_delete=models.CASCADE, related_name="messages")
+    groupeArchive = models.ForeignKey(GroupeArchive, on_delete=models.CASCADE, related_name="messages", null=True, blank=True) 
     etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE, related_name="messages")
     contenu = models.TextField()
     date_envoi = models.DateTimeField(auto_now_add=True)
@@ -229,7 +256,6 @@ class HistoriqueTachesEtu(models.Model):
         verbose_name_plural = "Historiques des Tâches"
         ordering = ['-date']  # Trie par date décroissante
 
-
 class P_ressources(models.Model):
     titre = models.CharField(max_length=255)
     file = models.FileField(upload_to='resources/', null=True, blank=True)
@@ -241,8 +267,6 @@ class P_ressources(models.Model):
     def __str__(self):
         return f"Ressource: {self.titre} ({self.projet.nom_project})"
   
-
-
 class TempsUtilisation(models.Model):
     etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE, related_name="historique_temps")
     date = models.DateField(default=timezone.now)  # Un enregistrement par jour
@@ -257,6 +281,7 @@ class TempsUtilisation(models.Model):
 class Sujet(models.Model):
     titre = models.CharField(max_length=255)
     groupe = models.ForeignKey(Groupe, on_delete=models.CASCADE)
+    GroupeArchive = models.ForeignKey(GroupeArchive, on_delete=models.CASCADE, null=True, blank=True) 
 
     def _str_(self):
         return self.titre
@@ -317,8 +342,6 @@ class PENotification(models.Model):
     def _str_(self):
         return self.title
 
-
-
 class ProfNotification(models.Model):
     professeur = models.ForeignKey(Professeur, on_delete=models.CASCADE, related_name="pnotifications")
     title = models.CharField(max_length=255)
@@ -337,14 +360,3 @@ class PEvent(models.Model):
     def __str__(self):
         return self.title
     
-
-class Meeting(models.Model):
-    target_type = models.CharField(max_length=255)
-    target_id = models.PositiveIntegerField()
-    meeting_link = models.URLField()
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
-    created_at = models.DateTimeField(default=timezone.now)
-
-    def __str__(self):
-        return f"Meeting for {self.target_type} {self.target_id} at {self.start_time}"

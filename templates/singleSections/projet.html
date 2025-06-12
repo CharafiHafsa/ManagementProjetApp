@@ -46,7 +46,7 @@
 </div>
 
 <div class="row">
-{% for groupe in groupes_etudiant %}
+{% for groupe in  groupes_associes  %}
 <div class="col-lg-3 col-md-6">
     <div class="card">
         <div class="card-header text-bg-primary">
@@ -59,8 +59,8 @@
                 <iconify-icon icon="solar:menu-dots-bold" class="fs-6"></iconify-icon>
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenu3Button{{ groupe.id }}">
-                <li><a class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" id="btn-delete">Quitter</a></li>
-                <li><a class="dropdown-item text-primary btn_modifier_grp" data-bs-toggle="modal" data-bs-target="#primary-header-modal-modifier">Modifier</a></li>
+                <li><a class="dropdown-item text-danger btn-delete" data-id="{{ groupe.id }}" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Quitter</a></li>
+                <li><a class="dropdown-item text-primary btn_modifier_grp" data-bs-toggle="modal" data-bs-target="#primary-header-modal-modifier"  data-id="{{ groupe.id }}" data-nom="{{ groupe.nom_groupe }}">Modifier</a></li>
             </ul>
         </div>
 
@@ -199,14 +199,17 @@
   </div>
 
   <script>
-     document.querySelectorAll(".btn_modifier_grp").forEach(item => {
+    document.querySelectorAll(".btn_modifier_grp").forEach(item => {
         item.addEventListener("click", function () {
-            var groupe_id = this.getAttribute('data-id');
-            
+            const groupe_id = this.getAttribute('data-id');
+            const groupe_nom = this.getAttribute('data-nom');
+
             document.getElementById('id_groupe').value = groupe_id;
-        }
-    )});
-  </script>
+            document.querySelector('#primary-header-modal-modifier input[name="nom_groupe"]').value = groupe_nom;
+        });
+    });
+</script>
+
 
 
     <!-- MODAL Quitter -->
@@ -250,5 +253,9 @@
           });
          
       </script>
+
+
+
+   
     
 {% endblock content %}

@@ -53,4 +53,7 @@ urlpatterns = [
     path('notification/read/<int:notification_id>/', views.mark_as_read, name='mark_notification_read'),
     path('notification/mark_all_read/', views.mark_all_as_read, name='mark_all_notifications_read'),
 
+
+    path('logout_prof/', views.logout_Prof, name='logout_prof'),
+
 ]

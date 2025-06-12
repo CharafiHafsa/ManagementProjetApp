@@ -98,7 +98,40 @@
     </div>
   </div>
 </div>
+<!-- ANNONCES -->
+<div class="row">
 
+  <div class="col-lg-12">
+      <div class="card">
+          <div class="card-body">
+              <h4 class="card-title mb-3">Annonces</h4>
+
+              
+              <ul class="list-group">
+                {% for annonce in Annonces %}
+                  <li class="list-group-item">
+                    <div class="d-flex justify-content-between">
+                      <div>
+                        <!-- <label class="form-check-label-Detailles" for="list2"> -->
+                        <label class="form-check-label-Detailles" >
+                          
+                          {{ annonce.contenu }}
+                        </label>
+                      </div>
+                      <div>
+                        <small class="text-muted">
+                          {{ annonce.date_publication|date:"d F Y à  H:i" }}
+                        </small>
+                      </div>
+                    </div>
+                  </li>
+                {% endfor %}
+              </ul>
+              
+              
+          </div>
+      </div>
+  </div> 
     
 
 <div class="row">
@@ -179,38 +212,7 @@
 
 </div>
 
-<!-- ANNONCES -->
-<div class="row">
 
-  <div class="col-lg-12">
-      <div class="card">
-          <div class="card-body">
-              <h4 class="card-title mb-3">Annonces</h4>
-
-              
-              <ul class="list-group">
-                {% for annonce in Annonces %}
-                  <li class="list-group-item">
-                    <div class="d-flex justify-content-between">
-                      <div>
-                        <label class="form-check-label-Detailles" for="list2">
-                          {{ annonce.contenu }}
-                        </label>
-                      </div>
-                      <div>
-                        <small class="text-muted">
-                          {{ annonce.date_publication|date:"d F Y à  H:i" }}
-                        </small>
-                      </div>
-                    </div>
-                  </li>
-                {% endfor %}
-              </ul>
-              
-              
-          </div>
-      </div>
-  </div> 
   
 
 

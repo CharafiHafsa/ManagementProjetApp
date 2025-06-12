@@ -4,11 +4,16 @@
 {% block content %}
 {% load static %}
 
-<div class="card card-body py-3" style="margin-bottom: 20px;">
+
+
+<!-- <div class="card card-body py-3" style="margin-bottom: 20px;">
     <div class="row align-items-center">
       <div class="col-12">
         <div class="d-sm-flex align-items-center justify-space-between">
           <h4 class="mb-4 mb-sm-0 card-title">Mes Groupes</h4>
+           
+             
+
           <nav aria-label="breadcrumb" class="ms-auto">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item d-flex align-items-center">
@@ -29,25 +34,86 @@
         </div>
       </div>
     </div>
+</div> -->
+<div class="card card-body py-3" style="margin-bottom: 20px;">
+    <div class="row align-items-center">
+      <div class="col-12">
+        <div class="d-sm-flex align-items-center justify-space-between">
+          <h4 class="mb-4 mb-sm-0 card-title">Mes Groupes</h4>
+           
+          <div class="ms-auto d-flex align-items-center gap-3">
+              <!-- Barre de recherche en temps réel -->
+              <div class="position-relative">
+                <div class="input-group">
+                  <input type="text" id="realtime-search" class="form-control" placeholder="Rechercher..." style="border-radius: 20px 0 0 20px; padding-left: 15px;">
+                  <button class="btn btn-outline-primary" style="border-radius: 0 20px 20px 0;">
+                    <iconify-icon icon="solar:magnifer-linear"></iconify-icon>
+                  </button>
+                </div>
+              </div>
+              
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item d-flex align-items-center">
+                        <button style="display: flex; justify-content: center; align-items: center;" type="button" class="btn mb-1 bg-primary-subtle text-primary px-4 fs-4 " data-bs-toggle="modal" data-bs-target="#primary-header-modal">
+                            <iconify-icon icon="solar:add-square-outline" class="fs-7"></iconify-icon>
+                            <span style="padding: 5px;"></span>
+                            Créer un groupe
+                        </button>
+                    </li>
+                    <li class="breadcrumb-item d-flex align-items-center">
+                        <a href="{% url 'groupes_archive' %}" class="btn mb-1 bg-primary-subtle text-primary" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
+                            data-bs-placement="bottom" data-bs-title="Archive">
+                            <iconify-icon icon="solar:archive-broken" class="fs-7"></iconify-icon>
+                        </a>
+                    </li>
+                </ol>
+              </nav>
+          </div>
+        </div>
+      </div>
+    </div>
 </div>
 
-    <div class="row">
+
+
+<!-- Modal Ajouter Groupe -->
+
+    {% if messages %}
+  <div id="message-container">
+    {% for message in messages %}
+      <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %} fade-message">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<!-- supprimer le message "groupe créer vec succes apres 3 secondes  -->
+        <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    setTimeout(function () {
+      document.querySelectorAll(".fade-message").forEach(function (el) {
+        el.style.transition = "opacity 0.5s ease";
+        el.style.opacity = "0";
+        setTimeout(() => el.remove(), 500);  // attendre la fin du fade out
+      });
+    }, 3000); // 3 secondes
+  });
+</script>
+
+
+    <div class="row" id="groupes-container">
         
         {% for groupe_data in groupes_data %}
-            <div class="col-md-4 d-flex align-items-stretch">
+             <div class="col-md-4  align-items-stretch groupe-card" 
+             data-name="{{ groupe_data.groupe.nom_groupe|lower }}"
+             data-project="{{ groupe_data.groupe.projet.nom_project|default:''|lower }}"
+             data-class="{{ groupe_data.groupe.projet.code_classe.nom_classe|default:''|lower }}"
+             >
                 <div class="card w-100">
                     <div class="card-body">
-                        <!-- Bouton Menu 3 points
-                        <div class="dropdown position-absolute top-0 end-0 m-2">
-                            <button class="three-points-menu" type="button" id="dropdownMenuButton{{ groupe_data.groupe.id }}" data-bs-toggle="dropdown" aria-expanded="false" style="background: transparent;">
-                                <iconify-icon icon="solar:menu-dots-bold" class="fs-6"></iconify-icon>
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ groupe_data.groupe.id }}">
-                                <li><a style="cursor: pointer;" class="dropdown-item text-danger"  data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" id="btn-delete">Quitter</a></li>
-                                <li><a class="dropdown-item text-primary btn_modifier_grp"  data-bs-toggle="modal" data-bs-target="#primary-header-modal-modifier">Modifier</a></li>
-                                
-                            </ul>
-                        </div> -->
+                         <!-- Bouton Menu 3 points -->
                         <div class="dropdown position-absolute top-0 end-0 m-2">
                             <button class="three-points-menu" type="button" id="dropdownMenuButton{{ groupe.id }}" data-bs-toggle="dropdown" aria-expanded="false" style="background: transparent;">
                                 <iconify-icon icon="solar:menu-dots-bold" class="fs-6"></iconify-icon>
@@ -108,6 +174,57 @@
     </script>
 
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        
+            
+            // Désactiver le comportement par défaut du bouton de recherche
+             document.querySelector('.btn-outline-primary').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    searchInput.dispatchEvent(new Event('input'));
+            });
+
+
+            const searchInput = document.getElementById('realtime-search');
+            const groupeCards = document.querySelectorAll('.groupe-card');
+            
+            searchInput.addEventListener('input', function() {
+            
+
+                const searchTerm = searchInput.value.toLowerCase().trim();
+                
+                
+                groupeCards.forEach(card => {
+                    const name = card.getAttribute('data-name') || '';
+                    // const project = card.getAttribute('data-project') || '';
+                    // const classe = card.getAttribute('data-class') || '';
+                    
+                    console.log("HERE ",name)
+                    
+                    // Vérification plus robuste
+                    if (name.includes(searchTerm)){
+                
+                        card.style.display = 'flex';
+                    }else {
+                        
+                        card.style.display = 'none';
+                    }
+                    
+                                //    project.includes(searchTerm) || 
+                                //    classe.includes(searchTerm);
+                    
+                    
+                });
+            });
+            
+            // Initialiser la recherche au chargement (au cas où il y aurait déjà du texte)
+            if (searchInput.value) {
+                searchInput.dispatchEvent(new Event('input'));
+            }
+        });
+</script>
+
+
    <!-- MODAL MODIFIER -->
               
    <div id="primary-header-modal-modifier" class="modal fade" tabindex="-1"
@@ -156,15 +273,7 @@
    </script>
 
    
-    <!-- Modal Ajouter Groupe -->
-
-    {% if messages %}
-      {% for message in messages %}
-        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
-            {{ message }}
-        </div>
-      {% endfor %}
-    {% endif %}
+    
 
    
     <!-- Modal -->
@@ -190,6 +299,8 @@
                 <h4>Ajouter des membres par email</h4>
                 <div class="mb-3">
                     <input type="email" id="emailInput" class="form-control" placeholder="Entrez un email et appuyez sur Entrée">
+                     <div class="alert alert-danger mt-2" id="emailErrorMsg" style="display: none;"></div>
+                     <!-- <div id="emailErrorMsg" class="text-danger mt-2" style="display: none;"></div> -->
                 </div>
                 <button style="visibility: hidden;" id="addEmailBtn" class="btn btn-primary mb-2">Créer</button>
                 <div id="emailList"></div>
@@ -198,7 +309,8 @@
                <input type="hidden" name="emails" id="emailsHidden">  
 
                 <!-- <input type="hidden" id="editIndex"> -->
-            
+           
+
             </div>
             <div class="modal-footer">
             <button type="button" class="btn btn-light" data-bs-dismiss="modal" onclick="resetForm()">
@@ -238,7 +350,7 @@
                 </div>
             </div>
         </div>
-        </div>
+    </div>
       
         <script>
           document.querySelectorAll(".btn-delete").forEach(item => {
@@ -275,6 +387,23 @@
         }
            
         </script>
+        <script>
+        document.querySelectorAll(".btn_modifier_grp").forEach(item => {
+            item.addEventListener("click", function () {
+            var groupe_id = this.getAttribute('data-id');
+            var groupe_nom = this.getAttribute('data-nom');
+
+            document.getElementById('id_groupe').value = groupe_id;
+            document.getElementById('taskName').value = groupe_nom;
+            });
+        });
+        </script>
+
+
+
+        
+
+
 
     
     

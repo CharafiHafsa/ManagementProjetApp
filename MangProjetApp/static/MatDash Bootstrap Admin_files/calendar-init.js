@@ -138,6 +138,8 @@ document.addEventListener("DOMContentLoaded", function () {
     // Calendar Select fn.
     /*=====================*/
     var calendarSelect = function (info) {
+      BtnSupprimer = document.getElementById("supprimer_event");
+        BtnSupprimer.style.display = "none"
       getModalAddBtnEl.style.display = "block";
       getModalUpdateBtnEl.style.display = "none";
       myModal.show();
@@ -155,6 +157,8 @@ document.addEventListener("DOMContentLoaded", function () {
       var combineDate = `${yyyy}-${mm}-${dd}T00:00:00`;
       getModalAddBtnEl.style.display = "block";
       getModalUpdateBtnEl.style.display = "none";
+      BtnSupprimer = document.getElementById("supprimer_event");
+      BtnSupprimer.style.display = "none"
       myModal.show();
       getModalStartDateEl.value = combineDate;
     };
@@ -179,6 +183,12 @@ document.addEventListener("DOMContentLoaded", function () {
         getModalTitleEl.value = eventObj.title;
         getModalStartDateEl.value = eventObj.startStr.slice(0, 10);
         getModalEndDateEl.value = eventObj.endStr.slice(0, 10);
+      
+        // hellooooooooo
+        if(getModalEndDateEl.value==""){
+          getModalEndDateEl.value = getModalStartDateEl.value;
+        }
+
         getModalCheckedRadioBtnEl.checked = true;
         getModalUpdateBtnEl.setAttribute(
           "data-fc-event-public-id",
@@ -186,7 +196,15 @@ document.addEventListener("DOMContentLoaded", function () {
         );
         getModalAddBtnEl.style.display = "none";
         getModalUpdateBtnEl.style.display = "block";
+        BtnSupprimer = document.getElementById("supprimer_event");
+        BtnSupprimer.style.display = "block"
         myModal.show();
+
+        console.log('hellllllllo')
+        inpGet = document.getElementById('get_id_event');
+        inpSend = document.getElementById('send_id_event');
+        const eventId = inpGet.getAttribute('data-fc-event-public-id');
+        inpSend.value = eventId
       }
     };
 

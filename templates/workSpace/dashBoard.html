@@ -10,20 +10,26 @@
 
 <div class="row">
     <div class="col-lg-6 col-md-6">
+      {% if groupe.projet %}
         <div class="card">
           <div class="card-body">
             <div class="row">
               <!-- Column -->
+            
               <div class="col d-flex align-items-center">
                 <div>
                   <h3>Date limite</h3>
-                  {% if jours_restants >= 0 %}
-                  <p class="mb-0">
-                    il vous reste {{jours_restants}} jour(s)
-                  </p>
+                  {% if jours_restants > 0 %}
+                      <p class="mb-0">
+                        Il vous reste {{ jours_restants }} jour{% if jours_restants > 1 %}s{% endif %}
+                      </p>
+                   {% elif jours_restants == 0 %}
+                      <p class="mb-0">
+                        Aujourd'hui est le dernier jour
+                      </p>
                   {% else %}
                   <p class="mb-0">
-                    La date est dépassé par {{jours_restants}} jour(s)
+                    La date est dépassée de {{ jours_restants }} jour{% if jours_restants > 1 %}s{% endif %}
                   </p>
                   {% endif %}
                 </div>
@@ -36,6 +42,8 @@
             </div>
           </div>
         </div>
+        {% endif %}
+        
         <div class="card">
             <div class="card-body">
               <div class="row">
@@ -43,14 +51,20 @@
                 <div class="col d-flex align-items-center">
                   <div>
                     <h3>Taches</h3>
-                    <p class="mb-0">
-                      il vous reste {{nb_tache_non_realisé }} taches parmi {{nb_tache_total}}
-                    </p>
+                    {% if nb_tache_total == 0 %}
+                        <p class="mb-0">
+                          il vous aucun taches 
+                        </p>
+                    {% else %}
+                        <p class="mb-0">
+                          il vous reste {{nb_tache_non_realisé }} taches parmi {{nb_tache_total}}
+                        </p>
+                    {% endif %}
                   </div>
                 </div>
                 <!-- Ring -->
                   <div class="col d-flex align-items-center justify-content-center">
-                    <div class="progress-ring" data-progress="90%"  id="ring-{{ forloop.counter }}"> </div>
+                    <div class="progress-ring" data-progress="{{pourcentage_taches}}%"  id="ring-{{ forloop.counter }}"> </div>
                   </div>
                 <!-- ---- -->
               </div>
@@ -108,7 +122,7 @@
                     <iconify-icon class="text-white fs-10 me-2" icon="solar:users-group-rounded-bold-duotone"></iconify-icon>
                     Membres de groupe
                 </h4>
-                <h3 class="fw-bolder fs-10 m-1 text-white d-flex justify-content-center">{{groupe.nbr_membre}}</h3>
+                <h3 class="fw-bolder fs-10 m-1 text-white d-flex justify-content-center">{{nb_membres}}</h3>
               </div>
             </div>
           </div>

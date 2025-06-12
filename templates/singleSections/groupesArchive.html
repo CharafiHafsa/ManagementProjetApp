@@ -4,10 +4,41 @@
 {% block content %}
 {% load static %}
 
+<div class="card card-body py-3" style="margin-bottom: 20px;">
+  <div class="row align-items-center">
+    <div class="col-12">
+      <div class="d-flex flex-column flex-sm-row align-items-center justify-content-between">
+        <h4 class="mb-4 mb-sm-0 card-title">Groupes Archivées</h4>
+        
+        <div class="d-flex align-items-center gap-3">
+          <!-- Barre de recherche en temps réel -->
+          <div class="position-relative">
+            <div class="input-group">
+              <input type="text" id="realtime-search" class="form-control" placeholder="Rechercher..." style="border-radius: 20px 0 0 20px; padding-left: 15px;">
+              <button class="btn btn-outline-primary" style="border-radius: 0 20px 20px 0;">
+                <iconify-icon icon="solar:magnifer-linear"></iconify-icon>
+              </button>
+            </div>
+          </div>
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb m-0">
+              <li class="breadcrumb-item d-flex align-items-center">
+                <a href="{% url 'groupes' %}" class="btn mb-1 bg-primary-subtle text-primary" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Retour">
+                  <iconify-icon icon="solar:arrow-left-broken" class="fs-7"></iconify-icon>
+                </a>
+              </li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
     <div class="row">
 
         {% for groupe_data in groupes_data %}
-            <div class="col-md-4 d-flex align-items-stretch" style="z-index: 10;">
+            <div class="col-md-4  align-items-stretch groupe-card " style="z-index: 10;" data-name="{{ groupe_data.groupe.nom_groupe|lower }}">
                 <div class="card w-100">
                     <div class="card-body">
                         <!-- Bouton Menu 3 points -->
@@ -16,7 +47,7 @@
                                 <iconify-icon icon="solar:menu-dots-bold" class="fs-6"></iconify-icon>
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ groupe_data.groupe.id }}">
-                                <li><a style="cursor: pointer;" class="dropdown-item text-danger"  data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" id="btn-delete">Quitter</a></li>
+                                <li><a style="cursor: pointer;" class="dropdown-item text-danger btn-delete"  data-bs-toggle="modal" data-bs-target="#confirmDeleteModal"  data-id="{{ groupe_data.groupe.id }}">Quitter</a></li>
                                 <li><form method="post" action="{% url 'groupes_archive' %}">{% csrf_token %}<input type="hidden" name="group_id" value="{{ groupe_data.groupe.id }}"><input type="submit" name="desarchiver" class="dropdown-item text-primary btn_archiver_grp" value="Désarchiver"></form></li>
                             </ul>
                         </div>
@@ -68,6 +99,58 @@
             });
         });
     </script>
+
+    <!-- recherche -->
+
+     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        
+            
+            // Désactiver le comportement par défaut du bouton de recherche
+             document.querySelector('.btn-outline-primary').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    searchInput.dispatchEvent(new Event('input'));
+            });
+
+
+            const searchInput = document.getElementById('realtime-search');
+            const groupeCards = document.querySelectorAll('.groupe-card');
+        
+            searchInput.addEventListener('input', function() {
+            
+
+                const searchTerm = searchInput.value.toLowerCase().trim();
+                console.log(searchTerm )
+                
+                groupeCards.forEach(card => {
+                    const name = card.getAttribute('data-name') || '';
+                    // const project = card.getAttribute('data-project') || '';
+                    // const classe = card.getAttribute('data-class') || '';
+                    
+                    console.log("HERE ",name)
+                    
+                    // Vérification plus robuste
+                    if (name.includes(searchTerm)){
+                
+                        card.style.display = 'flex';
+                    }else {
+                        
+                        card.style.display = 'none';
+                    }
+                    
+                                //    project.includes(searchTerm) || 
+                                //    classe.includes(searchTerm);
+                    
+                    
+                });
+            });
+            
+            // Initialiser la recherche au chargement (au cas où il y aurait déjà du texte)
+            if (searchInput.value) {
+                searchInput.dispatchEvent(new Event('input'));
+            }
+        });
+</script>
 
 
     <!-- MODAL MODIFIER -->
@@ -182,32 +265,34 @@
     <!-- MODAL Quitter -->
 
     <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Confirmation</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
-            </div>
-            <div class="modal-body">
-                Êtes-vous sûr de vouloir quitter ce groupe ?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                <form method="POST"> 
-                  {% csrf_token %}
-                  <input type="hidden" name="" id="">
-                  <input type="submit" class="btn btn-danger" id="confirmDeleteBtn"  name="delete" value="Quitter">
-                </form>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    Êtes-vous sûr de vouloir quitter ce groupe ?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <form method="post" action="{% url 'Quitter_Modifier' %}"> 
+                      {% csrf_token %}
+                      <input type="hidden" name="id_groupe_quitter" id="id_groupe_quitter">
+                      <input type="submit" class="btn btn-danger" id="confirmDeleteBtn"  name="delete_groupe" value="Quitter">
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-    </div>
-  
     <script>
-        document.getElementById("btn-delete").addEventListener("click", function() {
-            id_etu = document.getElementById('id_etu_tab').value
-            document.getElementById('id_etu_mod').value = id_etu
+        document.querySelectorAll(".btn-delete").forEach(function(button) {
+            button.addEventListener("click", function() {
+                var groupe_id = this.getAttribute('data-id');
+                document.getElementById("id_groupe_quitter").value = groupe_id;
+            });
         });
+
         document.getElementById("confirmDeleteBtn").addEventListener("click", function() {
             var modal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
             modal.hide();

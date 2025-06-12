@@ -29,4 +29,11 @@ urlpatterns = [
     path('profil/', views.profil, name='profil'),
     path('api/', views.get_events, name='get_events'),
     path('ws/documents/ouvrir/', views.ouvrir_doc, name='ouvrir_doc'),
+    path('creer-reunion/<int:groupe_id>/', views.creer_reunion, name='creer_reunion'),
+    path('lancer_meet/<int:groupe_id>/', views.lancer_meet, name='lancer_meet'),
+    path('terminer_meet/<int:groupe_id>/', views.terminer_meet, name='terminer_meet'),
+    
+    path('classes_archives/', views.classes_archive, name='classes_archives'),
+    path('logout/', views.logout_user, name='logout'),
+    
 ]

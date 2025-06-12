@@ -65,11 +65,7 @@
             {% endfor %}
             {% for tache in taches_proches %}
                 <div class="alert  alert-dismissible text-warning text-warning alert-light-warning bg-warning-subtle fade show remove-close-icon" style="margin-left: 20px; margin-right: 20px;">
-                    <form action="" method="POST">
-                        {% csrf_token %}
-                        <input type="hidden" name="id_notification" value="{{ notification.id }}">
-                        <button type="submit" class="btn-close" data-bs-dismiss="alert" aria-label="Close" name="delete"></button>
-                    </form>
+                   
                     <div class="border-start border-2 border-warning d-md-flex align-items-center disp-x">
                     <div class="d-flex align-items-center gap-6 ms-2">
                         <a href="javascript:void(0)" class=" round-40 bg-warning-subtle text-warning rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
@@ -91,11 +87,7 @@
             {% endfor %}
             {% for tache in taches_depassees %}
                 <div class="alert  alert-dismissible text-danger text-danger alert-light-danger bg-danger-subtle fade show remove-close-icon" style="margin-left: 20px; margin-right: 20px;">
-                    <form action="" method="POST">
-                        {% csrf_token %}
-                        <input type="hidden" name="id_notification" value="{{ notification.id }}">
-                        <button type="submit" class="btn-close" data-bs-dismiss="alert" aria-label="Close" name="delete"></button>
-                    </form>
+                   
                     <div class="border-start border-2 border-danger d-md-flex align-items-center disp-x">
                     <div class="d-flex align-items-center gap-6 ms-2">
                         <a href="javascript:void(0)" class=" round-40 bg-danger-subtle text-danger rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">

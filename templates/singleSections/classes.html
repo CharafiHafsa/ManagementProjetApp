@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 
-
 {% block content %}
 {% load static %}
 
@@ -8,11 +7,12 @@
   <div class="row align-items-center">
     {% load static %}  <!-- Charger les fichiers statiques -->
 
-  <div class="card card-body py-3" style="margin-bottom: 20px;">
+  <!-- <div class="card card-body py-3" style="margin-bottom: 20px;">
       <div class="row align-items-center">
         <div class="col-12">
           <div class="d-sm-flex align-items-center justify-space-between">
             <h4 class="mb-4 mb-sm-0 card-title">Mes Classes</h4>
+           
             <nav aria-label="breadcrumb" class="ms-auto">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item d-flex align-items-center">
@@ -22,8 +22,57 @@
                       Rejoindre une classe
                   </button>
                 </li>
+                 <li class="breadcrumb-item d-flex align-items-center">
+                    <a href="{% url 'classes_archives' %}" class="btn mb-1 bg-primary-subtle text-primary" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
+                        data-bs-placement="bottom" data-bs-title="Archive">
+                        <iconify-icon icon="solar:archive-broken" class="fs-7"></iconify-icon>
+                    </a>
+                </li>
               </ol>
             </nav>
+          </div>
+        </div>
+      </div>
+  </div> -->
+
+ <div class="card card-body py-3" style="margin-bottom: 20px; background: transparent; box-shadow: none;">
+  <div class="row align-items-center">
+    {% load static %}
+
+  <div class="card card-body py-3" style="margin-bottom: 20px;">
+      <div class="row align-items-center">
+        <div class="col-12">
+          <div class="d-sm-flex align-items-center justify-space-between">
+            <h4 class="mb-4 mb-sm-0 card-title">Mes Classes</h4>
+            <div class="ms-auto d-flex align-items-center gap-3">
+              <!-- Barre de recherche en temps réel -->
+              <div class="position-relative">
+                <div class="input-group">
+                  <input type="text" id="realtime-search" class="form-control" placeholder="Rechercher..." style="border-radius: 20px 0 0 20px; padding-left: 15px;">
+                  <button class="btn btn-outline-primary" style="border-radius: 0 20px 20px 0;">
+                    <iconify-icon icon="solar:magnifer-linear"></iconify-icon>
+                  </button>
+                </div>
+              </div>
+              
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item d-flex align-items-center">
+                    <button style="display: flex; justify-content: center; align-items: center;" type="button" class="btn mb-1 bg-primary-subtle text-primary px-4 fs-4 " data-bs-toggle="modal" data-bs-target="#primary-header-modal">
+                        <iconify-icon icon="solar:add-square-outline" class="fs-7"></iconify-icon>
+                        <span style="padding: 5px;"></span>
+                        Rejoindre une classe
+                    </button>
+                  </li>
+                  <li class="breadcrumb-item d-flex align-items-center">
+                    <a href="{% url 'classes_archives' %}" class="btn mb-1 bg-primary-subtle text-primary" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
+                        data-bs-placement="bottom" data-bs-title="Archive">
+                        <iconify-icon icon="solar:archive-broken" class="fs-7"></iconify-icon>
+                    </a>
+                  </li>
+                </ol>
+              </nav>
+            </div>
           </div>
         </div>
       </div>
@@ -64,44 +113,39 @@
         <!-- /.modal-dialog -->
       </div>
 
-<div class="row">
-    {% for classe in classes %}
-    <div class="col-md-4">
+
+
+<div class="row" id="classes-container">
+    {% for item in classes_with_images %}
+    {% with classe=item.classe image=item.image %}
+    <div class="col-md-4 classe-card" data-name="{{ classe.nom_classe|lower }}" >
         <div class="card">
             <div class="position-relative">
+                <div class="dropdown position-absolute top-0 end-0 m-2">
+                    <button class="three-points-menu" type="button" id="dropdownMenuButton{{ classe.id }}" data-bs-toggle="dropdown" aria-expanded="false" style="background: transparent;">
+                        <iconify-icon icon="solar:menu-dots-bold" class="fs-6"></iconify-icon>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ classe.id }}">
+                        <li><button class="dropdown-item text-danger btn-delete" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-id="{{ classe.id }}">Quitter</button></li>
+                        <li><form method="post" action="">{% csrf_token %}<input type="hidden" name="class_id" value="{{ classe.id }}"><input type="submit" name="archiver" class="dropdown-item text-primary btn_archiver_classe" value="Archiver"></form></li>
+                    </ul>
+                </div>
                 <a href="javascript:void(0)">
-                    <img src="{% static 'MatDash Bootstrap Admin_files/blog-img1.jpg' %}" class="card-img-top" alt="matdash-img">
+                  <img src="{% get_static_prefix %}{{ image }}" class="card-img-top" alt="matdash-img">
                 </a>
-                <span class="badge text-bg-light text-dark fs-2 lh-sm mb-9 me-9 py-1 px-2 fw-semibold position-absolute bottom-0 end-0" style="visibility: hidden;">Nouveau projet</span>
-             
-                <img src="{{ classe.professeur.photo_profil.url }}"
-                     style="height: 60px; width: 60px;" 
-                     alt="matdash-img" 
-                     class="img-pofile-class img-fluid rounded-circle position-absolute bottom-0 start-0 mb-n9 ms-9" 
-                     width="40" height="40" 
-                     data-bs-toggle="tooltip" 
-                     data-bs-placement="top" 
-                     data-bs-title="{{ classe.professeur.nom}} {{ classe.professeur.prenom}}">
             </div>
             <div class="card-body p-4">
-              
                 <span class="badge text-bg-light fs-2 py-1 px-2 lh-sm mt-3">
-                    {{ classe.professeur.nom }} {{ classe.professeur.prenom}}
+                    {{ classe.professeur.nom }} {{ classe.professeur.prenom }}
                 </span>
-                
-               
                 <a id="classe_link" class="d-block my-4 fs-5 text-dark fw-semibold link-primary" href="{% url 'projets' classe.code_classe %}">
                     {{ classe.nom_classe }}
                 </a>
-                
                 <div class="d-flex align-items-center gap-4">
-                 
                     <div class="d-flex align-items-center gap-2">
                         <iconify-icon icon="solar:users-group-rounded-bold-duotone" class="fs-7"></iconify-icon>
                         {{ classe.etudiants.count }} étudiants
                     </div>
-
-                    
                     <div class="d-flex align-items-center gap-2">
                         <iconify-icon icon="solar:folder-open-bold-duotone" class="fs-7"></iconify-icon>
                         {{ classe.projets.count }} projets
@@ -110,8 +154,33 @@
             </div>
         </div>
     </div>
+    {% endwith %}
     {% endfor %}
 </div>
+
+<!-- Modal de confirmation pour quitter -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                Êtes-vous sûr de vouloir quitter cette classe ?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <form method="post" action="{% url 'classes' %}"> 
+                    {% csrf_token %}
+                    <input type="hidden" name="id_groupe_quitter" id="id_groupe_quitter">
+                    <input type="submit" class="btn btn-danger" id="confirmDeleteBtn" name="delete_groupe" value="Quitter">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <!-- Modal -->
 
@@ -187,6 +256,52 @@
         });
     });
 </script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Gestion du bouton de suppression
+    document.querySelectorAll('.btn-delete').forEach(button => {
+        button.addEventListener('click', function() {
+            const classId = this.getAttribute('data-id');
+            document.getElementById('id_groupe_quitter').value = classId;
+        });
+    });
+});
+</script>
 {% endif %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('realtime-search');
+    const classesContainer = document.getElementById('classes-container');
+    const classCards = document.querySelectorAll('.classe-card');
+    
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        
+        classCards.forEach(card => {
+            const name = card.getAttribute('data-name');
+           
+            
+            if (name.includes(searchTerm) ) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+    
+    // Gestion du bouton de suppression
+    document.querySelectorAll('.btn-delete').forEach(button => {
+        button.addEventListener('click', function() {
+            const classId = this.getAttribute('data-id');
+            document.getElementById('id_groupe_quitter').value = classId;
+        });
+    });
+});
+</script>
+
+
+
 
 {% endblock content %}

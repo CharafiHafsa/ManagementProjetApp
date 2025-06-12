@@ -17,9 +17,15 @@ import uuid
 from datetime import timedelta
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-
+from django.contrib.auth import logout
 
 genai.configure(api_key="AIzaSyBNRe5yW4uRQNmjg1GcEZEpiXuPysY7xrQ")
+
+
+def logout_Prof(request):
+    request.session.flush()
+    logout(request)
+    return redirect('login')
 
 def prof_accueil(request):
     prof_id = request.session.get('user_id')
