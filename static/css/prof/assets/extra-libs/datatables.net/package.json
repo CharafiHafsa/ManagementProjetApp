@@ -29,8 +29,9 @@
   "bugs": {
     "url": "https://datatables.net/forums"
   },
-  "bundleDependencies": false,
+  "bundleDependencies": [],
   "dependencies": {
+    "datatables.net": "file:",
     "jquery": ">=1.7"
   },
   "deprecated": false,

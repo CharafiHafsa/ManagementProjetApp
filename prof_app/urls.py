@@ -11,6 +11,7 @@ urlpatterns = [
     path('classes/archived/unarchive/<int:class_id>/', views.unarchive_classe, name='unarchive_classe'),
     path('notification/', views.prof_notification, name='prof_notification'),
     path('profile/', views.prof_profile, name='prof_profile'),
+    path('update-profile/', views.update_profile, name='update_profile'),
     path('create_class/', views.create_class, name="create_class"),
     path('edit_classe/<int:class_id>/', views.edit_classe, name="edit_classe"),
     path('delete_classe/<int:class_id>/', views.delete_classe, name="delete_classe"),

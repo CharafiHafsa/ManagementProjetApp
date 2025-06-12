@@ -8,7 +8,7 @@ import requests
 import google.generativeai as genai
 import markdown
 from django.utils.timezone import now
-from django.db.models import Count
+from django.db.models import Prefetch, Count
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 import json
@@ -163,7 +163,7 @@ def unarchive_classe(request, class_id):
     classe = get_object_or_404(Classe, id=class_id)
     classe.is_archived = False
     classe.save()
-    messages.success(request, f"La classe {classe.nom_classe} a été désarchivée avec succès.")
+    messages.success(request, f"La classe {classe.nom_classe} a été désarchivée avec succès.", extra_tags="classes")
     return redirect('archived_classes')
 
 def classe_etudiants(request, class_id):
@@ -252,7 +252,7 @@ def add_project(request, class_id):
     classe = Classe.objects.get(id=class_id)
     prof_id = request.session.get('user_id')
     if not prof_id:
-        messages.error(request, "Votre session a expire")
+        messages.error(request, "Votre session a expire", extra_tags="classes")
         return redirect('login')
     professor = Professeur.objects.filter(id=prof_id).first()
 
@@ -356,7 +356,7 @@ def projet_detail(request, projet_id):
     
     announces = Announce.objects.filter(projet=projet).order_by("-date_publication")
     ressources = P_ressources.objects.filter(projet=projet).order_by("-date_ajout")
-    groupes = Groupe.objects.filter(projet=projet)
+    groupes = Groupe.objects.filter(projet=projet).annotate(student_count=Count('membres'))
     instruction_stats = []
     completed_instructions = 0
     
@@ -418,7 +418,7 @@ def add_instruction(request, projet_id):
         )
         notif.etudiants.set(etudiants)
         # Redirect or respond after the instruction is created
-        messages.success(request, "Instruction ajoutée avec succès!")
+        messages.success(request, "Instruction ajoutée avec succès!", extra_tags="peojet")
         return redirect('projet_detail', projet_id=projet.id)
 
     return JsonResponse({"error": "Invalid request"}, status=400)
@@ -447,7 +447,7 @@ def delete_instruction(request, id):
     instruction = get_object_or_404(Instruction, id=id)
     projet_id = instruction.projet.id  # save this before deleting
     instruction.delete()
-    messages.success(request, "L'instruction a été supprimée avec succès.")
+    messages.success(request, "L'instruction a été supprimée avec succès.", extra_tags="projet")
     return redirect('projet_detail', projet_id=projet_id)
 
 
@@ -768,7 +768,7 @@ def delete_notification(request, notification_id):
         
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return JsonResponse({'status': 'success'})
-        messages.success(request, "Notification supprimée avec succès.")
+        messages.success(request, "Notification supprimée avec succès.", extra_tags="notification")
     return redirect('prof_notification')
 
 def mark_as_read(request, notification_id):
@@ -786,7 +786,7 @@ def mark_as_read(request, notification_id):
         
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return JsonResponse({'status': 'success'})
-        messages.success(request, "Notification marquée comme lue.")
+        messages.success(request, "Notification marquée comme lue.", extra_tags="notification")
     return redirect('prof_notification')
 
 def mark_all_as_read(request):
@@ -801,7 +801,7 @@ def mark_all_as_read(request):
         
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return JsonResponse({'status': 'success', 'count': 0})
-        messages.success(request, "Toutes les notifications ont été marquées comme lues.")
+        messages.success(request, "Toutes les notifications ont été marquées comme lues.", extra_tags="notification")
     return redirect('prof_notification')
 
 def prof_profile(request):
@@ -810,6 +810,9 @@ def prof_profile(request):
         return redirect('login')
 
     prof = Professeur.objects.filter(id=prof_id).first()
+    if not prof:
+        return redirect('login')
+
     classe_count = Classe.objects.filter(professeur=prof).count()
     project_count = Project.objects.filter(code_classe__professeur=prof).count()
     student_count = Etudiant.objects.filter(classes__professeur=prof).distinct().count()
@@ -822,6 +825,31 @@ def prof_profile(request):
     }
     return render(request, 'prof/profile.html', context)
 
+def update_profile(request):
+    if request.method == 'POST':
+        prof_id = request.session.get('user_id')
+        if not prof_id:
+            return redirect('login')
+
+        prof = Professeur.objects.filter(id=prof_id).first()
+        if not prof:
+            return redirect('login')
+
+        # Update the professor's information
+        prof.nom = request.POST.get('nom')
+        prof.prenom = request.POST.get('prenom')
+        prof.departement = request.POST.get('departement')
+        prof.specialite = request.POST.get('specialite')
+        
+        try:
+            prof.save()
+            messages.success(request, 'Vos informations ont été mises à jour avec succès!')
+        except Exception as e:
+            messages.error(request, f'Une erreur est survenue: {str(e)}')
+
+        return redirect('prof_profile')
+    
+    return redirect('prof_profile')
 
 def project_list(request):
     prof_id = request.session.get('user_id')
@@ -861,7 +889,7 @@ def calendar_view(request):
     prof = Professeur.objects.filter(id=prof_id).first()
     classes = Classe.objects.filter(professeur=prof)
     projets = Project.objects.filter(code_classe__in=classes)
-    events = PEvent.objects.all()
+    events = PEvent.objects.filter(professeur=prof)  # Filter events by professor
 
     all_events = []
     color_classes = ['event-red', 'event-blue', 'event-green', 'event-yellow', 'event-purple']
@@ -904,12 +932,13 @@ def add_or_edit_event(request):
             start = data.get('start')
             end = data.get('end')
             color = data.get('color')
+            prof_id = request.session.get('user_id')  # Get professor ID from session
 
             if not all([title, start, end, color]):
                 return JsonResponse({'error': 'Champs manquants'}, status=400)
 
             if event_id:
-                event = PEvent.objects.get(id=event_id)
+                event = PEvent.objects.get(id=event_id, professeur_id=prof_id)  # Ensure professor owns the event
                 event.title = title
                 event.start = start
                 event.end = end
@@ -917,7 +946,13 @@ def add_or_edit_event(request):
                 event.save()
                 return JsonResponse({'message': 'Événement modifié !'})
             else:
-                PEvent.objects.create(title=title, start=start, end=end, color=color)
+                PEvent.objects.create(
+                    title=title, 
+                    start=start, 
+                    end=end, 
+                    color=color,
+                    professeur_id=prof_id  # Associate with professor
+                )
                 return JsonResponse({'message': 'Événement ajouté !'})
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
@@ -928,13 +963,13 @@ def add_or_edit_event(request):
 @require_http_methods(["DELETE"])
 def delete_event(request, event_id):
     try:
-        event = PEvent.objects.get(id=event_id)
+        prof_id = request.session.get('user_id')
+        event = PEvent.objects.get(id=event_id, professeur_id=prof_id)  # Filter by professor
         event.delete()
         return JsonResponse({"message": "Événement supprimé avec succès."})
     except PEvent.DoesNotExist:
         return JsonResponse({"error": "Événement non trouvé."}, status=404)
     
-
 def start_meet(request):
     prof_id = request.session.get('user_id')
     if not prof_id:
@@ -944,13 +979,18 @@ def start_meet(request):
     professeur = request.session.get('user_id')
     if not professeur:
         return redirect('login')
-    classes = Classe.objects.filter(professeur=professeur).prefetch_related('projets__groupe_set', 'etudiants')
+    
+    classes = Classe.objects.filter(professeur=professeur).prefetch_related(
+        Prefetch('projets__groupe_set', 
+                queryset=Groupe.objects.annotate(
+                    member_count=Count('membres')  # Assuming you have the membres relation
+                ))
+    )
 
     return render(request, 'prof/groupe_meet.html', {
         'professeur' : prof,
         'classes': classes
     })
-
 
 def launch_meet(request):
     prof_id = request.session.get('user_id')
@@ -968,6 +1008,7 @@ def launch_meet(request):
         elif target_type == 'groupe':
             groupe = get_object_or_404(Groupe, id=target_id)
             students = groupe.membres.all()
+            students_nbr = Groupe.objects.filter(id=target_id).annotate(student_count=Count('membres'))
         else:
             return redirect('start_meet')
 
@@ -991,7 +1032,8 @@ def launch_meet(request):
             'professeur': prof,
             'students': students,
             'target_type': target_type,
-            'meeting_link': meeting_link
+            'meeting_link': meeting_link,
+            'students_nbr' : students_nbr
         })
 
     return redirect('start_meet')

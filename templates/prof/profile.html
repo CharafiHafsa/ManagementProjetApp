@@ -13,36 +13,35 @@
     color: white;
     padding: 20px 40px 80px 40px;
     box-sizing: border-box;
-
-    }
+}
 
 .stats-bar {
     position: absolute;
-    bottom: 30px;   /* adjust this value as needed */
-    left: 40px;     /* match padding left */
+    bottom: 30px;
+    left: 40px;
     display: flex;
     gap: 40px;
     z-index: 1;
 }
 
-    .stat-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        font-size: 16px;
-        color: white;
-        position: relative; /* keep for possible future tweaks */
-    }
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 16px;
+    color: white;
+    position: relative;
+}
 
-    .stat-item .iconify {
-        font-size: 25px; 
-        margin-bottom: 8px;
-    }
+.stat-item .iconify {
+    font-size: 25px; 
+    margin-bottom: 8px;
+}
 
-    .stat-item .nbr {
-        font-weight: bold;
-        font-size: 18px;
-    }
+.stat-item .nbr {
+    font-weight: bold;
+    font-size: 18px;
+}
 
 .profile-photo-container {
     position: absolute;
@@ -54,38 +53,113 @@
     z-index: 2;
 }
 
-    .profile-photo {
-        width: 130px;
-        height: 130px;
-        border-radius: 50%;
-        border: 4px solid white;
-        object-fit: cover;
-        box-shadow: 0 0 15px rgba(0,0,0,0.5);
-        background-color: white;
-        display: block;
-        margin: 0 auto;
-    }
+.profile-photo {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    border: 4px solid white;
+    object-fit: cover;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    background-color: white;
+    display: block;
+    margin: 0 auto;
+}
 
-    .name {
-        margin-top: 10px;
-        white-space: nowrap;
-        font-size: 22px;
-        font-weight: bold;
-        color: white;
-        text-shadow: 0 0 5px rgba(0,0,0,0.8);
-    }
+.name {
+    margin-top: 10px;
+    white-space: nowrap;
+    font-size: 22px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 0 5px rgba(0,0,0,0.8);
+}
 
-    .content {
-        margin-top: 100px; /* marge suffisante pour que le contenu ne soit pas caché par la photo */
-        padding: 20px;
-    }
+.content {
+    margin-top: 100px;
+    padding: 20px;
+}
 
-    .info-section p {
-        margin-bottom: 10px;
-        font-size: 16px;
-    }
+.info-section p {
+    margin-bottom: 10px;
+    font-size: 16px;
+}
 
+/* Edit Form Styles */
+.edit-form {
+    display: none;
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+}
 
+.edit-form.active {
+    display: block;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.form-control {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.btn-save {
+    background-color: #635bff;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.btn-save:hover {
+    background-color: #4e47d6;
+}
+
+.btn-edit {
+    background-color: #635bff;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-edit:hover {
+    background-color: #4e47d6;
+}
+
+.btn-form-classe {
+    background-color: #635bff;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-form-classe:hover {
+    background-color: #4e47d6;
+    color: white;
+}
+
+.change-password {
+    margin-top: 15px;
+}
 </style>
 
 <div class="profile-banner mb-3">
@@ -113,7 +187,7 @@
 <div class="card my-2 shadow-sm raduise-for-all">
   <div class="card-body">
     <h2 class="card-title mb-3" style="color: #635bff; font-weight: 600;">Informations générales</h2>
-    <div class="info-section mb-3">
+    <div class="info-section mb-3" id="info-display">
       <p><strong>Email :</strong> {{ prof.email }}</p>
       <p><strong>Département :</strong> {{ prof.departement }}</p>
       <p><strong>Spécialité :</strong> {{ prof.specialite }}</p>
@@ -127,10 +201,60 @@
         <p><strong>Membre depuis :</strong> {{ prof.date_creation|date:"d/m/Y" }}</p>
       {% endif %}
     </div>
+    
+    <!-- Edit mode (initially hidden) -->
+    <div class="edit-form" id="info-edit">
+      <form method="post" action="{% url 'update_profile' %}">
+        {% csrf_token %}
+        <div class="form-group">
+          <p><strong>Email :</strong> {{ prof.email }}</p>
+        </div>
+        <div class="form-group">
+          <label for="nom">Nom</label>
+          <input type="text" class="form-control" id="nom" name="nom" value="{{ prof.nom }}" required>
+        </div>
+        <div class="form-group">
+          <label for="prenom">Prénom</label>
+          <input type="text" class="form-control" id="prenom" name="prenom" value="{{ prof.prenom }}" required>
+        </div>
+        <div class="form-group">
+          <label for="departement">Département</label>
+          <input type="text" class="form-control" id="departement" name="departement" value="{{ prof.departement }}" required>
+        </div>
+        <div class="form-group">
+          <label for="specialite">Spécialité</label>
+          <input type="text" class="form-control" id="specialite" name="specialite" value="{{ prof.specialite }}" required>
+        </div>
+        <button type="submit" class="btn-save">Enregistrer</button>
+        <button type="button" id="cancel-edit" class="btn-edit">Annuler</button>
+      </form>
+    </div>
+    
     <div class="change-password">
-      <a href="#" class="btn btn-form-classe">Changer le mot de passe</a>
+      <button id="toggle-edit" class="btn-edit">Modifier les informations</button>
+      <a href="{% url 'update_password' %}" class="btn-form-classe">Changer le mot de passe</a>
     </div>
   </div>
 </div>
 
+<script>
+document.getElementById('toggle-edit').addEventListener('click', function() {
+    const displaySection = document.getElementById('info-display');
+    const editSection = document.getElementById('info-edit');
+    
+    editSection.classList.add('active');
+    displaySection.style.display = 'none';
+    this.style.display = 'none';
+});
+
+document.getElementById('cancel-edit').addEventListener('click', function() {
+    const displaySection = document.getElementById('info-display');
+    const editSection = document.getElementById('info-edit');
+    const toggleButton = document.getElementById('toggle-edit');
+    
+    editSection.classList.remove('active');
+    displaySection.style.display = 'block';
+    toggleButton.style.display = 'inline-block';
+});
+</script>
 {% endblock %}

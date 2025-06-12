@@ -60,7 +60,7 @@
                                 </li>
                                 <li>
                                     <a class="dropdown-item" style="color: #635bff;" href="{% url 'classe_etudiants' classe.id %}">
-                                        Gérer Etudiants
+                                        Gérer les étudiants
                                     </a>
                                 </li>
                                 <li>
@@ -100,18 +100,18 @@
                 <div class="modal-dialog">
                     <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
                         <div class="modal-header text-white" style="background-color: #635bff;">
-                            <h5 class="modal-title" id="editClassModalLabel">Editer classe : {{ classe.nom_classe }}</h5>
+                            <h5 class="modal-title" id="editClassModalLabel">Modifier classe : {{ classe.nom_classe }}</h5>
                             <button type="button" class="btn-close custom-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <form id="editClassForm" method="POST" action="{% url 'edit_classe' classe.id %}">
                                 {% csrf_token %}
                                 <div class="mb-3">
-                                    <label for="className{{ classe.id }}" class="form-label">Nome du classe</label>
+                                    <label for="className{{ classe.id }}" class="form-label">Nom de la classe</label>
                                     <input type="text" class="form-control" id="className{{ classe.id }}" name="className" value="{{classe.nom_classe}}">
                                 </div>
                                 <div class="mb-3">
-                                    <label for="classdesc{{ classe.id }}" class="form-label">Descreption du classe</label>
+                                    <label for="classdesc{{ classe.id }}" class="form-label">Description de la classe</label>
                                     <input type="text" class="form-control" id="classdesc{{ classe.id }}" name="classdesc" value="{{classe.description}}">
                                 </div>
                                 <div class="text-end">
@@ -163,14 +163,14 @@
     <div class="modal-dialog">
         <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
             <div class="modal-header text-white" style="background-color: #635bff;">
-                <h5 class="modal-title" id="createClassModalLabel">Créer Nouveau classe</h5>
+                <h5 class="modal-title" id="createClassModalLabel">Créer une nouvelle classe</h5>
                 <button type="button" class="btn-close custom-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="createClassForm" method="POST" action="{% url 'create_class' %}">
                     {% csrf_token %}
                     <div class="mb-3">
-                        <label for="className" class="form-label">Nom du Classe</label>
+                        <label for="className" class="form-label">Nom de la classe</label>
                         <input type="text" class="form-control" id="className" name="className" required>
                     </div>
                     <div class="text-end">

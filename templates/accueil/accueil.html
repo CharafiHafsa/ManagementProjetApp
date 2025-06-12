@@ -1,7 +1,7 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -13,11 +13,11 @@
     <title>Study Hub</title>
     <meta
       name="title"
-      content="Study Hub"
+      content="Study Hub - Plateforme de collaboration académique"
     />
     <meta
       name="description"
-      content="collaboration plateforme !"
+      content="La plateforme ultime pour la collaboration et la réussite académique !"
     />
 
     <!-- 
@@ -59,23 +59,11 @@
       <div class="container">
         <a href="#" class="logo" style="display: flex">
           <img
-            src="{% static 'img/accueil/logo.png' %}"
-            width="80"
-            height="50"
+            src="{% static 'img/accueil/logoAcc.png' %}"
+            width="180"
+            height="180"
             alt="StudyHub logo"
           />
-          <h2
-            style="
-              position: absolute;
-              left: 110px;
-              top: 30%;
-              color: #635bff;
-              font-family: 'Times New Roman', Times, serif;
-              font-weight: bold;
-            "
-          >
-            Sutdy Hub
-          </h2>
         </a>
 
         <nav class="navbar" data-navbar>
@@ -100,7 +88,7 @@
 
           <ul class="navbar-list">
             <li class="navbar-item">
-              <a href="#home" class="navbar-link" data-nav-link>Home</a>
+              <a href="#home" class="navbar-link" data-nav-link>Accueil</a>
             </li>
 
             <li class="navbar-item">
@@ -112,7 +100,7 @@
             </li>
 
             <li class="navbar-item">
-              <a href="#courses" class="navbar-link" data-nav-link>Workspace</a>
+              <a href="#courses" class="navbar-link" data-nav-link>Espace de travail</a>
             </li>
 
             <li class="navbar-item">
@@ -123,7 +111,7 @@
 
         <div class="header-actions">
           <a href="{% url 'login' %}" class="btn has-before">
-            <span class="span">Log in</span>
+            <span class="span">Connexion</span>
 
             <ion-icon
               name="arrow-forward-outline"
@@ -224,7 +212,7 @@
             </h2>
 
             <p class="section-text">
-              Organiser, collabores et réussissez avec des outils innovants
+              Organisez, collaborez et réussissez avec des outils innovants
               conçus pour simplifier votre travail
             </p>
 
@@ -237,7 +225,7 @@
                       width="40"
                       height="40"
                       loading="lazy"
-                      alt="Online Degree Programs"
+                      alt="Liste de tâches"
                       class="img"
                     />
                   </div>
@@ -261,7 +249,7 @@
                       width="40"
                       height="40"
                       loading="lazy"
-                      alt="Non-Degree Programs"
+                      alt="Messagerie instantanée"
                       class="img"
                     />
                   </div>
@@ -285,18 +273,17 @@
                       width="40"
                       height="40"
                       loading="lazy"
-                      alt="Off-Campus Programs"
+                      alt="Assistant virtuel"
                       class="img"
                     />
                   </div>
 
                   <h3 class="h3">
-                    <a href="#" class="card-title">IA</a>
+                    <a href="#" class="card-title">Chatbot</a>
                   </h3>
 
                   <p class="card-text">
-                    Recevez des suggestions personnalisées pour prioriser vos
-                    tâches.
+                    Obtenez des réponses instantanées à vos questions .
                   </p>
                 </div>
               </li>
@@ -309,18 +296,17 @@
                       width="40"
                       height="40"
                       loading="lazy"
-                      alt="Hybrid Distance Programs"
+                      alt="Statistiques"
                       class="img"
                     />
                   </div>
 
                   <h3 class="h3">
-                    <a href="#" class="card-title">Analyse</a>
+                    <a href="#" class="card-title">Statistiques</a>
                   </h3>
 
                   <p class="card-text">
-                    Suivez vos progrès et obtenez des rapports sur vos
-                    performances.
+                    Visualisez l'avancement de chaque projet avec des tableaux de bord détaillés.
                   </p>
                 </div>
               </li>
@@ -377,7 +363,7 @@
                     aria-hidden="true"
                   ></ion-icon>
 
-                  <span class="span">Simplifier La gestion Des Projets</span>
+                  <span class="span">Simplifier la gestion des projets</span>
                 </li>
 
                 <li class="about-item">
@@ -387,7 +373,7 @@
                   ></ion-icon>
 
                   <span class="span"
-                    >Encourager La Collaboration En Equipe</span
+                    >Encourager la collaboration en équipe</span
                   >
                 </li>
 
@@ -398,7 +384,7 @@
                   ></ion-icon>
 
                   <span class="span"
-                    >Promouvoir Des Pratiques De Travail Productives</span
+                    >Promouvoir des pratiques de travail productives</span
                   >
                 </li>
               </ul>
@@ -421,7 +407,7 @@
 
         <section class="section course" id="courses" aria-label="course">
           <div class="container">
-            <p class="section-subtitle">Workspace Partagé</p>
+            <p class="section-subtitle">Espace de travail partagé</p>
 
             <h2 class="h2 section-title">
               Collaborez avec votre équipe dans un espace centralisé
@@ -439,7 +425,7 @@
                       width="370"
                       height="220"
                       loading="lazy"
-                      alt="Build Responsive Real- World Websites with HTML and CSS"
+                      alt="Partage de fichiers"
                       class="img-cover"
                     />
                   </figure>
@@ -468,17 +454,17 @@
                       width="370"
                       height="220"
                       loading="lazy"
-                      alt="Java Programming Masterclass for Software Developers"
+                      alt="Suivi de projet"
                       class="img-cover"
                     />
                   </figure>
 
                   <div class="card-content">
-                    <span class="badge">Suiver</span>
+                    <span class="badge">Suivi</span>
 
                     <h3 class="h3">
                       <a href="#" class="card-title"
-                        >Suivez l’avancement des projets en temps réel.</a
+                        >Suivez l'avancement des projets en temps réel.</a
                       >
                     </h3>
                   </div>
@@ -496,7 +482,7 @@
                       width="370"
                       height="220"
                       loading="lazy"
-                      alt="The Complete Camtasia Course for Content Creators"
+                      alt="Synchronisation"
                       class="img-cover"
                     />
                   </figure>
@@ -515,7 +501,7 @@
             </ul>
 
             <a href="{% url 'signup' %}" class="btn has-before">
-              <span class="span">Registre Maintenant</span>
+              <span class="span">S'inscrire maintenant</span>
 
               <ion-icon
                 name="arrow-forward-outline"
@@ -535,7 +521,7 @@
           aria-label="blog"
         >
           <div class="container">
-            <p class="section-subtitle">Vous etes un enseignant?</p>
+            <p class="section-subtitle">Vous êtes un enseignant ?</p>
 
             <h2 class="h2 section-title">
               Offrez aux enseignants les outils nécessaires pour guider leurs
@@ -554,7 +540,7 @@
                       width="370"
                       height="370"
                       loading="lazy"
-                      alt="Become A Better Blogger: Content Planning"
+                      alt="Création de cours"
                       class="img-cover"
                     />
                   </figure>
@@ -567,7 +553,7 @@
                       ></ion-icon>
                     </a>
 
-                    <a href="#" class="card-subtitle">Créer des cours </a>
+                    <a href="#" class="card-subtitle">Créer des cours</a>
 
                     <h3 class="h3">
                       <a href="#" class="card-title"
@@ -590,7 +576,7 @@
                       width="370"
                       height="370"
                       loading="lazy"
-                      alt="Become A Better Blogger: Content Planning"
+                      alt="Gestion de projets"
                       class="img-cover"
                     />
                   </figure>
@@ -628,7 +614,7 @@
                       width="370"
                       height="370"
                       loading="lazy"
-                      alt="Become A Better Blogger: Content Planning"
+                      alt="Évaluation des étudiants"
                       class="img-cover"
                     />
                   </figure>
@@ -648,7 +634,7 @@
                     <h3 class="h3">
                       <a href="#" class="card-title"
                         >Évaluez facilement les contributions individuelles et
-                        collectives grâce à des outils d’analyse détaillés</a
+                        collectives grâce à des outils d'analyse détaillés</a
                       >
                     </h3>
                   </div>

@@ -56,19 +56,19 @@
                 </button>
                 <button class="btn btn-dashboard p-3 flex-fill" onclick="changeContent('edit', this)">
                     <span class="iconify me-2" data-icon="solar:pen-linear" style="font-size: 24px;"></span>
-                    Modifier Classe
+                    Modifier la classe
                 </button>
                 <button class="btn btn-dashboard p-3 flex-fill" onclick="changeContent('delete', this)">
                     <span class="iconify me-2" data-icon="solar:trash-bin-2-linear" style="font-size: 24px;"></span>
-                    Supprimer Classe
+                    Supprimer la classe
                 </button>
                 <button class="btn btn-dashboard p-3 flex-fill" onclick="changeContent('students', this)">
                     <span class="iconify me-2" data-icon="solar:user-id-linear" style="font-size: 24px;"></span>
-                    Gérer Étudiants
+                    Gestion des étudiants
                 </button>
                 <button class="btn btn-dashboard p-3 flex-fill" onclick="changeContent('add_project', this)">
                     <span class="iconify me-2" data-icon="solar:add-square-linear" style="font-size: 24px;"></span>
-                    Ajouter Projet
+                    Ajouter un projet
                 </button>
             </div>
     </div>
@@ -113,14 +113,14 @@
                                                 <div class="modal-dialog">
                                                     <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
                                                         <div class="modal-header text-white" style="background-color: #635bff;">
-                                                            <h5 class="modal-title" id="editProjetModalLabel">Éditer Projet : {{ project.nom_project }}</h5>
+                                                            <h5 class="modal-title" id="editProjetModalLabel">Éditer le projet : {{ project.nom_project }}</h5>
                                                             <button type="button" class="btn-close custom-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
                                                         <div class="modal-body">
                                                             <form id="editProjetForm" method="POST" action="{% url 'edit_projet' project.id %}?next={{ request.path }}">
                                                                 {% csrf_token %}
                                                                 <div class="mb-3">
-                                                                    <label for="projetName{{ project.id }}" class="form-label">Nom du projet</label>
+                                                                    <label for="projetName{{ project.id }}" class="form-label">Intitulé du projet</label>
                                                                     <input type="text" class="form-control" id="projetName{{ project.id }}" name="projetName" value="{{ project.nom_project }}">
                                                                 </div>
                                                                 <div class="mb-3">
@@ -130,19 +130,19 @@
                                                                 <div class="mb-3">
                                                                     <label for="date_debut{{ project.id }}" class="form-label" style="color: #635bff;">
                                                                         <span class="iconify me-2" data-icon="solar:calendar-date-outline" style="font-size: 24px;"></span>
-                                                                        Date de Début
+                                                                        Date de début
                                                                     </label>
                                                                     <input type="date" class="form-control raduise-for-all" id="date_debut{{ project.id }}" name="date_debut" value="{{ project.date_debut|date:'Y-m-d' }}">
                                                                 </div>
                                                                 <div class="mb-3">
                                                                     <label for="date_fin{{ project.id }}" class="form-label" style="color: #635bff;">
                                                                         <span class="iconify me-2" data-icon="solar:calendar-date-line-duotone" style="font-size: 24px;"></span>
-                                                                        Date de Fin
+                                                                        Date de fin
                                                                     </label>
                                                                     <input type="date" class="form-control raduise-for-all" id="date_fin{{ project.id }}" name="date_fin" value="{{ project.date_fin|date:'Y-m-d' }}">
                                                                 </div>
                                                                 <div class="text-end">
-                                                                    <button type="submit" class="btn btn-modal-style">Modifier Projet</button>
+                                                                    <button type="submit" class="btn btn-modal-style">Modifier le projet</button>
                                                                 </div>
                                                             </form>
                                                         </div>
@@ -154,7 +154,7 @@
                                                 <div class="modal-dialog">
                                                     <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
                                                         <div class="modal-header text-white" style="background-color: #635bff;">
-                                                            <h5 class="modal-title" id="deleteProjetModalLabel">Supprimer Projet : {{ project.nom_project }}</h5>
+                                                            <h5 class="modal-title" id="deleteProjetModalLabel">Supprimer le projet : {{ project.nom_project }}</h5>
                                                             <button type="button" class="btn-close custom-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
                                                         <div class="modal-body">
@@ -520,7 +520,7 @@
                 <div id="add-project" style="display: none;">
                     <h5 class="fw-bold text-center mb-3">
                         <span class="iconify me-2" data-icon="solar:add-square-linear" style="font-size: 24px;"></span>
-                        Ajouter un Projet
+                        Ajouter un projet
                     </h5>
                     <!-- Add Project Form -->
                     <form id="add-project-form" method="POST" action="{% url 'add_project' classe.id %}">
@@ -598,41 +598,64 @@
             alert('Sharing is not supported on your browser.');
         }
     }
-    function changeContent(view, button) {
-                    // Hide all sections
-                    document.getElementById('default-view').style.display = 'none';
-                    document.getElementById('edit-form').style.display = 'none';
-                    document.getElementById('delete-confirmation').style.display = 'none';
-                    document.getElementById('students-management').style.display = 'none';
-                    document.getElementById('add-project').style.display = 'none';
+// Update the changeContent function to modify the URL
+function changeContent(view, button) {
+    // Hide all sections
+    document.getElementById('default-view').style.display = 'none';
+    document.getElementById('edit-form').style.display = 'none';
+    document.getElementById('delete-confirmation').style.display = 'none';
+    document.getElementById('students-management').style.display = 'none';
+    document.getElementById('add-project').style.display = 'none';
 
-                    // Show selected view
-                    if (view === 'edit') {
-                        document.getElementById('edit-form').style.display = 'block';
-                    } else if (view === 'delete') {
-                        document.getElementById('delete-confirmation').style.display = 'block';
-                    } else if (view === 'students') {
-                        document.getElementById('students-management').style.display = 'block';
-                    } else if (view === 'add_project') {
-                        document.getElementById('add-project').style.display = 'block';
-                    } else {
-                        document.getElementById('default-view').style.display = 'block';
-                    }
+    // Show selected view
+    if (view === 'edit') {
+        document.getElementById('edit-form').style.display = 'block';
+        history.pushState(null, '', '?view=edit');
+    } else if (view === 'delete') {
+        document.getElementById('delete-confirmation').style.display = 'block';
+        history.pushState(null, '', '?view=delete');
+    } else if (view === 'students') {
+        document.getElementById('students-management').style.display = 'block';
+        history.pushState(null, '', '?view=students');
+    } else if (view === 'add_project') {
+        document.getElementById('add-project').style.display = 'block';
+        history.pushState(null, '', '?view=add_project');
+    } else {
+        document.getElementById('default-view').style.display = 'block';
+        history.pushState(null, '', window.location.pathname);
+    }
 
-                    // Remove 'selected1' class from all buttons
-                    let buttons = document.querySelectorAll('.btn-dashboard');
-                    buttons.forEach(function(btn) {
-                        btn.classList.remove('selected1');
-                    });
+    // Remove 'selected1' class from all buttons
+    let buttons = document.querySelectorAll('.btn-dashboard');
+    buttons.forEach(function(btn) {
+        btn.classList.remove('selected1');
+    });
 
-                    // Add 'selected1' class to the clicked button
-                    button.classList.add('selected1');
-                }
+    // Add 'selected1' class to the clicked button
+    if (button) {
+        button.classList.add('selected1');
+    }
+}
 
-                // Set "Projets" as default on page load
-                window.onload = function() {
-                    document.getElementById("default-btn").click();
-                };
+// Check for view parameter on page load
+window.onload = function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const view = urlParams.get('view');
+    
+    let defaultButton = document.getElementById("default-btn");
+    
+    if (view === 'edit') {
+        document.querySelector('button[onclick*="edit"]').click();
+    } else if (view === 'delete') {
+        document.querySelector('button[onclick*="delete"]').click();
+    } else if (view === 'students') {
+        document.querySelector('button[onclick*="students"]').click();
+    } else if (view === 'add_project') {
+        document.querySelector('button[onclick*="add_project"]').click();
+    } else {
+        defaultButton.click();
+    }
+};
 </script>
 
 {% endblock content %}

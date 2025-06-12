@@ -33,7 +33,7 @@
         </button>
         <button class="btn btn-dashboard p-3 flex-fill" onclick="changeContent('announce', this)">
             <span class="iconify me-2" data-icon="solar:chat-round-line-outline" style="font-size: 24px;"></span>
-            Announce
+            Annonce
         </button>
         <button class="btn btn-dashboard p-3 flex-fill" onclick="changeContent('ressource', this)">
             <span class="iconify me-2" data-icon="solar:book-bookmark-minimalistic-linear" style="font-size: 24px;"></span>
@@ -62,7 +62,7 @@
                                     <div class="flex-fill text-center">
                                         <h5 class="fw-bold d-inline-flex align-items-center justify-content-center m-0">
                                             <span class="iconify me-2" data-icon="solar:clipboard-list-linear" style="font-size: 24px;"></span>
-                                            Project Dashboard
+                                            Tableau de bord du projet
                                         </h5>
                                     </div>
                     
@@ -99,7 +99,7 @@
                         <div class="modal-dialog">
                             <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
                                 <div class="modal-header text-white" style="background-color: #635bff;">
-                                    <h5 class="modal-title" id="editProjetModalLabel">Editer Projet : {{ projet.nom_project }}</h5>
+                                    <h5 class="modal-title" id="editProjetModalLabel">Modifier Projet : {{ projet.nom_project }}</h5>
                                     <button type="button" class="btn-close custom-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
@@ -168,7 +168,7 @@
                             <div class="card-body text-center">
                                 <h5 class="card-title fw-semibold d-flex align-items-center justify-content-center gap-2 mb-4" style="color: #635bff;">
                                     <span class="iconify" data-icon="solar:pie-chart-linear" style="font-size: 26px;"></span>
-                                    <span class="fs-5">Project Statistics</span>
+                                    <span class="fs-5">Statistiques du projet</span>
                                 </h5>
                                 
                     
@@ -180,7 +180,7 @@
                                         <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 110px; height: 110px;">
                                             <span class="count fw-bold fs-3" style="color: #635bff;" data-target="{{ total_groups }}">0</span>
                                         </div>
-                                        <p class="stat-label fw-semibold text-muted mt-2">Total Groups</p>
+                                        <p class="stat-label fw-semibold text-muted mt-2">Total des groupes </p>
                                     </div>
                     
                                     <!-- Total Students -->
@@ -188,33 +188,33 @@
                                         <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 110px; height: 110px;">
                                             <span class="count fw-bold fs-3" style="color: #635bff;" data-target="{{ total_students }}">0</span>
                                         </div>
-                                        <p class="stat-label fw-semibold text-muted mt-2">Total Students</p>
+                                        <p class="stat-label fw-semibold text-muted mt-2">Total d'étudiants</p>
                                     </div>
                     
                                     <!-- Completion Percentage -->
                                     <div class="text-center">
-                                        <div class="position-relative mx-auto mb-2" style="width: 130px; height: 130px;">
-                                            <svg viewBox="0 0 100 100" style="width: 100%; height: 100%;">
-                                                <circle class="progress-bg" cx="50" cy="50" r="40" stroke="#e6e6e6" stroke-width="6" fill="none" />
-                                                <circle class="progress-bar" cx="50" cy="50" r="40" stroke="#635bff" stroke-width="6" fill="none"
-                                                    stroke-dasharray="251" 
-                                                    stroke-dashoffset="calc(251 - ({{ completion_percentage }} * 2.51))"
-                                                    stroke-linecap="round" />
-                                            </svg>
-                                            <div class="position-absolute top-50 start-50 translate-middle fw-bold fs-4" style="color: #635bff;">
-                                                <span class="count" data-target="{{ completion_percentage }}">0</span>%
-                                            </div>
+                                    <div class="position-relative mx-auto mb-2" style="width: 130px; height: 130px;">
+                                        <svg viewBox="0 0 100 100" style="width: 100%; height: 100%;">
+                                            <circle class="progress-bg" cx="50" cy="50" r="40" stroke="#e6e6e6" stroke-width="6" fill="none" />
+                                            <circle class="progress-bar" cx="50" cy="50" r="40" stroke="#635bff" stroke-width="6" fill="none"
+                                                stroke-dasharray="251" 
+                                                stroke-dashoffset="calc(251 - ({{ completion_percentage|floatformat:2 }} * 2.51))"
+                                                stroke-linecap="round" />
+                                        </svg>
+                                        <div class="position-absolute top-50 start-50 translate-middle fw-bold fs-4" style="color: #635bff;">
+                                            <span class="count" data-target="{{ completion_percentage|floatformat:2 }}">0</span>%
                                         </div>
-                                        
-                                        <p class="stat-label fw-semibold text-muted mt-2">Completion</p>
                                     </div>
+                                    
+                                    <p class="stat-label fw-semibold text-muted mt-2">Progression</p>
+                                </div>
                     
                                     <!-- Total Instructions -->
                                     <div class="text-center">
                                         <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 110px; height: 110px;">
                                             <span class="count fw-bold fs-3" style="color: #635bff;" data-target="{{ total_instructions }}">0</span>
                                         </div>
-                                        <p class="stat-label fw-semibold text-muted mt-2">Total Instructions</p>
+                                        <p class="stat-label fw-semibold text-muted mt-2">Total d’instructionss</p>
                                     </div>
                     
                                     <!-- Completed Instructions -->
@@ -223,7 +223,7 @@
                                             <span class="count fw-bold fs-4" style="color: #635bff;" data-target="{{ completed_instructions }}">0</span>
                                             <small class="text-muted"> / {{ total_instructions }}</small>
                                         </div>
-                                        <p class="stat-label fw-semibold text-muted mt-2">Completed</p>
+                                        <p class="stat-label fw-semibold text-muted mt-2">Complétés</p>
                                     </div>
                                 </div>
                             </div>
@@ -239,7 +239,7 @@
             <div class="card-body d-flex flex-column align-items-center">
                 <h5 class="card-title fw-semibold d-flex align-items-center justify-content-center gap-3 mb-3" style="color: #635bff;">
                     <span class="iconify" data-icon="solar:chart-outline" style="font-size: 28px;"></span>
-                    Instruction Progress
+                    Progression des instructions
                 </h5>
                 <canvas id="instructionChart" width="300" height="150"></canvas> <!-- Smaller size -->
             </div>
@@ -252,7 +252,7 @@
             <div class="card-body d-flex flex-column align-items-center">
                 <h5 class="card-title fw-semibold d-flex align-items-center justify-content-center gap-3 mb-3" style="color: #635bff;">
                     <span class="iconify" data-icon="solar:pie-chart-3-linear" style="font-size: 28px;"></span>
-                    Group Participation
+                    Participation des groupes
                 </h5>
                 <canvas id="groupChart" width="300" height="150"></canvas> <!-- Smaller size -->
             </div>
@@ -274,7 +274,7 @@
                         ],
                         datasets: [
                             {
-                                label: 'Completed Groups',
+                                label: 'Groupes ayant terminé',
                                 data: [
                                     {% for stat in instruction_stats %}
                                         {{ stat.completed_groups }},
@@ -283,7 +283,7 @@
                                 backgroundColor: '#635bff'
                             },
                             {
-                                label: 'Pending Groups',
+                                label: 'Groupes en attente',
                                 data: [
                                     {% for stat in instruction_stats %}
                                         {{ stat.pending_groups }},
@@ -306,7 +306,7 @@
             },
             title: {
                 display: true,
-                text: 'Instruction Completion Status'
+                text: 'Statut d’achèvement des instructions'
             }
         },
         // Optional: control the chart's aspect ratio
@@ -317,7 +317,7 @@
 const groupChart = new Chart(groupCtx, {
     type: 'doughnut',
     data: {
-        labels: ['Completed All Instructions', 'Pending Instructions'],
+        labels: ['Toutes les instructions terminées', 'Instructions en attente'],
         datasets: [{
             data: [{{ completed_instructions }}, {{ pending_instructions }}],
             backgroundColor: ['#635bff', '#aca8ff'],
@@ -329,7 +329,7 @@ const groupChart = new Chart(groupCtx, {
         plugins: {
             title: {
                 display: true,
-                text: 'Overall Group Progress'
+                text: 'Progression globale des groupes'
             }
         },
         // Optional: control the chart's aspect ratio
@@ -542,7 +542,7 @@ const groupChart = new Chart(groupCtx, {
                         <label class="form-check-label">Livrable requis</label>
                     </div>
                     <div class="d-flex justify-content-between">
-                        <button type="submit" class="btn btn-modal-style">Éditer</button>
+                        <button type="submit" class="btn btn-modal-style">Modifier</button>
                         <a href="{% url 'delete_instruction' item.instruction.id %}" class="btn btn-danger raduise-for-all">Supprimer</a>
                     </div>
                 </form>
@@ -558,7 +558,7 @@ const groupChart = new Chart(groupCtx, {
             <div class="card shadow-lg p-4 bg-white border-0 raduise-for-all mt-3">
                 <h5 class="fw-bold d-flex align-items-center justify-content-center mb-3">
                     <span class="iconify me-2" data-icon="solar:chat-round-line-outline" style="font-size: 24px;"></span>
-                    Announcements
+                    Annoncements
                 </h5>
             
                 <!-- Add Announcement Form -->
@@ -648,7 +648,7 @@ const groupChart = new Chart(groupCtx, {
 
             </div>
         </div>
-        <div id="ressources-view" style="display: none;">
+        <div id="ressource-view" style="display: none;">
             <div class="card shadow-lg p-4 bg-white border-0 raduise-for-all mt-3">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <!-- Centered Title -->
@@ -837,7 +837,7 @@ const groupChart = new Chart(groupCtx, {
                             <span class="iconify me-3" data-icon="solar:user-group-rounded-bold" style="font-size: 20px; color: #635bff;"></span>
                             <div>
                                 <h6 class="mb-0 fw-semibold  ">{{ groupe.nom_groupe }}</h6>
-                                <small class="text-muted">{{ groupe.nbr_membre }} membre{{ groupe.nbr_membre|pluralize }}</small>
+                                <small class="text-muted">{{ groupe.student_count }} membre{{ groupe.student_count|pluralize }}</small>
                             </div>
                         </div>
                         <a href="{% url 'groupe_stats' projet.id groupe.id %}" class="info btn-indisplay btn-sm d-flex align-items-center gap-1 px-2 py-1 rounded-pill" style="font-size: 14px; border: 1px solid #635bff;">
@@ -861,63 +861,86 @@ const groupChart = new Chart(groupCtx, {
         
 <!-- 
     </div> -->
-    <script>
-        function changeContent(view, button) {
-    // Hide all sections
-    document.getElementById('default-view').style.display = 'none';
-    document.getElementById('instruction-view').style.display = 'none';
-    document.getElementById('announce-view').style.display = 'none';
-    document.getElementById('ressources-view').style.display = 'none';
-    document.getElementById('groupes-view').style.display = 'none';
+<script>
+// View switching and state management
+function changeContent(view, button) {
+    // Hide all views
+    document.querySelectorAll('[id$="-view"]').forEach(viewElement => {
+        viewElement.style.display = 'none';
+    });
 
-    // Show selected view
-    if (view === 'instruction') {
-        document.getElementById('instruction-view').style.display = 'block';
-    } else if (view === 'announce') {
-        document.getElementById('announce-view').style.display = 'block';
-    } else if (view === 'ressource') {
-        document.getElementById('ressources-view').style.display = 'block';
-    } else if (view === 'groupes') {
-        document.getElementById('groupes-view').style.display = 'block';
-    } else {
-        document.getElementById('default-view').style.display = 'block';
-    }
+    // Show the selected view
+    document.getElementById(`${view}-view`).style.display = 'block';
 
-    // Remove 'selected1' class from all buttons
-    let buttons = document.querySelectorAll('.btn-dashboard');
-    buttons.forEach(function(btn) {
+    // Highlight the selected button
+    document.querySelectorAll('.btn-dashboard').forEach(btn => {
         btn.classList.remove('selected1');
     });
-
-    // Add 'selected1' class to the clicked button
     button.classList.add('selected1');
+
+    // Store the current view
+    localStorage.setItem('lastActiveView', view);
 }
 
-// Set "Projets" as default on page load
-window.onload = function() {
-    document.getElementById("default-btn").click();
-};
-document.addEventListener("DOMContentLoaded", function () {
-        const counters = document.querySelectorAll(".count");
-        counters.forEach(counter => {
-            let target = +counter.getAttribute("data-target");
-            let count = 0;
-            let increment = target > 0 ? target / 50 : 1; // Ensure increment is at least 1
-
-            function updateCount() {
-                if (count < target) {
-                    count += increment;
-                    counter.innerText = Math.ceil(count);
-                    setTimeout(updateCount, 20);  // You can increase this value if the count is too fast
-                } else {
-                    counter.innerText = target;
-                }
-            }
-            updateCount();
-        });
+// Initialize the page
+function initializePage() {
+    // Set default view (either from localStorage or 'default')
+    const lastActiveView = localStorage.getItem('lastActiveView') || 'default';
+    
+    // Show the stored view
+    document.getElementById(`${lastActiveView}-view`).style.display = 'block';
+    
+    // Highlight the correct button
+    const buttons = document.querySelectorAll('.btn-dashboard');
+    buttons.forEach(button => {
+        button.classList.remove('selected1');
+        // Find the button that matches the last active view
+        if (button.onclick && button.onclick.toString().includes(`'${lastActiveView}'`)) {
+            button.classList.add('selected1');
+        }
     });
 
+    // Initialize counter animation
+    const counters = document.querySelectorAll(".count");
+    counters.forEach(counter => {
+        let target = +counter.getAttribute("data-target");
+        let count = 0;
+        let increment = target > 0 ? target / 50 : 1;
 
+        function updateCount() {
+            if (count < target) {
+                count += increment;
+                counter.innerText = Math.ceil(count);
+                setTimeout(updateCount, 20);
+            } else {
+                counter.innerText = target;
+            }
+        }
+        updateCount();
+    });
+
+    // Modify all forms to include the current view in their action URLs
+    document.querySelectorAll('form').forEach(form => {
+        const currentView = localStorage.getItem('lastActiveView') || 'default';
+        const action = form.getAttribute('action');
+        
+        // Only modify if it's not already in the URL
+        if (action && !action.includes('current_view=')) {
+            const separator = action.includes('?') ? '&' : '?';
+            form.setAttribute('action', `${action}${separator}current_view=${currentView}`);
+        }
+    });
+}
+
+// Wait for DOM to load
+document.addEventListener('DOMContentLoaded', initializePage);
+
+// Set default view on first load if not set
+window.onload = function() {
+    if (!localStorage.getItem('lastActiveView')) {
+        document.getElementById("default-btn").click();
+    }
+};
     </script>
 
 
