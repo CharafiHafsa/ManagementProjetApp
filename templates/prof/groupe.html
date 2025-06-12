@@ -36,11 +36,11 @@
     <!-- Toggle Buttons -->
     <div class="row g-4 mb-4">
         <div class="d-flex justify-content-between flex-wrap gap-3">
-            <button class="btn btn-dashboard p-3 flex-fill" onclick="toggleView('global')">
+            <button class="btn btn-dashboard p-3 flex-fill selected1" onclick="toggleView('global')" id="global-btn">
                 <span class="iconify me-2" data-icon="solar:chart-2-linear" style="font-size: 24px;"></span>
                 Statistiques Globales 
             </button>
-            <button class="btn btn-dashboard p-3 flex-fill" onclick="toggleView('membres')">
+            <button class="btn btn-dashboard p-3 flex-fill" onclick="toggleView('membres')" id="membres-btn">
                 <span class="iconify me-2" data-icon="solar:users-group-two-rounded-broken" style="font-size: 24px;"></span>
                 Statistiques des Membres
             </button>
@@ -87,7 +87,7 @@
                 <div class="card shadow-lg border-0 rounded p-3">
                     <h4 class="mx-2 mb-3 d-flex align-items-center gap-2">
                         <span class="iconify me-2" data-icon="solar:clipboard-list-linear" style="font-size: 24px;"></span>
-                        Taches
+                        Tâches
                     </h4>
                     <div class="d-flex flex-wrap justify-content-around mb-4">
                         <div class="text-center d-flex flex-column align-items-center">
@@ -173,7 +173,7 @@
                                             <span class="iconify me-1" data-icon="solar:download-minimalistic-bold" style="font-size: 20px;"></span>
                                              Télécharger</a>
                                         {% elif instruction.livrable_requis %}
-                                        <span class="text-muted">Attendu</span>
+                                        <span class="text-muted">Attendue</span>
                                         {% else %}
                                         Aucun
                                         {% endif %}
@@ -363,7 +363,7 @@
                     <div class="mb-4">
                         <h5 class="student-title">
                             <span class="iconify me-2" data-icon="solar:user-id-linear" style="font-size: 24px;"></span>
-                            Informations de l'étudiant
+                            Informations sur l'étudiant
                         </h5>
                         <ul class="list-group">
                     
@@ -374,7 +374,7 @@
                                     {% if membre.filiere %}
                                         {{ membre.filiere }}
                                     {% else %}
-                                        <span class="text-muted">Non spécifié</span>
+                                        <span class="text-muted">Non spécifiée</span>
                                     {% endif %}
                                 </div>
                                 {% if not membre.filiere %}
@@ -410,21 +410,11 @@
                                     {% if membre.last_login %}
                                         {{ membre.last_login }}
                                     {% else %}
-                                        <span class="text-muted">Jamais connecté</span>
+                                        <span class="text-muted">Jamais connecté(e)</span>
                                     {% endif %}
                                 </div>
                             </li>
-                    
-                            <!-- Statut vérifié -->
-                            <li class="list-group-item">
-                                <strong>Statut vérifié:</strong>
-                                {% if membre.is_verified %}
-                                    <span class="badge bg-success">Vérifié</span>
-                                {% else %}
-                                    <span class="badge bg-danger">Non vérifié</span>
-                                {% endif %}
-                            </li>
-                    
+
                         </ul>
                     </div>
                     
@@ -460,7 +450,7 @@
                             <div>
                                 <h5 class="student-title">
                                     <span class="iconify me-2" data-icon="solar:chart-linear" style="font-size: 24px;"></span>
-                                    Progression Globale
+                                    Progression globale
                                 </h5>
                                 <div class="chart-wrapper">
                                     <canvas id="chart-{{ membre.id }}"></canvas>
@@ -493,18 +483,24 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        function toggleView(view) {
-            const globalView = document.getElementById("global-view");
-            const membresView = document.getElementById("membres-view");
-    
-            if (view === "global") {
-                globalView.classList.remove("d-none");
-                membresView.classList.add("d-none");
-            } else {
-                globalView.classList.add("d-none");
-                membresView.classList.remove("d-none");
-            }
+    function toggleView(view) {
+        const globalView = document.getElementById("global-view");
+        const membresView = document.getElementById("membres-view");
+        const globalBtn = document.getElementById("global-btn");
+        const membresBtn = document.getElementById("membres-btn");
+
+        if (view === "global") {
+            globalView.classList.remove("d-none");
+            membresView.classList.add("d-none");
+            globalBtn.classList.add("selected1");
+            membresBtn.classList.remove("selected1");
+        } else {
+            globalView.classList.add("d-none");
+            membresView.classList.remove("d-none");
+            globalBtn.classList.remove("selected1");
+            membresBtn.classList.add("selected1");
         }
+    }
     
         function showStats(membreId) {
             document.getElementById("default-message").classList.add("d-none");

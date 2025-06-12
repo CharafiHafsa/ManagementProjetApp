@@ -1,10 +1,18 @@
 {% extends 'prof/base.html' %}
 {% load static %}
 {% block content %}
+
     <div class="card shadow p-3">
         <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+            {% if messages %}
+    {% for message in messages %}
+      {% if "notification" in message.tags%}
+        <div class="alert alert-success fade-message">{{ message }}</div>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h3 style="color: #635bff;">Mes Notifications</h3>
+            <h3 style="color: #635bff; font-weight: bold;">Mes Notifications</h3>
             {% if notifications %}
                 <button id="mark-all-read" class="btn btn-sm btn-form-classe d-flex align-items-center">
                 <span class="iconify me-2" data-icon="solar:bell-linear" style="font-size: 24px; line-height: 1;"></span>

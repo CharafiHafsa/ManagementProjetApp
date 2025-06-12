@@ -356,7 +356,17 @@ class PEvent(models.Model):
     start = models.DateField(default=datetime.date.today)
     end = models.DateField()
     color = models.CharField(max_length=50)  # Default FullCalendar color
+    professeur = models.ForeignKey(Professeur, on_delete=models.CASCADE, default=1)  # Add this line
 
     def __str__(self):
         return self.title
-    
+class Meeting(models.Model):
+    target_type = models.CharField(max_length=255)
+    target_id = models.PositiveIntegerField()
+    meeting_link = models.URLField()
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"Meeting for {self.target_type} {self.target_id} at {self.start_time}"

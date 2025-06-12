@@ -422,6 +422,12 @@ function getCookie(name) {
           center: 'title',
           right: 'dayGridMonth,timeGridWeek,listWeek'
         },
+        buttonText: {
+          today:    'Aujourd\'hui',
+          month:    'Mois',
+          week:     'Semaine',
+          list:     'Liste'
+        },
         events: events,
         dateClick: function (info) {
           openModal({
@@ -449,13 +455,7 @@ function getCookie(name) {
       });
   
       setTimeout(() => calendar.render(), 100);
-      document.getElementById("openEventModalBtn").addEventListener("click", function () {
-        const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD
-        openModal({
-            start: today,
-            end: today,
-        });
-        });
+
 
 
   

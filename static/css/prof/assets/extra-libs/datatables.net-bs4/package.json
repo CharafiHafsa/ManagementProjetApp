@@ -30,9 +30,10 @@
   "bugs": {
     "url": "https://datatables.net/forums"
   },
-  "bundleDependencies": false,
+  "bundleDependencies": [],
   "dependencies": {
     "datatables.net": "1.10.19",
+    "datatables.net-bs4": "file:",
     "jquery": ">=1.7"
   },
   "deprecated": false,
