@@ -105,7 +105,6 @@ def login_view(request):
         'password': password
     })
 
-
 def signup_view(request):
     user = None
     id_utilisateur = request.GET.get('uid')
