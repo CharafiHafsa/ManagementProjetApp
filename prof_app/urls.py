@@ -37,7 +37,7 @@ urlpatterns = [
     path('projet/<int:projet_id>/groupe/<int:groupe_id>/notifier/<int:etudiant_id>/<str:champ>/', views.notifier_champ_manquant, name='notifier_champ_manquant'),
 
 
-    path('pchatbot', views.chat_view, name='pchatbot'),
+    path('chatbot', views.chat_view, name='pchatbot'),
     path('etudiant/<int:etudiant_id>/supprimer/', views.supprimer_etudiant, name='supprimer_etudiant'),
     path('mes-projets/', views.project_list, name='mes_projets'),
 

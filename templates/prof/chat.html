@@ -97,7 +97,106 @@
     50% { opacity: 1; transform: translateY(-3px); }
     100% { opacity: 0.3; transform: translateY(0px); }
 }
+[data-bs-theme="dark"] .chat-container {
+    background: #27293d;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+}
 
+[data-bs-theme="dark"] .chat-box {
+    background: #3e3e50;
+    color: #e0e0e0;
+}
+
+[data-bs-theme="dark"] .user-message {
+    background-color: #5a4bff;
+    color: white;
+}
+
+[data-bs-theme="dark"] .bot-message {
+    background-color: #3a3a3a;
+    color: #e0e0e0;
+}
+
+[data-bs-theme="dark"] .typing-indicator {
+    background-color: #3a3a3a;
+    color: #e0e0e0;
+}
+
+[data-bs-theme="dark"] .typing-indicator span {
+    background-color: #e0e0e0;
+}
+
+[data-bs-theme="dark"] input {
+    background-color: #27293d;
+    border-color: #444;
+    color: #e0e0e0;
+}
+
+[data-bs-theme="dark"] input::placeholder {
+    color: #888;
+}
+
+[data-bs-theme="dark"] .btn-primary {
+    background-color: #5a4bff;
+    border-color: #5a4bff;
+}
+
+[data-bs-theme="dark"] .btn-primary:hover {
+    background-color: #3a3a3a;
+    border-color: #5a4bff;
+    color: #5a4bff;
+}
+
+[data-bs-theme="dark"] hr {
+    border-color: #444;
+}
+
+/* Dark mode for the header elements */
+[data-bs-theme="dark"] .fw-bold span[style*="color: #653bff"],
+[data-bs-theme="dark"] .fw-bold[style*="color: #653bff"],
+[data-bs-theme="dark"] .iconify[style*="color: #653bff"],
+[data-bs-theme="dark"] .fw-bold[style*="color: #653bff"] {
+    color: #7d6bff !important;
+}
+[data-bs-theme="dark"] #add-project-form {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+}
+
+[data-bs-theme="dark"] #add-project-form .form-control {
+    background-color: #1e1e1e;
+    border-color: #444;
+    color: #e0e0e0;
+}
+
+[data-bs-theme="dark"] #add-project-form .form-control::placeholder {
+    color: #888;
+}
+
+[data-bs-theme="dark"] #add-project-form .form-label {
+    color: #7d6bff;
+}
+
+[data-bs-theme="dark"] #add-project-form .btn-form-classe {
+    background-color: #5a4bff;
+    color: white;
+}
+
+[data-bs-theme="dark"] #add-project-form .btn-ret {
+    background-color: #27293d;
+    color: #e0e0e0;
+    border-color: #27293d;
+}
+
+[data-bs-theme="dark"] #add-project-form .alert-danger {
+    background-color: #3a1e1e;
+    border-color: #5c2c2c;
+    color: #ff8a8a;
+}
+
+[data-bs-theme="dark"] #add-project-form .text-danger {
+    color: #ff6b6b !important;
+}
 </style>
 <div class="d-flex align-items-center justify-content-between mb-3 flex-nowrap w-100" style="overflow-x: auto; gap: 1rem;">
     <!-- Left: Greeting -->
@@ -176,7 +275,7 @@ function sendMessage() {
     chatBox.scrollTop = chatBox.scrollHeight;
 
     // Envoyer le message au backend
-    fetch("{% url 'chat' %}", {
+    fetch("{% url 'pchatbot' %}", {
     method: "POST",
     headers: {
         "Content-Type": "application/x-www-form-urlencoded",

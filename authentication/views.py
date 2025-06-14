@@ -30,9 +30,9 @@ def login_view(request):
             professeur = Professeur.objects.authenticate(email=email, password=password)
 
             if professeur is None:
-                messages.error(request, 'The professor does not exist.')
+                messages.error(request, 'Le professeur n\'existe pas.')
             elif professeur == 'incorrect_password':
-                messages.error(request, 'The password is incorrect.')
+                messages.error(request, 'Le mot de passe est incorrect.')
             else:
                 if professeur.is_verified:
                     login(request, professeur)
@@ -54,18 +54,18 @@ def login_view(request):
                     professeur.last_login = timezone.now()  
                     professeur.save()
 
-                    messages.success(request, 'Login successful! Welcome Professeur.')
+                    messages.success(request, 'Connexion réussie ! Bienvenue Professeur.')
                     return response
                 else:
-                    messages.warning(request, 'Your account is not activated.')
+                    messages.warning(request, 'Votre compte n\'est pas activé.')
 
         elif email.endswith('-etu@etu.univh2c.ma'):
             etudiant = Etudiant.objects.authenticate(email=email, password=password)
 
             if etudiant is None:
-                messages.error(request, 'The student does not exist.')
+                messages.error(request, 'L\'étudiant n\'existe pas.')
             elif etudiant == 'incorrect_password':
-                messages.error(request, 'The password is incorrect.')
+                messages.error(request, 'Le mot de passe est incorrect.')
             else:
                 if etudiant.is_verified:
                     login(request, etudiant)
@@ -91,7 +91,7 @@ def login_view(request):
                         'message': 'Le compte n\'est pas activé'
                     })
         else:
-            messages.error(request, "Please enter a valid email.")
+            messages.error(request, "Veuillez entrer un email valide.")
 
         return redirect('login')
 

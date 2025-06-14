@@ -25,15 +25,15 @@
     <div class="d-flex justify-content-between flex-wrap gap-3">
         <button class="btn btn-dashboard p-3 flex-fill selected1" onclick="changeContent('default', this)" id="default-btn">
             <span class="iconify me-2" data-icon="solar:folder-open-linear" style="font-size: 24px;"></span>
-            Details
+            Détails
         </button>
         <button class="btn btn-dashboard p-3 flex-fill" onclick="changeContent('instruction', this)">
             <span class="iconify me-2" data-icon="solar:checklist-minimalistic-outline" style="font-size: 24px;"></span>
-            Instrution
+            Instructions
         </button>
         <button class="btn btn-dashboard p-3 flex-fill" onclick="changeContent('announce', this)">
             <span class="iconify me-2" data-icon="solar:chat-round-line-outline" style="font-size: 24px;"></span>
-            Annonce
+            Annonces
         </button>
         <button class="btn btn-dashboard p-3 flex-fill" onclick="changeContent('ressource', this)">
             <span class="iconify me-2" data-icon="solar:book-bookmark-minimalistic-linear" style="font-size: 24px;"></span>
@@ -41,7 +41,7 @@
         </button>
         <button class="btn btn-dashboard p-3 flex-fill" onclick="changeContent('groupes', this)">
             <span class="iconify me-2" data-icon="solar:users-group-rounded-linear" style="font-size: 24px;"></span>
-            Groups
+            Groupes
         </button>
     </div>
 </div>
@@ -87,8 +87,8 @@
                                     <p class="mb-2  "><strong>Description:</strong> {{ projet.description }}</p>
                                     <p class="mb-0 text-muted">
                                         <strong>Timeline:</strong>
-                                        <span class=" ">{{ projet.date_debut }}</span> →
-                                        <span class=" ">{{ projet.date_fin }}</span>
+                                        <span class=" ">{{ projet.date_debut|date:"j F Y" }}</span> →
+                                        <span class=" ">{{ projet.date_fin|date:"j F Y" }}</span>
                                     </p>
                                 </div>
                             </div>
@@ -193,21 +193,25 @@
                     
                                     <!-- Completion Percentage -->
                                     <div class="text-center">
-                                    <div class="position-relative mx-auto mb-2" style="width: 130px; height: 130px;">
-                                        <svg viewBox="0 0 100 100" style="width: 100%; height: 100%;">
-                                            <circle class="progress-bg" cx="50" cy="50" r="40" stroke="#e6e6e6" stroke-width="6" fill="none" />
-                                            <circle class="progress-bar" cx="50" cy="50" r="40" stroke="#635bff" stroke-width="6" fill="none"
-                                                stroke-dasharray="251" 
-                                                stroke-dashoffset="calc(251 - ({{ completion_percentage|floatformat:2 }} * 2.51))"
-                                                stroke-linecap="round" />
-                                        </svg>
-                                        <div class="position-absolute top-50 start-50 translate-middle fw-bold fs-4" style="color: #635bff;">
-                                            <span class="count" data-target="{{ completion_percentage|floatformat:2 }}">0</span>%
+                                        <div class="position-relative mx-auto mb-2" style="width: 130px; height: 130px;">
+                                            <svg viewBox="0 0 100 100" style="width: 100%; height: 100%;">
+                                                <circle class="progress-bg" cx="50" cy="50" r="40" stroke="#e6e6e6" stroke-width="6" fill="none" />
+                                                <circle class="progress-bar" cx="50" cy="50" r="40" stroke="#635bff" stroke-width="6" fill="none"
+                                                    stroke-dasharray="251" 
+                                                    stroke-dashoffset="calc(251 - ({{ completion_percentage|default:0|floatformat:2 }} * 2.51))"
+                                                    stroke-linecap="round" />
+                                            </svg>
+                                            <div class="position-absolute top-50 start-50 translate-middle fw-bold fs-4" style="color: #635bff;">
+                                                {% if completion_percentage is None or completion_percentage == 0 %}
+                                                    0%
+                                                {% else %}
+                                                    {{ completion_percentage|floatformat:2 }}%
+                                                {% endif %}
+                                            </div>
                                         </div>
+                                        
+                                        <p class="stat-label fw-semibold text-muted mt-2">Progression</p>
                                     </div>
-                                    
-                                    <p class="stat-label fw-semibold text-muted mt-2">Progression</p>
-                                </div>
                     
                                     <!-- Total Instructions -->
                                     <div class="text-center">
@@ -473,7 +477,7 @@ const groupChart = new Chart(groupCtx, {
                                         {% if item.instruction.date_limite %}
                                             <small class="text-danger d-flex align-items-center">
                                                 <span class="iconify me-1" data-icon="solar:calendar-linear"></span>
-                                                <strong>Date limite:</strong> {{ item.instruction.date_limite }}
+                                                <strong>Date limite:</strong> {{ item.instruction.date_limite|date:"d F Y" }}
                                             </small>
                                         {% endif %}
                                     </div>
@@ -502,7 +506,7 @@ const groupChart = new Chart(groupCtx, {
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Date limite (optionnel)</label>
-                                        <input type="date" name="date_limite" class="form-control raduise-for-all">
+                                        <input type="text" id="dateLimite" name="date_limite" class="form-control raduise-for-all">
                                     </div>
                                     <div class="form-check mb-3">
                                         <input type="checkbox" name="livrable_requis" class="form-check-input raduise-for-all" style="border: 1px solid #635bff;">
@@ -510,6 +514,13 @@ const groupChart = new Chart(groupCtx, {
                                     </div>
                                     <button type="submit" class="btn btn-modal-style">Ajouter</button>
                                 </form>
+                                <script>
+                                    flatpickr("#dateLimite", {
+                                        dateFormat: "Y-m-d",
+                                        locale: "fr"
+                                    });
+                                </script>
+
                             </div>
                         </div>
                     </div>

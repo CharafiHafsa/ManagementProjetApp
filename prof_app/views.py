@@ -8,7 +8,7 @@ import requests
 import google.generativeai as genai
 import markdown
 from django.utils.timezone import now
-from django.db.models import Prefetch, Count
+from django.db.models import Prefetch, Count, Sum
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 import json
@@ -132,15 +132,15 @@ def create_class(request):
         prof = Professeur.objects.filter(id=prof_id).first()
 
         if not className :
-            messages.error(request, "Nom requeired", extra_tags="classes")
+            messages.error(request, "Nom requis", extra_tags="classes")
 
         elif not prof:
-            messages.error(request, "Professeur introuvalble", extra_tags="classes")
+            messages.error(request, "Professeur introuvable", extra_tags="classes")
         else:
             new_Classe = Classe(nom_classe=className, professeur = prof)
 
             new_Classe.save()
-            messages.success(request, f"Classe {className} added with code {new_Classe.code_classe }!", extra_tags="classes")
+            messages.success(request, f"Classe {className} ajoutée avec le code {new_Classe.code_classe}!", extra_tags="classes")
 
             return redirect('prof_classes')
     return render(request, 'prof/classes.html')
@@ -193,9 +193,9 @@ def edit_classe(request, class_id):
             classe.nom_classe = class_name
             classe.description = class_desc
             classe.save()
-            messages.success(request, "Class updated successfully!", extra_tags="classes")
+            messages.success(request, "Classe mise à jour avec succès!", extra_tags="classes")
         else:
-            messages.error(request, "Please fill all fields.", extra_tags="classes")
+            messages.error(request, "Veuillez remplir tous les champs.", extra_tags="classes")
 
     next_url = request.GET.get("next", "prof_classes")
     return redirect(next_url)  # Redirect to the main page
@@ -205,7 +205,7 @@ def delete_classe(request, class_id):
 
     if request.method == 'POST':
         classe.delete()
-        messages.success(request, "class and all related data is deleted successfully!", extra_tags="classes")
+        messages.success(request, "Classe et toutes les données associées ont été supprimées avec succès!", extra_tags="classes")
         return redirect("prof_classes")
 
     return redirect("prof_classes")
@@ -254,24 +254,39 @@ def supprimer_etudiant(request, etudiant_id):
 
     return redirect('classe_detail', class_id=classe_id)
 
+import locale
+from datetime import datetime
+from django.utils.dateparse import parse_date  # sécurise le format
+
 def add_project(request, class_id):
     classe = Classe.objects.get(id=class_id)
     prof_id = request.session.get('user_id')
+
     if not prof_id:
-        messages.error(request, "Votre session a expire", extra_tags="classes")
+        messages.error(request, "Votre session a expiré", extra_tags="classes")
         return redirect('login')
+
     professor = Professeur.objects.filter(id=prof_id).first()
 
     if request.method == 'POST':
         nom_project = request.POST.get("nom_project")
         description = request.POST.get("description")
-        date_debut = request.POST.get("date_debut")
-        date_fin = request.POST.get("date_fin")
+        date_debut_str = request.POST.get("date_debut")
+        date_fin_str = request.POST.get("date_fin")
 
-        print(f"Received data: {nom_project}, {description}, {date_debut}, {date_fin}")
+        print(f"Received data: {nom_project}, {description}, {date_debut_str}, {date_fin_str}")
 
-        if nom_project and description and date_debut and date_fin:
+        if nom_project and description and date_debut_str and date_fin_str:
             try:
+                # Convertir les dates en objets datetime
+                date_debut = parse_date(date_debut_str)
+                date_fin = parse_date(date_fin_str)
+
+                # Vérifier que la date de début est antérieure à la date de fin
+                if date_debut > date_fin:
+                    messages.error(request, "La date de début doit être avant la date de fin.", extra_tags="projet")
+                    return redirect('classe_detail', class_id=classe.id)
+
                 new_project = Project(
                     nom_project=nom_project,
                     description=description,
@@ -281,6 +296,8 @@ def add_project(request, class_id):
                 )
                 new_project.save()
                 print(f"Saved project: {new_project.nom_project}")
+
+                # Notification aux étudiants
                 etudiants = classe.etudiants.all()
                 messages.success(request, "Projet ajouté avec succès !", extra_tags="projet")
                 notif = PENotification.objects.create(
@@ -288,6 +305,7 @@ def add_project(request, class_id):
                     content=f"Un nouveau projet '{new_project.nom_project}' a été ajouté à votre classe."
                 )
                 notif.etudiants.set(etudiants)
+
             except Exception as e:
                 print(f"Error: {e}")
                 messages.error(request, f"Erreur lors de l'ajout du projet: {e}", extra_tags="projet")
@@ -322,7 +340,7 @@ def edit_projet(request, projet_id):
 
         if updated:
             projet.save()
-            messages.success(request, "Project updated successfully!", extra_tags="projet")
+            messages.success(request, "Projet mis à jour avec succès!", extra_tags="projet")
             classe = projet.code_classe
             etudiants = classe.etudiants.all()
             notif = PENotification.objects.create(
@@ -331,7 +349,7 @@ def edit_projet(request, projet_id):
             )
             notif.etudiants.set(etudiants)
         else:
-            messages.error(request, "Please fill all fields.", extra_tags="projet")
+            messages.error(request, "Veuillez remplir tous les champs.", extra_tags="projet")
 
     next_url = request.GET.get("next", "projet_detail")
     return redirect(next_url)
@@ -341,7 +359,7 @@ def delete_projet(request, projet_id):
 
     if request.method == "POST" :
         projet.delete()
-        messages.success(request, "projet and all related data is deleted successfully!",extra_tags="projet")
+        messages.success(request, "Projet et toutes les données associées ont été supprimés avec succès!",extra_tags="projet")
 
 
         return redirect('classe_detail', class_id = projet.code_classe_id)
@@ -358,7 +376,9 @@ def projet_detail(request, projet_id):
     
     instructions = projet.instructions.all()
     total_groups_count = Groupe.objects.filter(projet=projet).count()
-    total_students_count = sum(groupe.nbr_membre for groupe in Groupe.objects.filter(projet=projet))
+    total_students_count = total_membres = Groupe.objects.filter(projet=projet) \
+    .annotate(nb_membres=Count('membres')) \
+    .aggregate(total=Sum('nb_membres'))['total'] or 0
     
     announces = Announce.objects.filter(projet=projet).order_by("-date_publication")
     ressources = P_ressources.objects.filter(projet=projet).order_by("-date_ajout")
@@ -481,7 +501,7 @@ def delete_announce(request, announce_id):
     announce = get_object_or_404(Announce, id=announce_id)
     projet_id = announce.projet.id
     announce.delete()
-    messages.success(request, "Announce supprimee ave succes ",extra_tags="projet")
+    messages.success(request, "Announce supprimée avec succès",extra_tags="projet")
     return redirect("projet_detail", projet_id=projet_id)
 
 def modify_announce(request, announce_id):
@@ -492,9 +512,9 @@ def modify_announce(request, announce_id):
         if nouveau_contentu :
             announce.contenu = nouveau_contentu
             announce.save()
-            messages.success(request, "Announce modifee avec succes",extra_tags="projet")
+            messages.success(request, "Announce modifiée avec succès",extra_tags="projet")
         else:
-            messages.error(request, "Le contenu ne peut pas etre vide",extra_tags="projet")
+            messages.error(request, "Le contenu ne peut pas être vide",extra_tags="projet")
     return redirect("projet_detail", projet_id=announce.projet.id)
 
 def add_ressource(request, projet_id):
