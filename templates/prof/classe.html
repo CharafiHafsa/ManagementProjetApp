@@ -101,7 +101,7 @@
                                                         </li>
                                                         <li>
                                                             <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#deleteProjetModal{{ project.id }}">
-                                                                Delete
+                                                                Supprimer
                                                             </a>
                                                         </li>
                                                     </ul>
@@ -177,7 +177,7 @@
                                                     <small class="text-muted">
                                                         Du {{ project.date_debut|date:"j F Y" }} au {{ project.date_fin|date:"j F Y" }}
                                                     </small>
-                                                    <a href="{% url 'projet_detail' project.id %}" class="btn btn-sm btn-form-classe raduise-for-all">Details</a>
+                                                    <a href="{% url 'projet_detail' project.id %}" class="btn btn-sm btn-form-classe raduise-for-all">Détails</a>
                                                 </div>
                                             </div>
                                         </div>
