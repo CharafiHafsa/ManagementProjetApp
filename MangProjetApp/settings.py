@@ -92,7 +92,7 @@ WSGI_APPLICATION = 'MangProjetApp.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'mergeone',
+        'NAME': 'dbTeamstudy',
         'USER': 'postgres',
         'PASSWORD': 'P@$$w0rd',
         'HOST': 'localhost',  # Or the IP address of your DB server
