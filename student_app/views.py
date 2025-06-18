@@ -231,7 +231,7 @@ def get_taches_stats_1(request):
     if not etudiant:
         return JsonResponse({"error": "Utilisateur non authentifié"}, status=403)
 
-    groupes = Groupe.objects.all()
+    groupes = etudiant.groupes.all()
     data = []
 
     for groupe in groupes:
@@ -268,6 +268,9 @@ def get_taches_stats_2(request):
     taches_terminees = [h.taches_terminees for h in historique]
     taches_en_cours = [h.taches_en_cours for h in historique]
 
+    print("ggggggggggggggg")
+    print(taches_en_cours, taches_terminees, taches_en_retard)
+
     data = {
         "categories": categories,
         "series": [
@@ -281,8 +284,12 @@ def get_taches_stats_2(request):
 
 def get_temps_utilisation_chart(request):
     if request.session.get('user_type') != 'etudiant': return redirect('login')
+    id_etudiant = request.session.get('user_id')
+    etudiant = Etudiant.objects.filter(id=id_etudiant).first()
+
     # Récupérer les 7 derniers jours de temps d'utilisation
-    historique = TempsUtilisation.objects.order_by('-date')[:7]
+    
+    historique = TempsUtilisation.objects.filter(etudiant=etudiant).order_by('-date')[:7]
 
     # Extraire les labels (jours) et les valeurs (temps passé en heures et minutes)
     categories = []
@@ -296,6 +303,7 @@ def get_temps_utilisation_chart(request):
         }.get(jour_nom, jour_nom)  # Traduction en français
 
         # Convertir `temps_passe` en heures et minutes
+       
         total_minutes = entry.temps_passe.total_seconds() // 60
         heures = int(total_minutes // 60)
         minutes = int(total_minutes % 60)
@@ -305,6 +313,7 @@ def get_temps_utilisation_chart(request):
         data.append(total_minutes)  # Ajouter la durée en minutes (pour l'échelle)
 
     # Retourner les données sous format JSON
+    
     return JsonResponse({"categories": categories, "data": data})
 
 def update_time_counter(request):
