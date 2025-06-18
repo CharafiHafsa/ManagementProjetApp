@@ -1,19 +1,19 @@
 # 📚 ManagementProjetApp – TeamStudy
 
-Plateforme collaborative pour la gestion de projets éducatifs.
+A collaborative platform for managing educational projects.
 
 ---
 
-##  Mise en place du projet
+## 🚀 Project Setup
 
-### 1. Cloner le dépôt
+### 1. Clone the repository
 
 ```bash
 git clone <repository-url>
 cd <repository-folder>
 ```
 
-### 2. Créer et activer un environnement virtuel
+### 2. Create and activate a virtual environment
 
 ```bash
 python -m venv env
@@ -23,15 +23,15 @@ env\Scripts\activate
 source env/bin/activate
 ```
 
-### 3.  Installer les dépendances
+### 3.  Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Configurer la base de données
-Dans myproject/settings.py, configurez les identifiants PostgreSQL.
-Puis lancez les migrations :
+### 4. Configure the database
+In myproject/settings.py, configure your PostgreSQL credentials.
+Then run the migrations:
 
 ```bash
 python manage.py makemigrations
